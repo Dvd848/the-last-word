@@ -19,11 +19,13 @@ export default class Game
         this.currentPlayerIndex = 0;
         this.bag = new Bag();
 
-        this.players.forEach((player) => {
+        this.display = new Display(this.board);
+
+        this.players.forEach((player, index) => {
             player.fillRack(this.bag);
+            this.display.fillPlayerRack(index + 1, player);
         });
 
-        this.display = new Display(this.board);
     }
     
     public getCurrentPlayer(): Player 

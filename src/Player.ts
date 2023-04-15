@@ -5,20 +5,25 @@ export default class Player
 {
     private name:           string;
     private max_tile_num:   number;
-    private rack        :   Tile[];
+    private _rack       :   Tile[];
 
     constructor(name: string, max_tile_num: number)
     {
         this.name = name;
         this.max_tile_num = max_tile_num;
-        this.rack = [];
+        this._rack = [];
     }
 
     public fillRack(bag: Bag) : void
     {
-        while ( (this.rack.length < this.max_tile_num) && (bag.length > 0) )
+        while ( (this._rack.length < this.max_tile_num) && (bag.length > 0) )
         {
-            this.rack.push(bag.draw()!);
+            this._rack.push(bag.draw()!);
         }
+    }
+
+    get rack() : Tile[]
+    {
+        return [...this._rack];
     }
 }
