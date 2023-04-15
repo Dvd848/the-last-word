@@ -1,0 +1,24 @@
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(15, 1fr);
+    grid-template-rows: repeat(15, 1fr);
+    grid-gap: 2px;
+    padding: 4px;
+    background-color: #eee;
+    width: 600px;
+    height: 600px;
+    margin: 0 auto;
+  }
+  
+.tile {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }

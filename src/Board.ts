@@ -2,12 +2,12 @@ import BoardTile from './BoardTile.js'
 
 export default class Board 
 {
-    private size: number;
+    private _size: number;
     private tiles: BoardTile[][];
   
     constructor(size: number) 
     {
-        this.size = size;
+        this._size = size;
         this.tiles = new Array(size).fill(null).map(() => new Array(size).fill(null));
         for (let row = 0; row < size; row++) 
         {
@@ -22,4 +22,10 @@ export default class Board
     {
         return this.tiles[row][col];
     }
+
+    get size(): number
+    {
+        return this._size;
+    }
+
 }

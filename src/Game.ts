@@ -2,6 +2,7 @@ import { Constants } from './Constants.js';
 import Board from './Board.js'
 import Player from './Player.js';
 import Bag from './Bag.js';
+import Display from './Display.js';
 
 export default class Game 
 {
@@ -9,6 +10,7 @@ export default class Game
     private players: Player[];
     private currentPlayerIndex: number;
     private bag: Bag;
+    private display : Display;
   
     constructor(players: string[]) 
     {
@@ -19,7 +21,9 @@ export default class Game
 
         this.players.forEach((player) => {
             player.fillRack(this.bag);
-        })
+        });
+
+        this.display = new Display(this.board);
     }
     
     public getCurrentPlayer(): Player 
