@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    #command: npm start
+    command: sh -c "echo 'Waiting for user input...' && sleep infinity"
+
+volumes:
+  node_modules:
+
+# docker-compose exec app sh
+# docker-compose up -d 
+# docker-compose up -d --build

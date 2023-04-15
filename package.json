@@ -1,0 +1,16 @@
+{
+  "name": "the-last-word",
+  "version": "0.1.0",
+  "description": "A word game",
+  "main": "dist/Game.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "author": "Dvd848",
+  "license": "AGPLv3",
+  "dependencies": {
+    "typescript": "^5.0.4"
+  }
+}
