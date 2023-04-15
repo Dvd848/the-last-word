@@ -1,4 +1,4 @@
 export const Constants = {
     BOARD_DIMENSIONS: 15,
-    TILES_PER_PLAYER: 8
+    TILES_PER_PLAYER: 7
 }

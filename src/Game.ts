@@ -16,6 +16,10 @@ export default class Game
         this.players = players.map(name => new Player(name, Constants.TILES_PER_PLAYER));
         this.currentPlayerIndex = 0;
         this.bag = new Bag();
+
+        this.players.forEach((player) => {
+            player.fillRack(this.bag);
+        })
     }
     
     public getCurrentPlayer(): Player 
@@ -29,4 +33,4 @@ export default class Game
     }
 }
 
-const game = new Game(["Player 1"]);
+const game = new Game(["Player 1", "Player 2"]);
