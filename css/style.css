@@ -1,13 +1,14 @@
 
 :root {
-    --tile_dimensions: 40px;
+    --tile_dimensions: 35px;
     --board_dimensions: 15;
-    --grid-gap: 2;
+    --grid_gap_board: 2;
     --v_rack_columns: 2;
     --max_player_tiles: 8;
+    --grid_gap_rack: 8px;
 }
 
-#game {
+#game_top {
     display: flex;
     align-content: center;
     justify-content: center;
@@ -18,16 +19,20 @@
     display: grid;
     grid-template-columns: repeat(var(--board_dimensions), 1fr);
     grid-template-rows: repeat(var(--board_dimensions), 1fr);
-    grid-gap: calc(var(--grid-gap) * 1px);
+    grid-gap: calc(var(--grid_gap_board) * 1px);
     padding: 4px;
     background-color: #eee;
-    width: calc(var(--board_dimensions) * (var(--tile_dimensions) + var(--grid-gap)));
-    height: calc(var(--board_dimensions) * (var(--tile_dimensions) + var(--grid-gap)));
+    width: calc(var(--board_dimensions) * (var(--tile_dimensions) + var(--grid_gap_board)));
+    height: calc(var(--board_dimensions) * (var(--tile_dimensions) + var(--grid_gap_board)));
     margin: 0 40px;
+
+    -webkit-box-shadow: 6px 10px 13px -8px rgba(0,0,0,0.75);
+    -moz-box-shadow: 6px 10px 13px -8px rgba(0,0,0,0.75);
+    box-shadow: 6px 10px 13px -8px rgba(0,0,0,0.75);
 }
   
 .board_tile {
-    background-color: #fff;
+    background-color: #F8F8F8;
     border: 1px solid #ccc;
     text-align: center;
     font-size: 24px;
@@ -40,16 +45,39 @@
     height: var(--tile_dimensions);
 }
 
-.v_rack {
-    display: grid;
-    grid-template-columns: repeat(var(--v_rack_columns), 1fr);
-    grid-gap: 8px;
-    padding: 6px;
+.drag-over {
+    background-color: #ADD8E6;
+}
+
+.rack {
     background-color: #eee;
-    width: var(--v_rack_columns) * var(--tile_dimensions);
+    display: grid;
+    grid-gap: 8px;
+
+    border-radius: 3px;
+
+    -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+    box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+}
+
+.v_rack {
+    padding: 6px;
+    grid-template-columns: repeat(var(--v_rack_columns), 1fr);
+    width: calc(var(--v_rack_columns) * calc(var(--tile_dimensions) +  var(--grid_gap_rack)));
     justify-items: center;
     align-content: start;
-    height: (round(var(--max_player_tiles) /  var(--v_rack_columns))) * var(--tile_dimensions);
+    /*height: calc(round(calc(var(--max_player_tiles) / var(--v_rack_columns))) * var(--tile_dimensions));*/
+    height: calc((var(--max_player_tiles) / var(--v_rack_columns)) * (var(--tile_dimensions) + var(--grid_gap_rack)));
+    
+}
+
+#active_player_rack {
+    width: calc(var(--max_player_tiles) * var(--tile_dimensions));
+    height: var(--tile_dimensions);
+    margin: 20px auto;
+    grid-template-columns: repeat(var(--max_player_tiles), 1fr);
+    padding: 8px 100px;
 }
 
 .game_tile {
@@ -71,4 +99,22 @@
     bottom: 0px;
     right: 2px;
     font-size: 12px;
+}
+
+.grabbable {
+    cursor: move; /* fallback if grab cursor is unsupported */
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}
+
+ /* (Optional) Apply a "closed-hand" cursor during drag operation. */
+.grabbable:active {
+    cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
+}
+
+.hide {
+    display: none;
 }

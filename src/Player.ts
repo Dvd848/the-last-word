@@ -3,13 +3,15 @@ import Tile from "./Tile.js";
 
 export default class Player
 {
-    private name:           string;
-    private max_tile_num:   number;
-    private _rack       :   Tile[];
+    private _name        :   string;
+    private _id          :   number;
+    private max_tile_num :   number;
+    private _rack        :   Tile[];
 
-    constructor(name: string, max_tile_num: number)
+    constructor(name: string, id: number, max_tile_num: number)
     {
-        this.name = name;
+        this._name = name;
+        this._id = id;
         this.max_tile_num = max_tile_num;
         this._rack = [];
     }
@@ -25,5 +27,15 @@ export default class Player
     get rack() : Tile[]
     {
         return [...this._rack];
+    }
+
+    get id() : number
+    {
+        return this._id;
+    }
+
+    get name() : string
+    {
+        return this._name;
     }
 }

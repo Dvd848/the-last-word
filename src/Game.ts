@@ -15,16 +15,18 @@ export default class Game
     constructor(players: string[]) 
     {
         this.board = new Board(Constants.BOARD_DIMENSIONS);
-        this.players = players.map(name => new Player(name, Constants.TILES_PER_PLAYER));
+        this.players = players.map((name, index) => new Player(name, index + 1, Constants.TILES_PER_PLAYER));
         this.currentPlayerIndex = 0;
         this.bag = new Bag();
 
         this.display = new Display(this.board);
 
-        this.players.forEach((player, index) => {
+        this.players.forEach((player) => {
             player.fillRack(this.bag);
-            this.display.fillPlayerRack(index + 1, player);
+            this.display.fillPlayerRack(player);
         });
+
+        this.display.setActivePlayer(this.players[0]);
 
     }
     
