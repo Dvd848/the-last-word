@@ -2,13 +2,29 @@ import Board from "./Board.js";
 import Player from "./Player.js";
 import Tile from "./Tile.js";
 
-export default class Display
+export type TilePlacement =
 {
-    private board : Element;
+    tile: Tile;
+    x: number;
+    y: number;
+}
 
-    constructor(board: Board)
+export interface DisplayCallBacks
+{
+    endTurn: (tile_placements: TilePlacement[]) => boolean
+}
+
+export class Display
+{
+    private board        : Element;
+    private activeTiles : Map<number, Tile>;
+    private callbacks    : DisplayCallBacks;
+
+    constructor(board: Board, callbacks: DisplayCallBacks)
     {
         this.board = document.getElementById("board")!;
+        this.activeTiles = new Map<number, Tile>();
+        this.callbacks = callbacks;
         this.createBoard(board);
     }
 
@@ -27,8 +43,42 @@ export default class Display
                 this.board.appendChild(tileElement);
             }
         }
+        this.attachEvents();
+    }
+
+    private attachEvents() : void
+    {
         this.makeBoardDroppable();
         this.makeElementDroppable(document.getElementById("active_player_rack")!);
+        this.configureButtons();
+    }
+
+    private configureButtons() : void
+    {
+        const endTurnButton = document.getElementById("end_turn_button")!;
+        const that = this;
+        endTurnButton.addEventListener('click', function(e){
+            const tilePlacements : TilePlacement[] = [];
+
+            const activeTiles = document.querySelectorAll(".active_tile");
+
+            activeTiles.forEach((activeTile) => {
+                const parent = activeTile.parentElement;
+                if (parent?.classList.contains("board_tile"))
+                {
+                    const tileId = parseInt(activeTile.id.replace("game_tile_", ""));
+
+                    tilePlacements.push({
+                        tile: that.activeTiles.get(tileId)!, 
+                        x: parseInt(parent.dataset.x!), 
+                        y: parseInt(parent.dataset.y!)
+                    });
+                }
+            });
+
+            const accepted = that.callbacks.endTurn(tilePlacements);
+            console.log(accepted);
+        })
     }
 
     private makeElementDroppable(element: Element) : void
@@ -86,7 +136,7 @@ export default class Display
         });
     }
 
-    private createTile(tile: Tile, is_draggable: boolean) : Element
+    private createTile(tile: Tile, is_draggable: boolean, is_active: boolean) : Element
     {
         const tileElement = document.createElement('div');
         const letter = document.createTextNode(tile.letter);
@@ -116,6 +166,11 @@ export default class Display
             });
         }
 
+        if (is_active)
+        {
+            tileElement.classList.add("active_tile");
+        }
+
         tileElement.appendChild(letter);
         tileElement.setAttribute("id", `game_tile_${tile.id}`);
 
@@ -139,7 +194,7 @@ export default class Display
         rack.innerHTML = '';
 
         player.rack.forEach((tile) => {
-            rack.appendChild(this.createTile(tile, false));
+            rack.appendChild(this.createTile(tile, false, false));
         });
     }
 
@@ -152,11 +207,12 @@ export default class Display
             throw new Error(`Can't find rack!`);
         }
 
-        player_rack.innerHTML = '';
+        this.activeTiles.clear();
 
         player.rack.forEach((tile) => {
             document.getElementById(`game_tile_${tile.id}`)?.remove();
-            active_rack.appendChild(this.createTile(tile, true));
+            active_rack.appendChild(this.createTile(tile, true, true));
+            this.activeTiles.set(tile.id, tile);
         });
     }
 }

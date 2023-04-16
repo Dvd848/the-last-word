@@ -2,7 +2,7 @@ import { Constants } from './Constants.js';
 import Board from './Board.js'
 import Player from './Player.js';
 import Bag from './Bag.js';
-import Display from './Display.js';
+import { Display, TilePlacement, DisplayCallBacks } from './Display.js';
 
 export default class Game 
 {
@@ -19,7 +19,9 @@ export default class Game
         this.currentPlayerIndex = 0;
         this.bag = new Bag();
 
-        this.display = new Display(this.board);
+        this.display = new Display(this.board, {
+            endTurn: this.endTurnCallback
+        });
 
         this.players.forEach((player) => {
             player.fillRack(this.bag);
@@ -28,6 +30,12 @@ export default class Game
 
         this.display.setActivePlayer(this.players[0]);
 
+    }
+
+    private endTurnCallback(tilePlacements: TilePlacement[]) : boolean
+    {
+        console.log(tilePlacements)
+        return false;
     }
     
     public getCurrentPlayer(): Player 
