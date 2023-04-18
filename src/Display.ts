@@ -5,8 +5,8 @@ import Tile from "./Tile.js";
 export type TilePlacement =
 {
     tile: Tile;
-    x: number;
-    y: number;
+    r: number;
+    c: number;
 }
 
 export interface DisplayCallBacks
@@ -32,14 +32,14 @@ export class Display
     {
         this.board.innerHTML = '';
 
-        for (let x = 0; x < board.height; x++) 
+        for (let r = 0; r < board.height; r++) 
         {
-            for (let y = 0; y < board.width; y++) 
+            for (let c = 0; c < board.width; c++) 
             {
                 const tileElement = document.createElement('div');
                 tileElement.classList.add('board_tile');
-                tileElement.dataset.x = x.toString();
-                tileElement.dataset.y = y.toString();
+                tileElement.dataset.r = r.toString();
+                tileElement.dataset.c = c.toString();
                 this.board.appendChild(tileElement);
             }
         }
@@ -70,8 +70,8 @@ export class Display
 
                     tilePlacements.push({
                         tile: that.activeTiles.get(tileId)!, 
-                        x: parseInt(parent.dataset.x!), 
-                        y: parseInt(parent.dataset.y!)
+                        r: parseInt(parent.dataset.r!), 
+                        c: parseInt(parent.dataset.c!)
                     });
                 }
             });

@@ -37,30 +37,30 @@ export default class Game
 
     private getWordsToCheck(tilePlacements: TilePlacement[]): string[] {
         const words = new Set<string>();
-        const axes = ["x", "y"];
+        const axes = ["r", "c"];
 
         for (const placement of tilePlacements) {
             for (let axis of axes)
             {
                 let word = "";
-                let start_index = { x: -1, y: -1 };
+                let start_index = { r: -1, c: -1 };
                 
                 // Scan vertically up
-                let current = {x: placement.x, y: placement.y};
-                while (this.board.isTileInBoard(current["x"], current["y"]) && !this.board.isTileEmpty(current["x"], current["y"])) 
+                let current = {r: placement.r, c: placement.c};
+                while (this.board.isTileInBoard(current["r"], current["c"]) && !this.board.isTileEmpty(current["r"], current["c"])) 
                 {
-                    start_index = { x: current["x"], y: current["y"] };
+                    start_index = { r: current["r"], c: current["c"] };
                     current[axis as keyof typeof current]--;
                 }
                 
                 // Reset to starting tile
-                current["x"] = start_index.x;
-                current["y"] = start_index.y;
+                current["r"] = start_index.r;
+                current["c"] = start_index.c;
                 
                 // Scan vertically down
-                while (this.board.isTileInBoard(current["x"], current["y"]) && !this.board.isTileEmpty(current["x"], current["y"])) 
+                while (this.board.isTileInBoard(current["r"], current["c"]) && !this.board.isTileEmpty(current["r"], current["c"])) 
                 {
-                    word += this.board.getTile(current["x"], current["y"])!.letter;
+                    word += this.board.getTile(current["r"], current["c"])!.letter;
                     current[axis as keyof typeof current]++;
                 }
                 
@@ -84,10 +84,10 @@ export default class Game
             if (tilePlacements.length > 0)
             {
                 // Check if all tiles are placed consecutively horizontally or vertically
-                const xValues = tilePlacements.map((tilePlacement) => tilePlacement.x);
-                const yValues = tilePlacements.map((tilePlacement) => tilePlacement.y);
+                const rValues = tilePlacements.map((tilePlacement) => tilePlacement.r);
+                const cValues = tilePlacements.map((tilePlacement) => tilePlacement.c);
     
-                if (new Set(xValues).size !== 1 && new Set(yValues).size !== 1)
+                if (new Set(rValues).size !== 1 && new Set(cValues).size !== 1)
                 {
                     throw "The tiles are not placed consecutively horizontally or vertically";
                 }
@@ -98,11 +98,11 @@ export default class Game
                 let connected = false;
                 for (const tilePlacement of tilePlacements) 
                 {
-                    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]])
+                    for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]])
                     {
-                        let new_x = tilePlacement.x + dx;
-                        let new_y = tilePlacement.y + dy;
-                        if (this.board.isTileInBoard(new_x, new_y) && !this.board.isTileEmpty(new_x, new_y))
+                        let new_r = tilePlacement.r + dr;
+                        let new_c = tilePlacement.c + dc;
+                        if (this.board.isTileInBoard(new_r, new_c) && !this.board.isTileEmpty(new_r, new_c))
                         {
                             connected = true;
                             break;
@@ -118,13 +118,13 @@ export default class Game
 
             for (const tilePlacement of tilePlacements) 
             {
-                if (!this.board.isTileEmpty(tilePlacement.x, tilePlacement.y)) 
+                if (!this.board.isTileEmpty(tilePlacement.r, tilePlacement.c)) 
                 {
                     throw "One or more tiles are placed on an existing tile.";
                 }
 
                 // Mark the placed tile as placed
-                this.board.setTile(tilePlacement.x, tilePlacement.y, tilePlacement.tile);
+                this.board.setTile(tilePlacement.r, tilePlacement.c, tilePlacement.tile);
                 actualTilePlacements.push(tilePlacement);
             }
 
@@ -167,7 +167,7 @@ export default class Game
         {
             console.log(err);
             actualTilePlacements.forEach((tilePlacement) => {
-                this.board.setTile(tilePlacement.x, tilePlacement.y, null);
+                this.board.setTile(tilePlacement.r, tilePlacement.c, null);
             });
         }
     }
