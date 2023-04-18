@@ -11,7 +11,7 @@ export type TilePlacement =
 
 export interface DisplayCallBacks
 {
-    endTurn: (tile_placements: TilePlacement[]) => boolean
+    endTurn: (tile_placements: TilePlacement[]) => void;
 }
 
 export class Display
@@ -32,9 +32,9 @@ export class Display
     {
         this.board.innerHTML = '';
 
-        for (let x = 0; x < board.size; x++) 
+        for (let x = 0; x < board.height; x++) 
         {
-            for (let y = 0; y < board.size; y++) 
+            for (let y = 0; y < board.width; y++) 
             {
                 const tileElement = document.createElement('div');
                 tileElement.classList.add('board_tile');
@@ -76,9 +76,18 @@ export class Display
                 }
             });
 
-            const accepted = that.callbacks.endTurn(tilePlacements);
-            console.log(accepted);
+            that.callbacks.endTurn(tilePlacements);
         })
+    }
+
+    public finalizePlacements() : void
+    {
+        const activeTiles = document.querySelectorAll(".active_tile");
+        activeTiles.forEach((activeTile) => {
+            activeTile.classList.remove("active_tile");
+            activeTile.classList.remove('grabbable');
+            activeTile.setAttribute("draggable", "false");
+        });
     }
 
     private makeElementDroppable(element: Element) : void
@@ -86,22 +95,39 @@ export class Display
         element.classList.add('droppable');
         element.addEventListener('dragenter', function(e) {
             const target = e.target as Element;
+            if (target.classList == undefined)
+            {
+                return;
+            }
             e.preventDefault();
             target.classList.add('drag-over');
         })
         element.addEventListener('dragover', function(e) {
             const target = e.target as Element;
+            if (target.classList == undefined)
+            {
+                return;
+            }
             e.preventDefault();
             target.classList.add('drag-over');
         });
         element.addEventListener('dragleave', function(e) {
             const target = e.target as Element;
+            if (target.classList == undefined)
+            {
+                return;
+            }
             e.preventDefault();
             target.classList.remove('drag-over');
         });
         element.addEventListener('drop', function(e) {
             const target = e.target as Element;
             const dragEvent = e as DragEvent;
+
+            if (target.classList == undefined)
+            {
+                return;
+            }
 
             target.classList.remove('drag-over');
 
@@ -151,9 +177,15 @@ export class Display
                 const target = e.target as Element;
                 const dragEvent = e as DragEvent;
 
+                if (target.classList == undefined)
+                {
+                    return;
+                }
+
                 if (dragEvent.dataTransfer != null)
                 {
                     dragEvent.dataTransfer.setData('text/plain', target.id);
+                    //dragEvent.dataTransfer.effectAllowed = "move";
                 }
                 setTimeout(() => {
                     target.classList.add('hide');
@@ -162,6 +194,12 @@ export class Display
 
             tileElement.addEventListener('dragend', function(e){
                 const target = e.target as Element;
+                
+                if (target.classList == undefined)
+                {
+                    return;
+                }
+
                 target.classList.remove('hide');
             });
         }
@@ -206,6 +244,8 @@ export class Display
         {
             throw new Error(`Can't find rack!`);
         }
+
+        active_rack.innerHTML = '';
 
         this.activeTiles.clear();
 

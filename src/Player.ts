@@ -6,22 +6,27 @@ export default class Player
     private _name        :   string;
     private _id          :   number;
     private max_tile_num :   number;
-    private _rack        :   Tile[];
+    private _rack        :   Set<Tile>;
 
     constructor(name: string, id: number, max_tile_num: number)
     {
         this._name = name;
         this._id = id;
         this.max_tile_num = max_tile_num;
-        this._rack = [];
+        this._rack = new Set<Tile>();
     }
 
     public fillRack(bag: Bag) : void
     {
-        while ( (this._rack.length < this.max_tile_num) && (bag.length > 0) )
+        while ( (this._rack.size < this.max_tile_num) && (bag.length > 0) )
         {
-            this._rack.push(bag.draw()!);
+            this._rack.add(bag.draw()!);
         }
+    }
+
+    public removeTile(tile: Tile) : void
+    {
+        this._rack.delete(tile);
     }
 
     get rack() : Tile[]
