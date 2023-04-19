@@ -29,10 +29,11 @@ export const scrabbleTiles : Record<Languages, { letter: string; count: number; 
         { letter: "ע", count: 5, points: 1 },
         { letter: "פ", count: 3, points: 2 },
         { letter: "צ", count: 1, points: 4 },
-        { letter: "ק", count :1 ,points :5 },
-        { letter: "ר", count :4 ,points :1 },
-        { letter: "ש", count :4 ,points :2 },
-        { letter: "ת", count :4 ,points :2 }
+        { letter: "ק", count: 1 ,points: 5 },
+        { letter: "ר", count: 4 ,points: 1 },
+        { letter: "ש", count: 4 ,points: 2 },
+        { letter: "ת", count: 4 ,points: 2 },
+        //TODO: { letter: " ", count: 2 ,points: 0 }
     ],
 
     [Languages.English]: [
@@ -54,13 +55,14 @@ export const scrabbleTiles : Record<Languages, { letter: string; count: number; 
         { letter: 'P', count: 2,  points: 3  },
         { letter: 'Q', count: 1,  points: 10 },
         { letter: 'R', count: 6,  points: 1  },
-        { letter: 'S', count :4,  points: 1  },
-        { letter: 'T', count :6,  points: 1  },
-        { letter: 'U', count :4,  points: 1  },
-        { letter: 'V', count :2,  points: 4  },
-        { letter: 'W', count :2,  points: 4  },
-        { letter: 'X', count :1,  points: 8  },
-        { letter: 'Y', count :2,  points: 4  },
-        { letter: 'Z', count :1,  points: 10 }
+        { letter: 'S', count: 4,  points: 1  },
+        { letter: 'T', count: 6,  points: 1  },
+        { letter: 'U', count: 4,  points: 1  },
+        { letter: 'V', count: 2,  points: 4  },
+        { letter: 'W', count: 2,  points: 4  },
+        { letter: 'X', count: 1,  points: 8  },
+        { letter: 'Y', count: 2,  points: 4  },
+        { letter: 'Z', count: 1,  points: 10 },
+        //TODO: { letter: " ", count: 2,  points: 0 }
     ]
 };
