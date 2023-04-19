@@ -58,8 +58,6 @@
 
     border-radius: 3px;
 
-    -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
-    -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
     box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
 
     user-select: none;
@@ -157,4 +155,20 @@
   .button_blue {
     padding: 1rem 2rem;
   }
+}
+
+.player_points {
+    text-align: center;
+    font-size: 1.5em;
+    margin: 40px auto;
+    background-color: #105f3a; /* dark green background color */
+    color: #fff; /* white text color */
+    font-size: 24px; /* font size for the number */
+    font-weight: bold; /* bold text for emphasis */
+    padding: 4px 16px; /* padding around the number */
+    border-radius: 5px; /* rounded corners */
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3); /* drop shadow for depth */
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.5); /* text shadow for contrast */
+    letter-spacing: 2px; /* spacing between characters */
+    box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
 }

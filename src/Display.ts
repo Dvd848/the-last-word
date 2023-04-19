@@ -1,13 +1,8 @@
 import Board from "./Board.js";
 import Player from "./Player.js";
 import Tile from "./Tile.js";
+import { TilePlacement } from "./Game.js";
 
-export type TilePlacement =
-{
-    tile: Tile;
-    r: number;
-    c: number;
-}
 
 export interface DisplayCallBacks
 {
@@ -221,7 +216,7 @@ export class Display
         return tileElement
     }
 
-    public fillPlayerRack(player: Player) : void
+    public displayPlayerInfo(player: Player) : void
     {
         const rack = document.getElementById(`player${player.id}_rack`);
         if (rack == null)
@@ -234,6 +229,13 @@ export class Display
         player.rack.forEach((tile) => {
             rack.appendChild(this.createTile(tile, false, false));
         });
+
+        const points = document.getElementById(`player${player.id}_points`);
+        if (points == null)
+        {
+            throw new Error(`Can't find player points for player ${player.id}`);
+        }
+        points.innerText = player.points.toString();
     }
 
     public setActivePlayer(player: Player) : void

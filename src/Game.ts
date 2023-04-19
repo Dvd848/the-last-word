@@ -2,7 +2,21 @@ import { Constants } from './Constants.js';
 import Board from './Board.js'
 import Player from './Player.js';
 import Bag from './Bag.js';
-import { Display, TilePlacement, DisplayCallBacks } from './Display.js';
+import Tile from './Tile.js';
+import { Display, DisplayCallBacks } from './Display.js';
+
+type WordInfo = {
+    word: string;
+    startIndex: { x: number, y: number };
+    points: number;
+}
+
+export type TilePlacement =
+{
+    tile: Tile;
+    r: number;
+    c: number;
+}
 
 export default class Game 
 {
@@ -28,14 +42,14 @@ export default class Game
 
         this.players.forEach((player) => {
             player.fillRack(this.bag);
-            this.display.fillPlayerRack(player);
+            this.display.displayPlayerInfo(player);
         });
 
-        this.display.setActivePlayer(this.players[this.currentPlayerIndex]);
+        this.display.setActivePlayer(this.currentPlayer);
 
     }
 
-    private getWordsToCheck(tilePlacements: TilePlacement[]): string[] {
+    private getCreatedWords(tilePlacements: TilePlacement[]): WordInfo[] {
         const words = new Set<string>();
         const axes = ["r", "c"];
 
@@ -43,6 +57,7 @@ export default class Game
             for (let axis of axes)
             {
                 let word = "";
+                let points = 0;
                 let start_index = { r: -1, c: -1 };
                 
                 // Scan vertically up
@@ -60,18 +75,21 @@ export default class Game
                 // Scan vertically down
                 while (this.board.isTileInBoard(current["r"], current["c"]) && !this.board.isTileEmpty(current["r"], current["c"])) 
                 {
-                    word += this.board.getTile(current["r"], current["c"])!.letter;
+                    let tile = this.board.getTile(current["r"], current["c"])!;
+                    word += tile.letter;
+                    points += tile.points;
                     current[axis as keyof typeof current]++;
                 }
                 
                 if (word.length > 1) 
                 {
-                    words.add(JSON.stringify({ word, start: start_index }));
+                    // Use JSON.stringify to maintain the set property
+                    words.add(JSON.stringify({ word, start_index: start_index, points: points }));
                 }
             }
         }
         
-        return Array.from(words, (JSONEntry) => JSON.parse(JSONEntry).word);
+        return Array.from(words, (JSONEntry) => JSON.parse(JSONEntry));
     }
 
     private endTurnCallback(tilePlacements: TilePlacement[]) : void
@@ -128,13 +146,13 @@ export default class Game
                 actualTilePlacements.push(tilePlacement);
             }
 
-            const placedWords: string[] = this.getWordsToCheck(tilePlacements);
+            const placedWords: WordInfo[] = this.getCreatedWords(tilePlacements);
 
             // Check if all placedWords are valid words
             for (const placedWord of placedWords) 
             {
                 // TODO: Check against dictionary
-                console.log(placedWord);
+                console.log(placedWord.word);
             }
 
             if (!this.firstTurnPlayed)
@@ -150,18 +168,26 @@ export default class Game
             }
             
             // All checks passed, move is good
+
+            let newPoints = 0;
+            for (const placedWord of placedWords) 
+            {
+                console.log(placedWord.word, placedWord.points)
+                newPoints += placedWord.points;
+            }
+            this.currentPlayer.points = newPoints;
             
             tilePlacements.forEach((tilePlacement) => {
-                this.players[this.currentPlayerIndex].removeTile(tilePlacement.tile);
+                this.currentPlayer.removeTile(tilePlacement.tile);
             });
 
             this.display.finalizePlacements();
 
-            this.players[this.currentPlayerIndex].fillRack(this.bag);
-            this.display.fillPlayerRack(this.players[this.currentPlayerIndex]);
+            this.currentPlayer.fillRack(this.bag);
+            this.display.displayPlayerInfo(this.currentPlayer);
 
             this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
-            this.display.setActivePlayer(this.players[this.currentPlayerIndex]);
+            this.display.setActivePlayer(this.currentPlayer);
         }
         catch(err) 
         {
@@ -172,7 +198,7 @@ export default class Game
         }
     }
     
-    public getCurrentPlayer(): Player 
+    private get currentPlayer(): Player 
     {
         return this.players[this.currentPlayerIndex];
     }

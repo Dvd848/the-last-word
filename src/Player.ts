@@ -7,12 +7,14 @@ export default class Player
     private _id          :   number;
     private max_tile_num :   number;
     private _rack        :   Set<Tile>;
+    private _points      :   number;
 
     constructor(name: string, id: number, max_tile_num: number)
     {
         this._name = name;
         this._id = id;
         this.max_tile_num = max_tile_num;
+        this._points = 0;
         this._rack = new Set<Tile>();
     }
 
@@ -42,5 +44,20 @@ export default class Player
     get name() : string
     {
         return this._name;
+    }
+
+    get points() : number
+    {
+        return this._points;
+    }
+
+    set points(value: number)
+    {
+        if (value < 0)
+        {
+            throw "Can't reduce player points";
+        }
+
+        this._points = value;
     }
 }
