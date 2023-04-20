@@ -176,7 +176,7 @@ export const tileMultipliers : Record<TileTypes, {wordMul: number, letterMul: nu
     },
 
     [TileTypes.CenterTile]: {
-        wordMul : 1,
+        wordMul : 2,
         letterMul: 1,
         coordinates: [
             { row: Constants.CENTER_TILE_ROW, col: Constants.CENTER_TILE_COL }
