@@ -1,4 +1,4 @@
-export const Constants = {
+export const Values = {
     BOARD_DIMENSIONS: 15,
     TILES_PER_PLAYER: 7,
     CENTER_TILE_ROW: 7,
@@ -10,6 +10,8 @@ export enum Languages {
     English = "English",
     Hebrew = "Hebrew"
 }
+
+export const DefaultLanguage = Languages.Hebrew;
 
 export const scrabbleTiles : Record<Languages, { letter: string; count: number; points: number; }[]> = 
 {
@@ -179,8 +181,23 @@ export const tileMultipliers : Record<TileTypes, {wordMul: number, letterMul: nu
         wordMul : 2,
         letterMul: 1,
         coordinates: [
-            { row: Constants.CENTER_TILE_ROW, col: Constants.CENTER_TILE_COL }
+            { row: Values.CENTER_TILE_ROW, col: Values.CENTER_TILE_COL }
         ]
     },
 
 }
+
+export enum Strings {
+    EndTurn,   
+}
+
+export const Translations : Record<Languages, Record<Strings, string>> = {
+    [Languages.English]: {
+        [Strings.EndTurn]: "End Turn"
+    },
+
+    [Languages.Hebrew]: {
+        [Strings.EndTurn]: "סיום תור"
+    },
+}
+

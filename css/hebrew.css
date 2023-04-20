@@ -1,0 +1,25 @@
+:root {
+    direction: rtl;
+}
+
+.points {
+    bottom: 0px;
+    right: auto;
+    left: 2px;
+}
+
+.tile_type_DoubleWord:after {
+    content: "ערך המילה מוכפל";
+}
+
+.tile_type_DoubleLetter:after {
+    content: "ערך האות מוכפל";
+}
+
+.tile_type_TripleWord:after {
+    content: "ערך המילה משולש";
+}
+
+.tile_type_TripleLetter:after {
+    content: "ערך האות משולש";
+}

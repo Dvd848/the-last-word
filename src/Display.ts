@@ -2,7 +2,8 @@ import Board from "./Board.js";
 import Player from "./Player.js";
 import Tile from "./Tile.js";
 import { TilePlacement } from "./Game.js";
-
+import * as Constants from "./Constants.js"
+import * as Utils from "./Utils.js"
 
 export interface DisplayCallBacks
 {
@@ -55,6 +56,7 @@ export class Display
     {
         const endTurnButton = document.getElementById("end_turn_button")!;
         const that = this;
+        endTurnButton.innerText = Utils.getTranslation(Constants.DefaultLanguage, Constants.Strings.EndTurn);
         endTurnButton.addEventListener('click', function(e){
             const tilePlacements : TilePlacement[] = [];
 

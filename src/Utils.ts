@@ -1,3 +1,5 @@
+import * as Constants from "./Constants.js"
+
 // https://stackoverflow.com/questions/48083353/
 export function shuffle<T>(array: T[]): T[] {
     let currentIndex = array.length,  randomIndex;
@@ -16,3 +18,8 @@ export function shuffle<T>(array: T[]): T[] {
   
     return array;
 };
+
+export function getTranslation(lang: Constants.Languages, str: Constants.Strings) : string
+{
+    return Constants.Translations[lang]?.[str] || "";
+}

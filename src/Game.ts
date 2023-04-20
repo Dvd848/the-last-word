@@ -1,4 +1,4 @@
-import { Constants } from './Constants.js';
+import * as Constants from './Constants.js';
 import Board from './Board.js'
 import Player from './Player.js';
 import Bag from './Bag.js';
@@ -30,10 +30,10 @@ export default class Game
     constructor(players: string[]) 
     {
         const that = this;
-        this.board = new Board(Constants.BOARD_DIMENSIONS);
-        this.players = players.map((name, index) => new Player(name, index + 1, Constants.TILES_PER_PLAYER));
+        this.board = new Board(Constants.Values.BOARD_DIMENSIONS);
+        this.players = players.map((name, index) => new Player(name, index + 1, Constants.Values.TILES_PER_PLAYER));
         this.currentPlayerIndex = 0;
-        this.bag = new Bag();
+        this.bag = new Bag(Constants.DefaultLanguage);
         this.firstTurnPlayed = false;
 
         this.display = new Display(this.board, {
@@ -107,9 +107,9 @@ export default class Game
             console.log(placedWord.word, placedWord.points)
             newPoints += placedWord.points;
         }
-        if (tilePlacements.length == Constants.TILES_PER_PLAYER)
+        if (tilePlacements.length == Constants.Values.TILES_PER_PLAYER)
         {
-            newPoints += Constants.BINGO_BONUS_POINTS;
+            newPoints += Constants.Values.BINGO_BONUS_POINTS;
         }
 
         return newPoints;
@@ -208,7 +208,7 @@ export default class Game
                     let centerTileUsed = false;
 
                     tilePlacements.forEach((tilePlacement) => {
-                        if ( (tilePlacement.r == Constants.CENTER_TILE_ROW) && (tilePlacement.c == Constants.CENTER_TILE_COL) ) 
+                        if ( (tilePlacement.r == Constants.Values.CENTER_TILE_ROW) && (tilePlacement.c == Constants.Values.CENTER_TILE_COL) ) 
                         {
                             centerTileUsed = true;
                         }

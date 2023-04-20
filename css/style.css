@@ -8,6 +8,15 @@
     --grid_gap_rack: 8px;
 }
 
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #F5F5F5;
+}
+
+h1 {
+    text-align: center;
+}
+
 #game_top {
     display: flex;
     align-content: center;
@@ -53,7 +62,7 @@
 }
 
 .rack {
-    background-color: #eee;
+    background-color: #b2b1b1;
     display: grid;
     grid-gap: 8px;
 

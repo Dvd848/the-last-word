@@ -6,9 +6,9 @@ export default class Bag
 {
     private tiles: Tile[] = [];
   
-    constructor() 
+    constructor(language: Constants.Languages) 
     {
-        const tileCounts = Constants.scrabbleTiles[Constants.Languages.English];
+        const tileCounts = Constants.scrabbleTiles[language];
   
         for (const tileCount of tileCounts) 
         {
