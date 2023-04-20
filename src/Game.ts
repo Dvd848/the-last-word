@@ -170,6 +170,20 @@ export default class Game
                 }
                 else if (tilePlacements.length > 0)
                 {
+                    let centerTileUsed = false;
+
+                    tilePlacements.forEach((tilePlacement) => {
+                        if ( (tilePlacement.r == Constants.CENTER_TILE_ROW) && (tilePlacement.c == Constants.CENTER_TILE_COL) ) 
+                        {
+                            centerTileUsed = true;
+                        }
+                    });
+
+                    if (!centerTileUsed)
+                    {
+                        throw "The first word must be placed on the center tile!";
+                    }
+                    
                     this.firstTurnPlayed = true;
                 }
             }
