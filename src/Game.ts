@@ -73,13 +73,20 @@ export default class Game
                 current["c"] = start_index.c;
                 
                 // Scan vertically down
+                let wordMultiplier = 1;
+
                 while (this.board.isTileInBoard(current["r"], current["c"]) && !this.board.isTileEmpty(current["r"], current["c"])) 
                 {
                     let tile = this.board.getTile(current["r"], current["c"])!;
+                    let boardTile = this.board.getBoardTile(current["r"], current["c"])!;
+
                     word += tile.letter;
-                    points += tile.points;
+                    points += (tile.points * boardTile.letterMultiplier);
                     current[axis as keyof typeof current]++;
+                    wordMultiplier *= boardTile.wordMultiplier;
                 }
+
+                points *= wordMultiplier;
                 
                 if (word.length > 1) 
                 {
@@ -175,10 +182,11 @@ export default class Game
                 console.log(placedWord.word, placedWord.points)
                 newPoints += placedWord.points;
             }
-            this.currentPlayer.points = newPoints;
+            this.currentPlayer.points += newPoints;
             
             tilePlacements.forEach((tilePlacement) => {
                 this.currentPlayer.removeTile(tilePlacement.tile);
+                this.board.getBoardTile(tilePlacement.r, tilePlacement.c).disableMultiplier();
             });
 
             this.display.finalizePlacements();

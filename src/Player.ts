@@ -55,7 +55,7 @@ export default class Player
     {
         if (value < 0)
         {
-            throw "Can't reduce player points";
+            throw "Points must be non-negative";
         }
 
         this._points = value;

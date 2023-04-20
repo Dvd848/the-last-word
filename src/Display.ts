@@ -12,7 +12,7 @@ export interface DisplayCallBacks
 export class Display
 {
     private board        : Element;
-    private activeTiles : Map<number, Tile>;
+    private activeTiles  : Map<number, Tile>;
     private callbacks    : DisplayCallBacks;
 
     constructor(board: Board, callbacks: DisplayCallBacks)
@@ -35,6 +35,9 @@ export class Display
                 tileElement.classList.add('board_tile');
                 tileElement.dataset.r = r.toString();
                 tileElement.dataset.c = c.toString();
+
+                tileElement.classList.add(`tile_type_${board.getBoardTile(r, c).type}`);
+
                 this.board.appendChild(tileElement);
             }
         }
