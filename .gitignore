@@ -21,3 +21,4 @@ yarn-debug.log*
 yarn-error.log*
 
 tmp.txt
+utils/words/words_*.txt
