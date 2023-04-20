@@ -2,7 +2,8 @@ export const Constants = {
     BOARD_DIMENSIONS: 15,
     TILES_PER_PLAYER: 7,
     CENTER_TILE_ROW: 7,
-    CENTER_TILE_COL: 7
+    CENTER_TILE_COL: 7,
+    BINGO_BONUS_POINTS: 50
 }
 
 export enum Languages {

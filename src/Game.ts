@@ -99,6 +99,66 @@ export default class Game
         return Array.from(words, (JSONEntry) => JSON.parse(JSONEntry));
     }
 
+    private calculatePoints(tilePlacements: TilePlacement[], placedWords: WordInfo[]) : number
+    {
+        let newPoints = 0;
+        for (const placedWord of placedWords) 
+        {
+            console.log(placedWord.word, placedWord.points)
+            newPoints += placedWord.points;
+        }
+        if (tilePlacements.length == Constants.TILES_PER_PLAYER)
+        {
+            newPoints += Constants.BINGO_BONUS_POINTS;
+        }
+
+        return newPoints;
+    }
+
+    private verifyPlacementConsecutive(tilePlacements: TilePlacement[]) : boolean
+    {
+        if (tilePlacements.length > 0)
+        {
+            // Check if all tiles are placed consecutively horizontally or vertically
+            const rValues = tilePlacements.map((tilePlacement) => tilePlacement.r);
+            const cValues = tilePlacements.map((tilePlacement) => tilePlacement.c);
+
+            if (new Set(rValues).size !== 1 && new Set(cValues).size !== 1)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private verifyPlacementConnected(tilePlacements: TilePlacement[]) : boolean
+    {
+        if (this.firstTurnPlayed && tilePlacements.length > 0)
+        {
+            let connected = false;
+            for (const tilePlacement of tilePlacements) 
+            {
+                for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]])
+                {
+                    let new_r = tilePlacement.r + dr;
+                    let new_c = tilePlacement.c + dc;
+                    if (this.board.isTileInBoard(new_r, new_c) && !this.board.isTileEmpty(new_r, new_c))
+                    {
+                        connected = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!connected) 
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private endTurnCallback(tilePlacements: TilePlacement[]) : void
     {
         const actualTilePlacements : TilePlacement[] = []
@@ -106,39 +166,14 @@ export default class Game
 
         try
         {
-            if (tilePlacements.length > 0)
+            if (!this.verifyPlacementConsecutive(tilePlacements))
             {
-                // Check if all tiles are placed consecutively horizontally or vertically
-                const rValues = tilePlacements.map((tilePlacement) => tilePlacement.r);
-                const cValues = tilePlacements.map((tilePlacement) => tilePlacement.c);
-    
-                if (new Set(rValues).size !== 1 && new Set(cValues).size !== 1)
-                {
-                    throw "The tiles are not placed consecutively horizontally or vertically";
-                }
+                throw "The tiles are not placed consecutively horizontally or vertically";
             }
 
-            if (this.firstTurnPlayed && tilePlacements.length > 0)
+            if (!this.verifyPlacementConnected(tilePlacements))
             {
-                let connected = false;
-                for (const tilePlacement of tilePlacements) 
-                {
-                    for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]])
-                    {
-                        let new_r = tilePlacement.r + dr;
-                        let new_c = tilePlacement.c + dc;
-                        if (this.board.isTileInBoard(new_r, new_c) && !this.board.isTileEmpty(new_r, new_c))
-                        {
-                            connected = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!connected) 
-                {
-                    throw "One or more tiles are not connected to an existing tile.";
-                }
+                throw "One or more tiles are not connected to an existing tile";
             }
 
             for (const tilePlacement of tilePlacements) 
@@ -183,20 +218,14 @@ export default class Game
                     {
                         throw "The first word must be placed on the center tile!";
                     }
-                    
+
                     this.firstTurnPlayed = true;
                 }
             }
             
             // All checks passed, move is good
 
-            let newPoints = 0;
-            for (const placedWord of placedWords) 
-            {
-                console.log(placedWord.word, placedWord.points)
-                newPoints += placedWord.points;
-            }
-            this.currentPlayer.points += newPoints;
+            this.currentPlayer.points += this.calculatePoints(tilePlacements, placedWords);
             
             tilePlacements.forEach((tilePlacement) => {
                 this.currentPlayer.removeTile(tilePlacement.tile);
