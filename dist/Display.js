@@ -7,6 +7,9 @@ export class Display {
         this.callbacks = callbacks;
         this.createBoard(board);
     }
+    show() {
+        document.getElementById("game").classList.remove("hide");
+    }
     createBoard(board) {
         this.board.innerHTML = '';
         for (let r = 0; r < board.height; r++) {

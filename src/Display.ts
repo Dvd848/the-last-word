@@ -24,6 +24,11 @@ export class Display
         this.createBoard(board);
     }
 
+    public show() : void
+    {
+        document.getElementById("game")!.classList.remove("hide");
+    }
+
     private createBoard(board: Board) : void
     {
         this.board.innerHTML = '';

@@ -1,8 +1,18 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 import * as Constants from './Constants.js';
 import Board from './Board.js';
 import Player from './Player.js';
 import Bag from './Bag.js';
 import { Display } from './Display.js';
+import Dictionary from './Dictionary.js';
 export default class Game {
     constructor(players) {
         const that = this;
@@ -11,6 +21,7 @@ export default class Game {
         this.currentPlayerIndex = 0;
         this.bag = new Bag(Constants.DefaultLanguage);
         this.firstTurnPlayed = false;
+        this.dictionary = new Dictionary(Constants.DefaultLanguage);
         this.display = new Display(this.board, {
             endTurn: function (tilePlacements) { that.endTurnCallback(tilePlacements); }
         });
@@ -18,7 +29,15 @@ export default class Game {
             player.fillRack(this.bag);
             this.display.displayPlayerInfo(player);
         });
-        this.display.setActivePlayer(this.currentPlayer);
+    }
+    init() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.dictionary.init();
+            this.display.setActivePlayer(this.currentPlayer);
+        });
+    }
+    start() {
+        this.display.show();
     }
     getCreatedWords(tilePlacements) {
         const words = new Set();
@@ -99,7 +118,6 @@ export default class Game {
     }
     endTurnCallback(tilePlacements) {
         const actualTilePlacements = [];
-        console.log(tilePlacements);
         try {
             if (!this.verifyPlacementConsecutive(tilePlacements)) {
                 throw "The tiles are not placed consecutively horizontally or vertically";
@@ -118,8 +136,9 @@ export default class Game {
             const placedWords = this.getCreatedWords(tilePlacements);
             // Check if all placedWords are valid words
             for (const placedWord of placedWords) {
-                // TODO: Check against dictionary
-                console.log(placedWord.word);
+                if (!this.dictionary.contains(placedWord.word)) {
+                    throw `Illegal word: ${placedWord.word}`;
+                }
             }
             if (!this.firstTurnPlayed) {
                 if (tilePlacements.length == 1) {
@@ -165,3 +184,5 @@ export default class Game {
     }
 }
 const game = new Game(["Player 1", "Player 2"]);
+game.init();
+game.start();

@@ -4,6 +4,7 @@ import Player from './Player.js';
 import Bag from './Bag.js';
 import Tile from './Tile.js';
 import { Display, DisplayCallBacks } from './Display.js';
+import Dictionary from './Dictionary.js';
 
 type WordInfo = {
     word: string;
@@ -26,6 +27,7 @@ export default class Game
     private bag: Bag;
     private display : Display;
     private firstTurnPlayed : boolean;
+    private dictionary : Dictionary;
   
     constructor(players: string[]) 
     {
@@ -35,6 +37,7 @@ export default class Game
         this.currentPlayerIndex = 0;
         this.bag = new Bag(Constants.DefaultLanguage);
         this.firstTurnPlayed = false;
+        this.dictionary = new Dictionary(Constants.DefaultLanguage);
 
         this.display = new Display(this.board, {
             endTurn: function(tilePlacements: TilePlacement[]){that.endTurnCallback(tilePlacements)}
@@ -44,9 +47,17 @@ export default class Game
             player.fillRack(this.bag);
             this.display.displayPlayerInfo(player);
         });
+    }
 
+    public async init()
+    {
+        await this.dictionary.init();
         this.display.setActivePlayer(this.currentPlayer);
+    }
 
+    public start() : void
+    {
+        this.display.show();
     }
 
     private getCreatedWords(tilePlacements: TilePlacement[]): WordInfo[] {
@@ -162,7 +173,6 @@ export default class Game
     private endTurnCallback(tilePlacements: TilePlacement[]) : void
     {
         const actualTilePlacements : TilePlacement[] = []
-        console.log(tilePlacements);
 
         try
         {
@@ -193,8 +203,10 @@ export default class Game
             // Check if all placedWords are valid words
             for (const placedWord of placedWords) 
             {
-                // TODO: Check against dictionary
-                console.log(placedWord.word);
+                if (!this.dictionary.contains(placedWord.word))
+                {
+                    throw `Illegal word: ${placedWord.word}`;
+                }
             }
 
             if (!this.firstTurnPlayed)
@@ -260,4 +272,7 @@ export default class Game
     }
 }
 
+
 const game = new Game(["Player 1", "Player 2"]);
+game.init();
+game.start();
