@@ -1,18 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he" dir="rtl">
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
     <title>המילה האחרונה - משחק דמוי "שבץ נא" אונליין</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.rtl.min.css" 
+          integrity="sha384-gXt9imSW0VcJVHezoNQsP+TNrjYXoGcrqBZJpry9zJt8PCQjobwmhMGaDHTASo9N" crossorigin="anonymous">
 
     <link href="css/style.css" rel="stylesheet" />
     <link href="css/hebrew.css" rel="stylesheet" />
+
 </head>
 
 <body>
-    <h1>המילה האחרונה - משחק דמוי "שבץ נא" אונליין</h1>
+    <nav class="navbar navbar-expand-lg" style="background-color: #000080;">
+        <div class="container-fluid">
+            <div id="header_tiles">
+                <div class="header_word">
+                    <div class="game_tile">ה</div>
+                    <div class="game_tile">מ</div>
+                    <div class="game_tile">י</div>
+                    <div class="game_tile">ל</div>
+                    <div class="game_tile">ה</div>
+                </div>
+                <div class="header_word">
+                    <div class="game_tile">ה</div>
+                    <div class="game_tile">א</div>
+                    <div class="game_tile">ח</div>
+                    <div class="game_tile">ר</div>
+                    <div class="game_tile">ו</div>
+                    <div class="game_tile">נ</div>
+                    <div class="game_tile">ה</div>
+                </div>
+            </div>
+            <h2>המילה האחרונה</h2>
+            <h1>משחק דמוי "שבץ נא" אונליין</h1>
+            <ul class="navbar-nav ms-auto navbar-light-color">
+                <li class="nav-item">
+                    <a class="nav-link" href="" data-bs-target="#aboutModal" data-bs-toggle="modal">אודות</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
     <div id="game" class="hide">
         <div id="game_top">
             <div class="player_info">
@@ -32,7 +63,41 @@
             </div>
         </div>
     </div>
+    <div id="loader">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">טוען...</span>
+        </div>
+    </div>
 
+    <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title fs-5" id="aboutModalLabel">אודות</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        "המילה האחרונה" הוא משחק דמוי "שבץ נא" אונליין.
+                    </p>
+                    <p>
+                        המשחק עושה שימוש במילון <a href="http://hspell.ivrix.org.il/">HSpell</a>
+                         המשוחרר תחת רישיון <a href="http://www.gnu.org/licenses/agpl.html">AGPLv3</a>.
+                    </p>
+                    <p>
+                        קוד המקור של המשחק זמין ב-<a href="https://github.com/Dvd848/the-last-word">GitHub</a>. 
+                        הערות ותרומות קוד יתקבלו בברכה.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">סגירה</button>
+                </div>
+            </div>
+        </div>
+    </div>
+      
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="dist/Game.js" type="module"></script>
 </body>
 

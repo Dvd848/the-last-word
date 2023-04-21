@@ -27,6 +27,7 @@ export class Display
     public show() : void
     {
         document.getElementById("game")!.classList.remove("hide");
+        document.getElementById("loader")!.remove();
     }
 
     private createBoard(board: Board) : void

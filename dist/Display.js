@@ -9,6 +9,7 @@ export class Display {
     }
     show() {
         document.getElementById("game").classList.remove("hide");
+        document.getElementById("loader").remove();
     }
     createBoard(board) {
         this.board.innerHTML = '';
