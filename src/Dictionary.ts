@@ -1,7 +1,7 @@
 
 
-import { CompletionDAWG } from "./dawg/dawgs.js";
-import * as Constants from "./Constants.js";
+import { CompletionDAWG } from "./dawg/dawgs";
+import * as Constants from "./Constants";
 
 export default class Dictionary 
 { 

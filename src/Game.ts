@@ -1,12 +1,12 @@
-import * as Constants from './Constants.js';
-import Board from './Board.js'
-import Player from './Player.js';
-import Bag from './Bag.js';
-import Tile from './Tile.js';
-import { Display, DisplayCallBacks } from './Display.js';
-import Dictionary from './Dictionary.js';
+import * as Constants from './Constants';
+import Board from './Board'
+import Player from './Player';
+import Bag from './Bag';
+import Tile from './Tile';
+import { Display, DisplayCallBacks } from './Display';
+import Dictionary from './Dictionary';
 
-type WordInfo = {
+export type WordInfo = {
     word: string;
     startIndex: { x: number, y: number };
     points: number;
@@ -237,7 +237,8 @@ export default class Game
             
             // All checks passed, move is good
 
-            this.currentPlayer.points += this.calculatePoints(tilePlacements, placedWords);
+            let newPoints = this.calculatePoints(tilePlacements, placedWords);
+            this.currentPlayer.points += newPoints;
             
             tilePlacements.forEach((tilePlacement) => {
                 this.currentPlayer.removeTile(tilePlacement.tile);
@@ -245,6 +246,8 @@ export default class Game
             });
 
             this.display.finalizePlacements();
+
+            this.display.logMoveDetails(this.currentPlayer, newPoints, placedWords);
 
             this.currentPlayer.fillRack(this.bag);
             this.display.displayPlayerInfo(this.currentPlayer);
@@ -271,8 +274,3 @@ export default class Game
         return this.board;
     }
 }
-
-
-const game = new Game(["Player 1", "Player 2"]);
-game.init();
-game.start();

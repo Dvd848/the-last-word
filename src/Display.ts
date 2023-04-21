@@ -1,9 +1,9 @@
-import Board from "./Board.js";
-import Player from "./Player.js";
-import Tile from "./Tile.js";
-import { TilePlacement } from "./Game.js";
-import * as Constants from "./Constants.js"
-import * as Utils from "./Utils.js"
+import Board from "./Board";
+import Player from "./Player";
+import Tile from "./Tile";
+import { TilePlacement, WordInfo } from "./Game";
+import * as Constants from "./Constants"
+import * as Utils from "./Utils"
 
 export interface DisplayCallBacks
 {
@@ -268,4 +268,10 @@ export class Display
             this.activeTiles.set(tile.id, tile);
         });
     }
+
+    public logMoveDetails(player: Player, points: number, placedWords: WordInfo[]) : void
+    {
+        
+    }
 }
+

@@ -24,7 +24,7 @@ The original code was licensed under MIT license:
     OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Completer, Dictionary, Guide } from '../dawg/wrapper.js';
+import { Completer, Dictionary, Guide } from '../dawg/wrapper';
 
 export class CompletionDAWG 
 {

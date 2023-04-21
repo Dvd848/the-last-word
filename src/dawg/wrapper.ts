@@ -23,7 +23,7 @@ The original code was licensed under MIT license:
     CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
     OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import * as units from './units.js';
+import * as units from './units';
 
 /**
  * Dictionary class for retrieval and binary I/O.

@@ -1,5 +1,5 @@
-import Bag from "./Bag.js";
-import Tile from "./Tile.js";
+import Bag from "./Bag";
+import Tile from "./Tile";
 
 export default class Player
 {

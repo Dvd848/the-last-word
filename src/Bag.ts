@@ -1,6 +1,6 @@
-import Tile from "./Tile.js";
-import { shuffle } from "./Utils.js";
-import * as Constants from "./Constants.js";
+import Tile from "./Tile";
+import { shuffle } from "./Utils";
+import * as Constants from "./Constants";
 
 export default class Bag 
 {

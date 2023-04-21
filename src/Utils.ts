@@ -1,4 +1,4 @@
-import * as Constants from "./Constants.js"
+import * as Constants from "./Constants"
 
 // https://stackoverflow.com/questions/48083353/
 export function shuffle<T>(array: T[]): T[] {
