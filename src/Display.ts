@@ -5,6 +5,8 @@ import { TilePlacement, WordInfo } from "./Game";
 import * as Constants from "./Constants"
 import * as Utils from "./Utils"
 
+import * as bootstrap from 'bootstrap';
+
 export interface DisplayCallBacks
 {
     endTurn: (tile_placements: TilePlacement[]) => void;
@@ -271,7 +273,86 @@ export class Display
 
     public logMoveDetails(player: Player, points: number, placedWords: WordInfo[]) : void
     {
-        
+        const header = Utils.getTranslation(Constants.Languages.Hebrew, 
+                                          Constants.Strings.PlayerInfoTitle).replace("${name}", player.name);
+        const subheader = Utils.getTranslation(Constants.Languages.Hebrew, 
+                                             Constants.Strings.PlayerInfoPoints).replace("${points}", points.toString());
+
+        const list = document.createElement('ul');
+        list.style.margin = "10px";
+        placedWords.forEach((wordInfo) => {
+            const listItem = document.createElement('li');
+            const wordPoints = Utils.getTranslation(Constants.Languages.Hebrew, 
+                                                    Constants.Strings.PlayerInfoPoints).replace("${points}", wordInfo.points.toString());
+            const textNode = document.createTextNode(`${wordInfo.word}: ${wordPoints}`);
+            listItem.appendChild(textNode);
+            list.appendChild(listItem);
+        });
+
+        const toast = new BootstrapToast(header, subheader, list, 10000);
+        toast.show();
+        console.log(toast);
     }
 }
 
+class BootstrapToast 
+{
+    private readonly header: string;
+    private readonly secondaryHeader: string;
+    private readonly body: HTMLElement;
+    private readonly delay: number;
+    
+    constructor(header: string, secondaryHeader: string, body: HTMLElement, delay: number = 5000) 
+    {
+        this.body = body;
+        this.header = header;
+        this.secondaryHeader = secondaryHeader;
+        this.delay = delay;
+    }
+    
+    public show(): void 
+    {
+        const toast = document.createElement('div');
+        toast.classList.add('toast');
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+        
+        const header = this.header ? `<div class="toast-header"><strong class="me-auto">` + 
+                                        `${this.header}</strong><small>${this.secondaryHeader}</small>` + 
+                                        `<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>` + 
+                                        `</div>` : '';
+        const body = `<div class="toast-body">${this.body}</div>`;
+        toast.innerHTML = `${header}`;
+        toast.appendChild(this.body);
+        
+        const toastContainer = this.getOrCreateToastWrapper();
+        toastContainer.appendChild(toast);
+        
+        const bootstrapToast = bootstrap.Toast.getOrCreateInstance(toast, { delay: this.delay });
+        bootstrapToast.show();
+
+        toast.addEventListener('hidden.bs.toast', () => {
+            toast.remove();
+        });
+    }
+
+    private getOrCreateToastWrapper() 
+    {
+        var toastWrapper = document.querySelector<HTMLElement>('body > [data-toast-wrapper]');
+        
+        if (!toastWrapper) 
+        {
+            toastWrapper = document.createElement('div');
+            toastWrapper.style.zIndex = "11";
+            toastWrapper.style.position = 'fixed';
+            toastWrapper.style.bottom = "0";
+            toastWrapper.style.left = "0";
+            toastWrapper.style.padding = '1rem';
+            toastWrapper.setAttribute('data-toast-wrapper', '');
+            document.body.append(toastWrapper);
+        }
+        
+        return toastWrapper;
+    }
+}

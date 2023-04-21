@@ -188,16 +188,22 @@ export const tileMultipliers : Record<TileTypes, {wordMul: number, letterMul: nu
 }
 
 export enum Strings {
-    EndTurn,   
+    EndTurn,
+    PlayerInfoTitle,
+    PlayerInfoPoints
 }
 
 export const Translations : Record<Languages, Record<Strings, string>> = {
     [Languages.English]: {
-        [Strings.EndTurn]: "End Turn"
+        [Strings.EndTurn]: "End Turn",
+        [Strings.PlayerInfoTitle]: "${name}'s Move",
+        [Strings.PlayerInfoPoints]: "${points} points",
     },
 
     [Languages.Hebrew]: {
-        [Strings.EndTurn]: "סיום תור"
+        [Strings.EndTurn]: "סיום תור",
+        [Strings.PlayerInfoTitle]: "המהלך של ${name}",
+        [Strings.PlayerInfoPoints]: "${points} נקודות",
     },
 }
 
