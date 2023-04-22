@@ -213,7 +213,7 @@ export enum Strings {
     Error,
     Bonus,
     PlayerSkippedMove,
-    TilesSwapped
+    TilesSwapped,
 }
 
 export const Translations : Record<Languages, Record<Strings, string>> = {
