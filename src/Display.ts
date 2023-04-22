@@ -71,12 +71,9 @@ export class Display
         this.configureButtons();
     }
 
-    private configureButtons() : void
+    private configureButtonEndTurn() : void
     {
         const that = this;
-
-        // End turn button
-
         const endTurnButton = document.getElementById("end_turn_button")!;
         endTurnButton.innerText = getStr(Constants.Strings.EndTurn);
         endTurnButton.addEventListener('click', function(e){
@@ -100,9 +97,11 @@ export class Display
 
             that.callbacks.endTurn(tilePlacements);
         });
+    }
 
-        // Configuration menu
-
+    private configureButtonConfigMenu() : void
+    {
+        const that = this;
         const showConfigMenu = document.getElementById("showConfigMenu")!;
         const configPlayer1Name = document.getElementById("configPlayer1Name") as HTMLInputElement;
         const configPlayer2Name = document.getElementById("configPlayer2Name") as HTMLInputElement;
@@ -129,9 +128,11 @@ export class Display
             });
             configModal.hide();
         });
+    }
 
-        // Swap tiles 
-
+    private configureButtonSwapTiles() : void
+    {
+        const that = this;
         const showSwapTilesMenu = document.getElementById("showSwapTilesMenu")!;
         const swapTilesForm = document.getElementById("swapTilesForm")!;
         const swapTilesModal = new bootstrap.Modal('#swapTilesModal');
@@ -190,7 +191,13 @@ export class Display
             }
             swapTilesModal.hide();
         });
+    }
 
+    private configureButtons() : void
+    {
+        this.configureButtonEndTurn();
+        this.configureButtonConfigMenu();
+        this.configureButtonSwapTiles();
     }
 
     public finalizePlacements() : void
