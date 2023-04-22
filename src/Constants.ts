@@ -190,7 +190,16 @@ export const tileMultipliers : Record<TileTypes, {wordMul: number, letterMul: nu
 export enum Strings {
     EndTurn,
     PlayerInfoTitle,
-    PlayerInfoPoints
+    PlayerInfoPoints,
+    ErrorConsecutive,
+    ErrorConnected,
+    ErrorExisting,
+    ErrorIllegalWord,
+    ErrorFirstWordMin,
+    ErrorFirstWordLocation,
+    Close,
+    Error,
+    Bonus
 }
 
 export const Translations : Record<Languages, Record<Strings, string>> = {
@@ -198,12 +207,30 @@ export const Translations : Record<Languages, Record<Strings, string>> = {
         [Strings.EndTurn]: "End Turn",
         [Strings.PlayerInfoTitle]: "${name}'s Move",
         [Strings.PlayerInfoPoints]: "${points} points",
+        [Strings.ErrorConsecutive]: "The tiles must be placed consecutively horizontally or vertically!",
+        [Strings.ErrorConnected]: "One or more tiles are not connected to an existing tile"!,
+        [Strings.ErrorExisting]: "One or more tiles are placed on an existing tile!",
+        [Strings.ErrorIllegalWord]: "The word '${word}' isn't included in our dictionary.",
+        [Strings.ErrorFirstWordMin]: "The first word must be at least 2 letters long!",
+        [Strings.ErrorFirstWordLocation]: "The first word must be placed on the center tile!",
+        [Strings.Close]: "Close",
+        [Strings.Error]: "Error",
+        [Strings.Bonus]: "Bonus for using all letters"
     },
 
     [Languages.Hebrew]: {
         [Strings.EndTurn]: "סיום תור",
         [Strings.PlayerInfoTitle]: "המהלך של ${name}",
         [Strings.PlayerInfoPoints]: "${points} נקודות",
+        [Strings.ErrorConsecutive]: "על האותיות להיות מונחות ברצף במאוזן או במאונך!",
+        [Strings.ErrorConnected]: "לפחות אחת האותיות צריכה להיות מחוברת לאות קיימת!",
+        [Strings.ErrorExisting]: "אין להניח אות על אות קיימת!",
+        [Strings.ErrorIllegalWord]: "המילה '${word}' לא נכללת במילון שלנו.",
+        [Strings.ErrorFirstWordMin]: "על המילה הראשונה לכלול לפחות שתי אותיות!",
+        [Strings.ErrorFirstWordLocation]: "על המילה הראשונה להיות מונחת במשבצת המרכזית!",
+        [Strings.Close]: "סגירה",
+        [Strings.Error]: "שגיאה",
+        [Strings.Bonus]: "בונוס על שימוש בכל האותיות"
     },
 }
 

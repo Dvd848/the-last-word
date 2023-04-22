@@ -12,6 +12,11 @@ export interface DisplayCallBacks
     endTurn: (tile_placements: TilePlacement[]) => void;
 }
 
+function getStr(id: Constants.Strings) : string
+{
+    return Utils.getTranslation(Constants.DefaultLanguage, id);
+}
+
 export class Display
 {
     private board        : Element;
@@ -64,7 +69,7 @@ export class Display
     {
         const endTurnButton = document.getElementById("end_turn_button")!;
         const that = this;
-        endTurnButton.innerText = Utils.getTranslation(Constants.DefaultLanguage, Constants.Strings.EndTurn);
+        endTurnButton.innerText = getStr(Constants.Strings.EndTurn);
         endTurnButton.addEventListener('click', function(e){
             const tilePlacements : TilePlacement[] = [];
 
@@ -271,27 +276,40 @@ export class Display
         });
     }
 
-    public logMoveDetails(player: Player, points: number, placedWords: WordInfo[]) : void
+    public logMoveDetails(player: Player, points: number, placedWords: WordInfo[], bonusPoints: number) : void
     {
-        const header = Utils.getTranslation(Constants.Languages.Hebrew, 
-                                          Constants.Strings.PlayerInfoTitle).replace("${name}", player.name);
-        const subheader = Utils.getTranslation(Constants.Languages.Hebrew, 
-                                             Constants.Strings.PlayerInfoPoints).replace("${points}", points.toString());
+        const header = getStr(Constants.Strings.PlayerInfoTitle).replace("${name}", player.name);
+        const subheader = getStr(Constants.Strings.PlayerInfoPoints).replace("${points}", points.toString());
 
         const list = document.createElement('ul');
         list.style.margin = "10px";
-        placedWords.forEach((wordInfo) => {
+
+        const addListItem = (numPoints:number, description: string) => {
             const listItem = document.createElement('li');
-            const wordPoints = Utils.getTranslation(Constants.Languages.Hebrew, 
-                                                    Constants.Strings.PlayerInfoPoints).replace("${points}", wordInfo.points.toString());
-            const textNode = document.createTextNode(`${wordInfo.word}: ${wordPoints}`);
+            const wordPoints = getStr(Constants.Strings.PlayerInfoPoints).replace("${points}", numPoints.toString());
+            const textNode = document.createTextNode(`${description}: ${wordPoints}`);
             listItem.appendChild(textNode);
             list.appendChild(listItem);
+        }
+
+        placedWords.forEach((wordInfo) => {
+            addListItem(wordInfo.points, wordInfo.word);
         });
+
+        if (bonusPoints > 0)
+        {
+            addListItem(bonusPoints, getStr(Constants.Strings.Bonus));
+        }
 
         const toast = new BootstrapToast(header, subheader, list, 10000);
         toast.show();
         console.log(toast);
+    }
+
+    public showError(message: string) : void 
+    {
+        const myWarningModal = new BootstrapWarningModal('move-warning-modal', getStr(Constants.Strings.Error), message);
+        myWarningModal.openModal();
     }
 }
 
@@ -322,9 +340,11 @@ class BootstrapToast
                                         `${this.header}</strong><small>${this.secondaryHeader}</small>` + 
                                         `<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>` + 
                                         `</div>` : '';
-        const body = `<div class="toast-body">${this.body}</div>`;
+        const body = document.createElement('div');
+        body.classList.add("toast-body");
+        body.appendChild(this.body);
         toast.innerHTML = `${header}`;
-        toast.appendChild(this.body);
+        toast.appendChild(body);
         
         const toastContainer = this.getOrCreateToastWrapper();
         toastContainer.appendChild(toast);
@@ -356,3 +376,74 @@ class BootstrapToast
         return toastWrapper;
     }
 }
+
+
+class BootstrapWarningModal {
+    private readonly modalId: string;
+    private readonly modalTitle: string;
+    private readonly modalMessage: string;
+    
+    constructor(modalId: string, modalTitle: string, modalMessage: string) {
+        this.modalId = modalId;
+        this.modalTitle = modalTitle;
+        this.modalMessage = modalMessage;
+    }
+    
+    public openModal(): void {
+        const modal = document.createElement('div');
+        modal.classList.add('modal', 'fade');
+        modal.setAttribute('id', this.modalId);
+        modal.setAttribute('tabindex', '-1');
+        modal.setAttribute('aria-labelledby', `${this.modalId}-title`);
+        modal.setAttribute('aria-hidden', 'true');
+        
+        const modalDialog = document.createElement('div');
+        modalDialog.classList.add('modal-dialog', 'modal-dialog-centered');
+        
+        const modalContent = document.createElement('div');
+        modalContent.classList.add('modal-content');
+        
+        const modalHeader = document.createElement('div');
+        modalHeader.classList.add('modal-header', 'bg-danger', 'text-white');
+        
+        const modalTitle = document.createElement('h5');
+        modalTitle.classList.add('modal-title');
+        modalTitle.setAttribute('id', `${this.modalId}-title`);
+        modalTitle.textContent = this.modalTitle;
+        
+        const modalBody = document.createElement('div');
+        modalBody.classList.add('modal-body');
+        modalBody.textContent = this.modalMessage;
+        
+        const modalFooter = document.createElement('div');
+        modalFooter.classList.add('modal-footer');
+        
+        const closeButton = document.createElement('button');
+        closeButton.setAttribute('type', 'button');
+        closeButton.classList.add('btn', 'btn-secondary');
+        closeButton.setAttribute('data-bs-dismiss', 'modal');
+        closeButton.textContent = getStr(Constants.Strings.Close);
+        
+        modalHeader.appendChild(modalTitle);
+        modalContent.appendChild(modalHeader);
+        modalContent.appendChild(modalBody);
+        modalFooter.appendChild(closeButton);
+        modalContent.appendChild(modalFooter);
+        modalDialog.appendChild(modalContent);
+        modal.appendChild(modalDialog);
+        
+        document.body.appendChild(modal);
+        
+        const bsModal = new bootstrap.Modal(modal, {
+            backdrop: true,
+            keyboard: true
+        });
+        
+        bsModal.show();
+        
+        modal.addEventListener('hidden.bs.modal', () => {
+            modal.remove();
+        });
+    }
+}
+  

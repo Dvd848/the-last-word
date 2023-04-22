@@ -5,6 +5,7 @@ import Bag from './Bag';
 import Tile from './Tile';
 import { Display, DisplayCallBacks } from './Display';
 import Dictionary from './Dictionary';
+import * as Utils from './Utils';
 
 export type WordInfo = {
     word: string;
@@ -17,6 +18,12 @@ export type TilePlacement =
     tile: Tile;
     r: number;
     c: number;
+}
+
+class UserError extends Error {
+    constructor(message: string) {
+        super(message);
+    }
 }
 
 export default class Game 
@@ -110,20 +117,22 @@ export default class Game
         return Array.from(words, (JSONEntry) => JSON.parse(JSONEntry));
     }
 
-    private calculatePoints(tilePlacements: TilePlacement[], placedWords: WordInfo[]) : number
+    private calculatePoints(tilePlacements: TilePlacement[], placedWords: WordInfo[]) : [number, number]
     {
         let newPoints = 0;
+        let bonusPoints = 0;
+
         for (const placedWord of placedWords) 
         {
-            console.log(placedWord.word, placedWord.points)
+            console.log(placedWord.word, placedWord.points);
             newPoints += placedWord.points;
         }
         if (tilePlacements.length == Constants.Values.TILES_PER_PLAYER)
         {
-            newPoints += Constants.Values.BINGO_BONUS_POINTS;
+            bonusPoints = Constants.Values.BINGO_BONUS_POINTS;
         }
 
-        return newPoints;
+        return [newPoints, bonusPoints];
     }
 
     private verifyPlacementConsecutive(tilePlacements: TilePlacement[]) : boolean
@@ -217,25 +226,29 @@ export default class Game
 
     private endTurnCallback(tilePlacements: TilePlacement[]) : void
     {
-        const actualTilePlacements : TilePlacement[] = []
+        const actualTilePlacements : TilePlacement[] = [];
+
+        const getError = (id: Constants.Strings) => {
+            return Utils.getTranslation(Constants.DefaultLanguage, id);
+        };
 
         try
         {
             if (!this.verifyPlacementConsecutive(tilePlacements))
             {
-                throw "The tiles are not placed consecutively horizontally or vertically";
+                throw new UserError(getError(Constants.Strings.ErrorConsecutive));
             }
 
             if (!this.verifyPlacementConnected(tilePlacements))
             {
-                throw "One or more tiles are not connected to an existing tile";
+                throw new UserError(getError(Constants.Strings.ErrorConnected));
             }
 
             for (const tilePlacement of tilePlacements) 
             {
                 if (!this.board.isTileEmpty(tilePlacement.r, tilePlacement.c)) 
                 {
-                    throw "One or more tiles are placed on an existing tile.";
+                    throw new UserError(getError(Constants.Strings.ErrorExisting));
                 }
 
                 // Mark the placed tile as placed
@@ -250,7 +263,7 @@ export default class Game
             {
                 if (!this.dictionary.contains(placedWord.word))
                 {
-                    throw `Illegal word: ${placedWord.word}`;
+                    throw new UserError(getError(Constants.Strings.ErrorIllegalWord).replace("${word}", placedWord.word));
                 }
             }
 
@@ -258,7 +271,7 @@ export default class Game
             {
                 if (tilePlacements.length == 1)
                 {
-                    throw "The first word must be at least 2 letters long!";
+                    throw new UserError(getError(Constants.Strings.ErrorFirstWordMin));
                 }
                 else if (tilePlacements.length > 0)
                 {
@@ -273,7 +286,7 @@ export default class Game
 
                     if (!centerTileUsed)
                     {
-                        throw "The first word must be placed on the center tile!";
+                        throw new UserError(getError(Constants.Strings.ErrorFirstWordLocation));
                     }
 
                     this.firstTurnPlayed = true;
@@ -282,8 +295,8 @@ export default class Game
             
             // All checks passed, move is good
 
-            let newPoints = this.calculatePoints(tilePlacements, placedWords);
-            this.currentPlayer.points += newPoints;
+            let [newPoints, bonusPoints] = this.calculatePoints(tilePlacements, placedWords);
+            this.currentPlayer.points += newPoints + bonusPoints;
             
             tilePlacements.forEach((tilePlacement) => {
                 this.currentPlayer.removeTile(tilePlacement.tile);
@@ -292,7 +305,7 @@ export default class Game
 
             this.display.finalizePlacements();
 
-            this.display.logMoveDetails(this.currentPlayer, newPoints, placedWords);
+            this.display.logMoveDetails(this.currentPlayer, newPoints, placedWords, bonusPoints);
 
             this.currentPlayer.fillRack(this.bag);
             this.display.displayPlayerInfo(this.currentPlayer);
@@ -302,7 +315,18 @@ export default class Game
         }
         catch(err) 
         {
-            console.log(err);
+            if (err instanceof UserError) 
+            {
+                this.display.showError(err.message);
+            }
+            else if (err instanceof Error)
+            {
+                console.log(err.message);
+            }
+            else
+            {
+                console.log(err);
+            }
             actualTilePlacements.forEach((tilePlacement) => {
                 this.board.setTile(tilePlacement.r, tilePlacement.c, null);
             });
