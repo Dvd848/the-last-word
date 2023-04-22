@@ -273,20 +273,25 @@ h1 {
 
 @media (max-width: 800px) {
     #header_tiles {
-      display: none;
+        display: none;
     }
     h2 {
-      display: block;
-      color: white;
-      margin: 0 0 0 20px;
+        display: block;
+        color: white;
+        margin: 0 0 0 20px;
     }
-  }
-  
-  @media (min-width: 801px) {
+}
+
+@media (min-width: 801px) {
     #header_tiles {
-      display: inline-flex;
+        display: inline-flex;
     }
     h2 {
-      display: none;
+        display: none;
     }
-  }
+}
+
+.player_name {
+    text-align: center;
+    margin: 3px 0;
+}

@@ -65,6 +65,8 @@ export default class Game
             player.fillRack(this.bag);
             this.display.displayPlayerInfo(player);
         });
+
+        this.display.setPlayerNames(this.players);
     }
 
     public async init()
@@ -89,9 +91,16 @@ export default class Game
 
     private setConfiguration(config: GameConfiguration) : void
     {
+        if (config.player1Name.trim() == "" || config.player2Name.trim() == "")
+        {
+            return;
+        }
+
         this.checkDict = config.checkDict;
         this.players[0].name = config.player1Name;
         this.players[1].name = config.player2Name;
+
+        this.display.setPlayerNames(this.players);
     }
 
     private getCreatedWords(tilePlacements: TilePlacement[]): WordInfo[] {

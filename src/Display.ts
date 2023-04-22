@@ -71,6 +71,8 @@ export class Display
     {
         const that = this;
 
+        // End turn button
+
         const endTurnButton = document.getElementById("end_turn_button")!;
         endTurnButton.innerText = getStr(Constants.Strings.EndTurn);
         endTurnButton.addEventListener('click', function(e){
@@ -94,6 +96,8 @@ export class Display
 
             that.callbacks.endTurn(tilePlacements);
         });
+
+        // Configuration menu
 
         const showConfigMenu = document.getElementById("showConfigMenu")!;
         const configPlayer1Name = document.getElementById("configPlayer1Name") as HTMLInputElement;
@@ -265,6 +269,14 @@ export class Display
         return tileElement
     }
 
+    public setPlayerNames(players: Player[])
+    {
+        players.forEach((player) => {
+            let name = document.getElementById(`player${player.id}_name`)!;
+            name.innerText = player.name;
+        });
+    }
+
     public displayPlayerInfo(player: Player) : void
     {
         const rack = document.getElementById(`player${player.id}_rack`);
@@ -285,6 +297,8 @@ export class Display
             throw new Error(`Can't find player points for player ${player.id}`);
         }
         points.innerText = player.points.toString();
+
+        
     }
 
     public setActivePlayer(player: Player) : void
@@ -349,7 +363,6 @@ export class Display
 
         const toast = new BootstrapToast(header, subheader, content, 10000);
         toast.show();
-        console.log(toast);
     }
 
     public showError(message: string) : void 
@@ -382,14 +395,30 @@ class BootstrapToast
         toast.setAttribute('aria-live', 'assertive');
         toast.setAttribute('aria-atomic', 'true');
         
-        const header = this.header ? `<div class="toast-header"><strong class="me-auto">` + 
-                                        `${this.header}</strong><small>${this.secondaryHeader}</small>` + 
-                                        `<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>` + 
-                                        `</div>` : '';
+        const toastHeader = document.createElement('div');
+        toastHeader.classList.add('toast-header');
+
+        const strong = document.createElement('strong');
+        strong.classList.add('me-auto');
+        strong.textContent = this.header;
+
+        const small = document.createElement('small');
+        small.textContent = this.secondaryHeader;
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.classList.add('btn-close');
+        button.dataset.bsDismiss = 'toast';
+        button.setAttribute('aria-label', 'Close');
+
+        toastHeader.appendChild(strong);
+        toastHeader.appendChild(small);
+        toastHeader.appendChild(button);
+
         const body = document.createElement('div');
         body.classList.add("toast-body");
         body.appendChild(this.body);
-        toast.innerHTML = `${header}`;
+        toast.appendChild(toastHeader);
         toast.appendChild(body);
         
         const toastContainer = this.getOrCreateToastWrapper();
