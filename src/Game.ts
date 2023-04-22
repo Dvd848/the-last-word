@@ -130,14 +130,59 @@ export default class Game
     {
         if (tilePlacements.length > 0)
         {
-            // Check if all tiles are placed consecutively horizontally or vertically
             const rValues = tilePlacements.map((tilePlacement) => tilePlacement.r);
             const cValues = tilePlacements.map((tilePlacement) => tilePlacement.c);
-
-            if (new Set(rValues).size !== 1 && new Set(cValues).size !== 1)
+            
+            const rSet = new Set(rValues);
+            const cSet = new Set(cValues);
+            
+            let axis: keyof TilePlacement;
+            if (rSet.size === 1)
+            {
+                // All the tiles are placed in the same row
+                axis = "c" as keyof TilePlacement;
+            }
+            else if (cSet.size === 1)
+            {
+                // All the tiles are placed in the same column
+                axis = "r" as keyof TilePlacement;
+            }
+            else
             {
                 return false;
             }
+
+            // Search for the minimum and maximum value for the non-constant axis
+            const minMax = tilePlacements.reduce((acc, curr) => {
+                let n : number = curr[axis] as number;
+                return [
+                    Math.min(acc[0], n),
+                    Math.max(acc[1], n)
+                ];
+            }, [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER]);
+
+            // Check that the tiles are consecutive
+            if (rSet.size === 1)
+            {
+                for (let c = minMax[0]; c <= minMax[1]; c++)
+                {
+                    if (this.board.isTileEmpty(rValues[0], c) && !cSet.has(c))
+                    {
+                        return false;
+                    }
+                }
+            }
+            else if (cSet.size === 1)
+            {
+                for (let r = minMax[0]; r <= minMax[1]; r++)
+                {
+                    if (this.board.isTileEmpty(r, cValues[0]) && !rSet.has(r))
+                    {
+                        return false;
+                    }
+                }
+            }
+              
         }
 
         return true;
