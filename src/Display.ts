@@ -13,6 +13,7 @@ export interface DisplayCallBacks
     getConfiguration:    () => GameConfiguration;
     setConfiguration:    (config: GameConfiguration) => void;
     swapTiles:           (tiles: Tile[]) => void;
+    getNumTilesInBag:    () => number;
 }
 
 function getStr(id: Constants.Strings) : string
@@ -136,33 +137,40 @@ export class Display
         const swapTilesModal = new bootstrap.Modal('#swapTilesModal');
         showSwapTilesMenu.addEventListener('click', function(e) {
             swapTilesForm.innerHTML = '';
+            let numTilesInBag = that.callbacks.getNumTilesInBag();
 
-            const row = document.createElement('div');
-            row.classList.add('row');
+            if (numTilesInBag > 0)
+            {
+                const row = document.createElement('div');
+                row.classList.add('row');
+    
+                that.activePlayer?.rack.forEach((tile) => {
+                    const col = document.createElement('div');
+                    col.classList.add('col');
+    
+                    const label = document.createElement('label');
+                    label.classList.add('check-img');
+    
+                    const gameTile = document.createElement('div');
+                    gameTile.classList.add('game_tile');
+                    gameTile.textContent = tile.letter;
+    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.name = 'swapTile';
+                    checkbox.value = tile.id.toString();
+    
+                    label.appendChild(gameTile);
+                    label.appendChild(checkbox);
+                    col.appendChild(label);
+    
+                    row.appendChild(col);
+                });
+                swapTilesForm.appendChild(row);
+            }
 
-            that.activePlayer?.rack.forEach((tile) => {
-                const col = document.createElement('div');
-                col.classList.add('col');
 
-                const label = document.createElement('label');
-                label.classList.add('check-img');
-
-                const gameTile = document.createElement('div');
-                gameTile.classList.add('game_tile');
-                gameTile.textContent = tile.letter;
-
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.name = 'swapTile';
-                checkbox.value = tile.id.toString();
-
-                label.appendChild(gameTile);
-                label.appendChild(checkbox);
-                col.appendChild(label);
-
-                row.appendChild(col);
-            });
-            swapTilesForm.appendChild(row);
+            document.getElementById("remainingTilesInBag")!.textContent = numTilesInBag.toString();
 
             swapTilesModal.show();
         });
@@ -170,13 +178,16 @@ export class Display
         const swapTilesOkButton = document.getElementById("swapTilesOkButton")!;
         swapTilesOkButton.addEventListener("click", function(e) {
 
-            const checkedCheckboxes = swapTilesForm.querySelectorAll<HTMLInputElement>('input[name="swapTile"]:checked');
-            const tilesToSwap : Tile[] = [];
-
-            for (let i = 0; i < checkedCheckboxes.length; i++) {
-                tilesToSwap.push(that.activeTiles.get(parseInt(checkedCheckboxes[i].value))!);
+            if (that.callbacks.getNumTilesInBag() > 0)
+            {
+                const checkedCheckboxes = swapTilesForm.querySelectorAll<HTMLInputElement>('input[name="swapTile"]:checked');
+                const tilesToSwap : Tile[] = [];
+    
+                for (let i = 0; i < checkedCheckboxes.length; i++) {
+                    tilesToSwap.push(that.activeTiles.get(parseInt(checkedCheckboxes[i].value))!);
+                }
+                that.callbacks.swapTiles(tilesToSwap);
             }
-            that.callbacks.swapTiles(tilesToSwap);
             swapTilesModal.hide();
         });
 

@@ -299,3 +299,8 @@ h1 {
 #swapTilesForm .col {
     text-align: center;
 }
+
+#tilesInBagWrapper {
+    text-align: center;
+    margin-top: 20px;
+}

@@ -58,7 +58,8 @@ export default class Game
             endTurn: function(tilePlacements: TilePlacement[]){that.endTurnCallback(tilePlacements);},
             getConfiguration: function(){return that.getConfigurationCallback();},
             setConfiguration: function(config: GameConfiguration){that.setConfigurationCallback(config);},
-            swapTiles: function(tiles: Tile[]){that.swapTilesCallback(tiles);}
+            swapTiles: function(tiles: Tile[]){that.swapTilesCallback(tiles);},
+            getNumTilesInBag: function(){return that.bag.length;}
         });
 
         this.players.forEach((player) => {
