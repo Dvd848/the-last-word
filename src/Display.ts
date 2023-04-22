@@ -1,7 +1,7 @@
 import Board from "./Board";
 import Player from "./Player";
 import Tile from "./Tile";
-import { TilePlacement, WordInfo } from "./Game";
+import { TilePlacement, WordInfo, GameConfiguration } from "./Game";
 import * as Constants from "./Constants"
 import * as Utils from "./Utils"
 
@@ -9,7 +9,9 @@ import * as bootstrap from 'bootstrap';
 
 export interface DisplayCallBacks
 {
-    endTurn: (tile_placements: TilePlacement[]) => void;
+    endTurn:            (tile_placements: TilePlacement[]) => void;
+    getConfiguration:    () => GameConfiguration;
+    setConfiguration:    (config: GameConfiguration) => void;
 }
 
 function getStr(id: Constants.Strings) : string
@@ -67,8 +69,9 @@ export class Display
 
     private configureButtons() : void
     {
-        const endTurnButton = document.getElementById("end_turn_button")!;
         const that = this;
+
+        const endTurnButton = document.getElementById("end_turn_button")!;
         endTurnButton.innerText = getStr(Constants.Strings.EndTurn);
         endTurnButton.addEventListener('click', function(e){
             const tilePlacements : TilePlacement[] = [];
@@ -90,7 +93,35 @@ export class Display
             });
 
             that.callbacks.endTurn(tilePlacements);
-        })
+        });
+
+        const showConfigMenu = document.getElementById("showConfigMenu")!;
+        const configPlayer1Name = document.getElementById("configPlayer1Name") as HTMLInputElement;
+        const configPlayer2Name = document.getElementById("configPlayer2Name") as HTMLInputElement;
+        const configCheckDict = document.getElementById("configCheckDict") as HTMLInputElement;
+        const configModal = new bootstrap.Modal('#configModal');
+
+        showConfigMenu.addEventListener('click', function(e) {
+            const config = that.callbacks.getConfiguration();
+
+            configPlayer1Name.value = config.player1Name;
+            configPlayer2Name.value = config.player2Name;
+
+            configCheckDict.checked = config.checkDict;
+
+            configModal.show();
+        });
+
+        const configOkButton = document.getElementById("configOkButton")!;
+        configOkButton.addEventListener("click", function(e) {
+
+            that.callbacks.setConfiguration({
+                player1Name: configPlayer1Name.value,
+                player2Name: configPlayer2Name.value,
+                checkDict: configCheckDict.checked
+            });
+            configModal.hide();
+        });
     }
 
     public finalizePlacements() : void

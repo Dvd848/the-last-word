@@ -38,7 +38,10 @@
             <h1>משחק דמוי "שבץ נא" אונליין</h1>
             <ul class="navbar-nav ms-auto navbar-light-color">
                 <li class="nav-item">
-                    <a class="nav-link" href="" data-bs-target="#aboutModal" data-bs-toggle="modal">אודות</a>
+                    <a class="nav-link" href="#" id="showConfigMenu">הגדרות</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-target="#aboutModal" data-bs-toggle="modal">אודות</a>
                 </li>
             </ul>
         </div>
@@ -91,6 +94,45 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">סגירה</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="configModal" tabindex="-1" aria-labelledby="configModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="configModalLabel">הגדרות</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3 row">
+                            <label for="input1" class="col-sm-3 col-form-label">שחקן/ית א'</label>
+                            <div class="col-sm-8">
+                              <input type="text" class="form-control" id="configPlayer1Name" placeholder="שם השחקן/ית" maxlength="15">
+                            </div>
+                          </div>
+                          <div class="mb-3 row">
+                            <label for="input2" class="col-sm-3 col-form-label">שחקן/ית ב'</label>
+                            <div class="col-sm-8">
+                              <input type="text" class="form-control" id="configPlayer2Name" placeholder="שם השחקן/ית" maxlength="15">
+                            </div>
+                          </div>
+                          <div class="mb-3 row">
+                            <label for="toggleSwitch" class="col-sm-3 col-form-label">אימות מול מילון</label>
+                            <div class="col-sm-8 d-flex align-items-center">
+                              <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="configCheckDict">
+                              </div>
+                            </div>
+                          </div>
+                      </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ביטול</button>
+                    <button type="button" class="btn btn-primary" id="configOkButton">אישור</button>
                 </div>
             </div>
         </div>

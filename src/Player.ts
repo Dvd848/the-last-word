@@ -46,6 +46,11 @@ export default class Player
         return this._name;
     }
 
+    set name(value: string)
+    {
+        this._name = value;
+    }
+
     get points() : number
     {
         return this._points;

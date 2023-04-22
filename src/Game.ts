@@ -20,6 +20,13 @@ export type TilePlacement =
     c: number;
 }
 
+export type GameConfiguration = 
+{
+    player1Name: string;
+    player2Name: string;
+    checkDict: boolean;
+}
+
 class UserError extends Error {
     constructor(message: string) {
         super(message);
@@ -35,6 +42,7 @@ export default class Game
     private display : Display;
     private firstTurnPlayed : boolean;
     private dictionary : Dictionary;
+    private checkDict : boolean;
   
     constructor(players: string[]) 
     {
@@ -45,9 +53,12 @@ export default class Game
         this.bag = new Bag(Constants.DefaultLanguage);
         this.firstTurnPlayed = false;
         this.dictionary = new Dictionary(Constants.DefaultLanguage);
+        this.checkDict = true;
 
         this.display = new Display(this.board, {
-            endTurn: function(tilePlacements: TilePlacement[]){that.endTurnCallback(tilePlacements)}
+            endTurn: function(tilePlacements: TilePlacement[]){that.endTurnCallback(tilePlacements);},
+            getConfiguration: function(){return that.getConfiguration();},
+            setConfiguration: function(config: GameConfiguration){that.setConfiguration(config);},
         });
 
         this.players.forEach((player) => {
@@ -65,6 +76,22 @@ export default class Game
     public start() : void
     {
         this.display.show();
+    }
+
+    private getConfiguration() : GameConfiguration
+    {
+        return {
+            player1Name: this.players[0].name,
+            player2Name: this.players[1].name,
+            checkDict: this.checkDict
+        }
+    }
+
+    private setConfiguration(config: GameConfiguration) : void
+    {
+        this.checkDict = config.checkDict;
+        this.players[0].name = config.player1Name;
+        this.players[1].name = config.player2Name;
     }
 
     private getCreatedWords(tilePlacements: TilePlacement[]): WordInfo[] {
@@ -124,7 +151,6 @@ export default class Game
 
         for (const placedWord of placedWords) 
         {
-            console.log(placedWord.word, placedWord.points);
             newPoints += placedWord.points;
         }
         if (tilePlacements.length == Constants.TILES_PER_PLAYER)
@@ -259,11 +285,14 @@ export default class Game
             const placedWords: WordInfo[] = this.getCreatedWords(tilePlacements);
 
             // Check if all placedWords are valid words
-            for (const placedWord of placedWords) 
+            if (this.checkDict)
             {
-                if (!this.dictionary.contains(placedWord.word))
+                for (const placedWord of placedWords) 
                 {
-                    throw new UserError(getError(Constants.Strings.ErrorIllegalWord).replace("${word}", placedWord.word));
+                    if (!this.dictionary.contains(placedWord.word))
+                    {
+                        throw new UserError(getError(Constants.Strings.ErrorIllegalWord).replace("${word}", placedWord.word));
+                    }
                 }
             }
 
