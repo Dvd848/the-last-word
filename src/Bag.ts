@@ -18,7 +18,7 @@ export default class Bag
             }
         }
 
-        this.tiles = shuffle(this.tiles);
+        this.shuffle();
     }
 
     public draw() : Tile | null
@@ -29,6 +29,16 @@ export default class Bag
         }
 
         return null;
+    }
+
+    public add(tile: Tile) : void
+    {
+        this.tiles.push(tile);
+    }
+
+    public shuffle() : void 
+    {
+        this.tiles = shuffle(this.tiles);
     }
 
     get length() : number

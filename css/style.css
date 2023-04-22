@@ -295,3 +295,7 @@ h1 {
     text-align: center;
     margin: 3px 0;
 }
+
+#swapTilesForm .col {
+    text-align: center;
+}

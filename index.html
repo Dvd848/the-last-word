@@ -38,6 +38,9 @@
             <h1>משחק דמוי "שבץ נא" אונליין</h1>
             <ul class="navbar-nav ms-auto navbar-light-color">
                 <li class="nav-item">
+                    <a class="nav-link" href="#" id="showSwapTilesMenu">החלפת אותיות</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="#" id="showConfigMenu">הגדרות</a>
                 </li>
                 <li class="nav-item">
@@ -135,6 +138,51 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ביטול</button>
                     <button type="button" class="btn btn-primary" id="configOkButton">אישור</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="swapTilesModal" tabindex="-1" aria-labelledby="swapTilesModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="swapTilesModalLabel">החלפת אותיות</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="swapTilesForm">
+                        <div class="row">
+                            <div class="col">
+                                <label class="check-img">
+                                    <div class="game_tile">ת</div>
+                                    <input type="checkbox" name="image1" value="1">
+                                </label>
+                            </div>
+                            <div class="col">
+                                <label class="check-img">
+                                    <div class="game_tile">ת</div>
+                                    <input type="checkbox" name="image1" value="1">
+                                </label>
+                            </div>
+                            <div class="col">
+                                <label class="check-img">
+                                    <div class="game_tile">ת</div>
+                                    <input type="checkbox" name="image1" value="1">
+                                </label>
+                            </div>
+                            <div class="col">
+                                <label class="check-img">
+                                    <div class="game_tile">ת</div>
+                                    <input type="checkbox" name="image1" value="1">
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ביטול</button>
+                    <button type="button" class="btn btn-primary" id="swapTilesOkButton">אישור</button>
                 </div>
             </div>
         </div>

@@ -9,9 +9,10 @@ import * as bootstrap from 'bootstrap';
 
 export interface DisplayCallBacks
 {
-    endTurn:            (tile_placements: TilePlacement[]) => void;
+    endTurn:             (tile_placements: TilePlacement[]) => void;
     getConfiguration:    () => GameConfiguration;
     setConfiguration:    (config: GameConfiguration) => void;
+    swapTiles:           (tiles: Tile[]) => void;
 }
 
 function getStr(id: Constants.Strings) : string
@@ -24,12 +25,14 @@ export class Display
     private board        : Element;
     private activeTiles  : Map<number, Tile>;
     private callbacks    : DisplayCallBacks;
+    private activePlayer : Player | null;
 
     constructor(board: Board, callbacks: DisplayCallBacks)
     {
         this.board = document.getElementById("board")!;
         this.activeTiles = new Map<number, Tile>();
         this.callbacks = callbacks;
+        this.activePlayer = null;
         this.createBoard(board);
     }
 
@@ -125,6 +128,58 @@ export class Display
             });
             configModal.hide();
         });
+
+        // Swap tiles 
+
+        const showSwapTilesMenu = document.getElementById("showSwapTilesMenu")!;
+        const swapTilesForm = document.getElementById("swapTilesForm")!;
+        const swapTilesModal = new bootstrap.Modal('#swapTilesModal');
+        showSwapTilesMenu.addEventListener('click', function(e) {
+            swapTilesForm.innerHTML = '';
+
+            const row = document.createElement('div');
+            row.classList.add('row');
+
+            that.activePlayer?.rack.forEach((tile) => {
+                const col = document.createElement('div');
+                col.classList.add('col');
+
+                const label = document.createElement('label');
+                label.classList.add('check-img');
+
+                const gameTile = document.createElement('div');
+                gameTile.classList.add('game_tile');
+                gameTile.textContent = tile.letter;
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.name = 'swapTile';
+                checkbox.value = tile.id.toString();
+
+                label.appendChild(gameTile);
+                label.appendChild(checkbox);
+                col.appendChild(label);
+
+                row.appendChild(col);
+            });
+            swapTilesForm.appendChild(row);
+
+            swapTilesModal.show();
+        });
+
+        const swapTilesOkButton = document.getElementById("swapTilesOkButton")!;
+        swapTilesOkButton.addEventListener("click", function(e) {
+
+            const checkedCheckboxes = swapTilesForm.querySelectorAll<HTMLInputElement>('input[name="swapTile"]:checked');
+            const tilesToSwap : Tile[] = [];
+
+            for (let i = 0; i < checkedCheckboxes.length; i++) {
+                tilesToSwap.push(that.activeTiles.get(parseInt(checkedCheckboxes[i].value))!);
+            }
+            that.callbacks.swapTiles(tilesToSwap);
+            swapTilesModal.hide();
+        });
+
     }
 
     public finalizePlacements() : void
@@ -308,6 +363,8 @@ export class Display
         {
             throw new Error(`Can't find rack!`);
         }
+
+        this.activePlayer = player;
 
         active_rack.innerHTML = '';
 

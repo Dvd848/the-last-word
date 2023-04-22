@@ -56,8 +56,9 @@ export default class Game
 
         this.display = new Display(this.board, {
             endTurn: function(tilePlacements: TilePlacement[]){that.endTurnCallback(tilePlacements);},
-            getConfiguration: function(){return that.getConfiguration();},
-            setConfiguration: function(config: GameConfiguration){that.setConfiguration(config);},
+            getConfiguration: function(){return that.getConfigurationCallback();},
+            setConfiguration: function(config: GameConfiguration){that.setConfigurationCallback(config);},
+            swapTiles: function(tiles: Tile[]){that.swapTilesCallback(tiles);}
         });
 
         this.players.forEach((player) => {
@@ -79,7 +80,7 @@ export default class Game
         this.display.show();
     }
 
-    private getConfiguration() : GameConfiguration
+    private getConfigurationCallback() : GameConfiguration
     {
         return {
             playerNames: this.players.map(player => player.name),
@@ -87,7 +88,7 @@ export default class Game
         }
     }
 
-    private setConfiguration(config: GameConfiguration) : boolean
+    private setConfigurationCallback(config: GameConfiguration) : boolean
     {
         try
         {
@@ -120,7 +121,34 @@ export default class Game
         }
     }
 
-    private getCreatedWords(tilePlacements: TilePlacement[]): WordInfo[] {
+    private swapTilesCallback(tiles: Tile[]) : void
+    {
+        if (tiles.length > this.currentPlayer.rack.length)
+        {
+            return;
+        }
+
+        const numTiles = Math.min(tiles.length, this.bag.length);
+        
+        const oldTiles : Tile[] = [];
+        for (let i = 0; i < numTiles; i++)
+        {
+            this.currentPlayer.removeTile(tiles[i]);
+            oldTiles.push(tiles[i]);
+        }
+        this.currentPlayer.fillRack(this.bag);
+
+        oldTiles.forEach((tile) => {
+            this.bag.add(tile);
+        })
+
+        this.bag.shuffle();
+
+        this.moveToNextPlayer();
+    }
+
+    private getCreatedWords(tilePlacements: TilePlacement[]): WordInfo[] 
+    {
         const words = new Set<string>();
         const axes = ["r", "c"];
 
@@ -243,7 +271,6 @@ export default class Game
                     }
                 }
             }
-              
         }
 
         return true;
@@ -274,6 +301,13 @@ export default class Game
             }
         }
         return true;
+    }
+
+    private moveToNextPlayer() : void
+    {
+        this.display.displayPlayerInfo(this.currentPlayer);
+        this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
+        this.display.setActivePlayer(this.currentPlayer);
     }
 
     private endTurnCallback(tilePlacements: TilePlacement[]) : void
@@ -363,10 +397,8 @@ export default class Game
             this.display.logMoveDetails(this.currentPlayer, newPoints, placedWords, bonusPoints);
 
             this.currentPlayer.fillRack(this.bag);
-            this.display.displayPlayerInfo(this.currentPlayer);
 
-            this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
-            this.display.setActivePlayer(this.currentPlayer);
+            this.moveToNextPlayer();
         }
         catch(err) 
         {
