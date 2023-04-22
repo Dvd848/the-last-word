@@ -1,10 +1,9 @@
-export const Values = {
-    BOARD_DIMENSIONS: 15,
-    TILES_PER_PLAYER: 7,
-    CENTER_TILE_ROW: 7,
-    CENTER_TILE_COL: 7,
-    BINGO_BONUS_POINTS: 50
-}
+
+export const BOARD_DIMENSIONS = 15;
+export const TILES_PER_PLAYER = 7;
+export const CENTER_TILE_ROW = 7;
+export const CENTER_TILE_COL = 7;
+export const BINGO_BONUS_POINTS = 50;
 
 export enum Languages {
     English = "English",
@@ -181,7 +180,7 @@ export const tileMultipliers : Record<TileTypes, {wordMul: number, letterMul: nu
         wordMul : 2,
         letterMul: 1,
         coordinates: [
-            { row: Values.CENTER_TILE_ROW, col: Values.CENTER_TILE_COL }
+            { row: CENTER_TILE_ROW, col: CENTER_TILE_COL }
         ]
     },
 
