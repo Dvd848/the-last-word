@@ -421,6 +421,18 @@ export class Display
         toast.show();
     }
 
+    public logSwap(player: Player, oldTiles: Tile[]) : void
+    {
+        const header = getStr(Constants.Strings.PlayerInfoTitle).replace("${name}", player.name);
+        const p = document.createElement('p');
+
+        const tilesSwapped = oldTiles.map((tile) => tile.letter + "'");
+
+        p.textContent = getStr(Constants.Strings.TilesSwapped).replace("${tiles}", tilesSwapped.join(", "));
+        const toast = new BootstrapToast(header, "", p, 10000);
+        toast.show();
+    }
+
     public showError(message: string) : void 
     {
         const myWarningModal = new BootstrapWarningModal('move-warning-modal', getStr(Constants.Strings.Error), message);

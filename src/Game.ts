@@ -144,6 +144,8 @@ export default class Game
 
         this.bag.shuffle();
 
+        this.display.logSwap(this.currentPlayer, oldTiles);
+
         this.moveToNextPlayer();
     }
 

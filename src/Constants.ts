@@ -212,7 +212,8 @@ export enum Strings {
     Close,
     Error,
     Bonus,
-    PlayerSkippedMove
+    PlayerSkippedMove,
+    TilesSwapped
 }
 
 export const Translations : Record<Languages, Record<Strings, string>> = {
@@ -229,7 +230,8 @@ export const Translations : Record<Languages, Record<Strings, string>> = {
         [Strings.Close]: "Close",
         [Strings.Error]: "Error",
         [Strings.Bonus]: "Bonus for using all letters",
-        [Strings.PlayerSkippedMove]: "Move skipped."
+        [Strings.PlayerSkippedMove]: "Move skipped.",
+        [Strings.TilesSwapped]: "The following tiles were swapped: ${tiles}"
     },
 
     [Languages.Hebrew]: {
@@ -245,7 +247,8 @@ export const Translations : Record<Languages, Record<Strings, string>> = {
         [Strings.Close]: "סגירה",
         [Strings.Error]: "שגיאה",
         [Strings.Bonus]: "בונוס על שימוש בכל האותיות",
-        [Strings.PlayerSkippedMove]: "דילוג על התור"
+        [Strings.PlayerSkippedMove]: "דילוג על התור",
+        [Strings.TilesSwapped]: "האותיות הבאות הוחלפו: ${tiles}"
     },
 }
 
