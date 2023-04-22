@@ -108,8 +108,8 @@ export class Display
         showConfigMenu.addEventListener('click', function(e) {
             const config = that.callbacks.getConfiguration();
 
-            configPlayer1Name.value = config.player1Name;
-            configPlayer2Name.value = config.player2Name;
+            configPlayer1Name.value = config.playerNames[0];
+            configPlayer2Name.value = config.playerNames[1];
 
             configCheckDict.checked = config.checkDict;
 
@@ -120,8 +120,7 @@ export class Display
         configOkButton.addEventListener("click", function(e) {
 
             that.callbacks.setConfiguration({
-                player1Name: configPlayer1Name.value,
-                player2Name: configPlayer2Name.value,
+                playerNames: [configPlayer1Name.value, configPlayer2Name.value],
                 checkDict: configCheckDict.checked
             });
             configModal.hide();

@@ -22,8 +22,7 @@ export type TilePlacement =
 
 export type GameConfiguration = 
 {
-    player1Name: string;
-    player2Name: string;
+    playerNames: string[];
     checkDict: boolean;
 }
 
@@ -83,24 +82,42 @@ export default class Game
     private getConfiguration() : GameConfiguration
     {
         return {
-            player1Name: this.players[0].name,
-            player2Name: this.players[1].name,
+            playerNames: this.players.map(player => player.name),
             checkDict: this.checkDict
         }
     }
 
-    private setConfiguration(config: GameConfiguration) : void
+    private setConfiguration(config: GameConfiguration) : boolean
     {
-        if (config.player1Name.trim() == "" || config.player2Name.trim() == "")
+        try
         {
-            return;
+
+            if (config.playerNames.length != this.players.length)
+            {
+                throw Error("Number of player names should match number of players");
+            }
+    
+            config.playerNames.forEach((name) => {
+                if (name.trim() == "")
+                {
+                    throw Error("Player name can't be empty or only spaces");
+                }
+            });
+    
+            this.checkDict = config.checkDict;
+    
+            config.playerNames.forEach((name, index) => {
+                this.players[index].name = name.trim();
+            });
+    
+            this.display.setPlayerNames(this.players);
+    
+            return true;
         }
-
-        this.checkDict = config.checkDict;
-        this.players[0].name = config.player1Name;
-        this.players[1].name = config.player2Name;
-
-        this.display.setPlayerNames(this.players);
+        catch (err)
+        {
+            return false;
+        }
     }
 
     private getCreatedWords(tilePlacements: TilePlacement[]): WordInfo[] {
