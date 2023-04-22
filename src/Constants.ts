@@ -71,6 +71,19 @@ export const scrabbleTiles : Record<Languages, { letter: string; count: number; 
     ]
 };
 
+export const lastLetterTranslations : Record<Languages, Record<string, string>> = {
+    [Languages.English]: {
+
+    },
+    [Languages.Hebrew]: {
+        "נ": "ן",
+        "מ": "ם",
+        "פ": "ף",
+        "צ": "ץ",
+        "כ": "ך"
+    }
+}
+
 export enum TileTypes {
     Regular      = "Regular",
     DoubleWord   = "DoubleWord",

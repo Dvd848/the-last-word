@@ -293,7 +293,13 @@ export class Display
         }
 
         placedWords.forEach((wordInfo) => {
-            addListItem(wordInfo.points, wordInfo.word);
+            let word = wordInfo.word;
+            let lastChar = word.slice(-1);
+            if (Utils.isKeyOfObject(lastChar, Constants.lastLetterTranslations[Constants.DefaultLanguage]))
+            {
+                word = word.slice(0, -1) + Constants.lastLetterTranslations[Constants.DefaultLanguage][lastChar];
+            }
+            addListItem(wordInfo.points, word);
         });
 
         if (bonusPoints > 0)
