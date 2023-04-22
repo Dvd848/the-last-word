@@ -281,33 +281,42 @@ export class Display
         const header = getStr(Constants.Strings.PlayerInfoTitle).replace("${name}", player.name);
         const subheader = getStr(Constants.Strings.PlayerInfoPoints).replace("${points}", points.toString());
 
-        const list = document.createElement('ul');
-        list.style.margin = "10px";
-
-        const addListItem = (numPoints:number, description: string) => {
-            const listItem = document.createElement('li');
-            const wordPoints = getStr(Constants.Strings.PlayerInfoPoints).replace("${points}", numPoints.toString());
-            const textNode = document.createTextNode(`${description}: ${wordPoints}`);
-            listItem.appendChild(textNode);
-            list.appendChild(listItem);
-        }
-
-        placedWords.forEach((wordInfo) => {
-            let word = wordInfo.word;
-            let lastChar = word.slice(-1);
-            if (Utils.isKeyOfObject(lastChar, Constants.lastLetterTranslations[Constants.DefaultLanguage]))
-            {
-                word = word.slice(0, -1) + Constants.lastLetterTranslations[Constants.DefaultLanguage][lastChar];
-            }
-            addListItem(wordInfo.points, word);
-        });
-
-        if (bonusPoints > 0)
+        let content : HTMLElement;
+        if (placedWords.length > 0)
         {
-            addListItem(bonusPoints, getStr(Constants.Strings.Bonus));
+            const list = document.createElement('ul');
+            list.style.margin = "10px";
+            const addListItem = (numPoints:number, description: string) => {
+                const listItem = document.createElement('li');
+                const wordPoints = getStr(Constants.Strings.PlayerInfoPoints).replace("${points}", numPoints.toString());
+                const textNode = document.createTextNode(`${description}: ${wordPoints}`);
+                listItem.appendChild(textNode);
+                list.appendChild(listItem);
+            }
+
+            placedWords.forEach((wordInfo) => {
+                let word = wordInfo.word;
+                let lastChar = word.slice(-1);
+                if (Utils.isKeyOfObject(lastChar, Constants.lastLetterTranslations[Constants.DefaultLanguage]))
+                {
+                    word = word.slice(0, -1) + Constants.lastLetterTranslations[Constants.DefaultLanguage][lastChar];
+                }
+                addListItem(wordInfo.points, word);
+            });
+
+            if (bonusPoints > 0)
+            {
+                addListItem(bonusPoints, getStr(Constants.Strings.Bonus));
+            }
+            content = list;
+        }
+        else
+        {
+            content = document.createElement("p");
+            content.appendChild(document.createTextNode(getStr(Constants.Strings.PlayerSkippedMove)));
         }
 
-        const toast = new BootstrapToast(header, subheader, list, 10000);
+        const toast = new BootstrapToast(header, subheader, content, 10000);
         toast.show();
         console.log(toast);
     }

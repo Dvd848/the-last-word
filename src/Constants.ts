@@ -211,7 +211,8 @@ export enum Strings {
     ErrorFirstWordLocation,
     Close,
     Error,
-    Bonus
+    Bonus,
+    PlayerSkippedMove
 }
 
 export const Translations : Record<Languages, Record<Strings, string>> = {
@@ -227,7 +228,8 @@ export const Translations : Record<Languages, Record<Strings, string>> = {
         [Strings.ErrorFirstWordLocation]: "The first word must be placed on the center tile!",
         [Strings.Close]: "Close",
         [Strings.Error]: "Error",
-        [Strings.Bonus]: "Bonus for using all letters"
+        [Strings.Bonus]: "Bonus for using all letters",
+        [Strings.PlayerSkippedMove]: "Move skipped."
     },
 
     [Languages.Hebrew]: {
@@ -242,7 +244,8 @@ export const Translations : Record<Languages, Record<Strings, string>> = {
         [Strings.ErrorFirstWordLocation]: "על המילה הראשונה להיות מונחת במשבצת המרכזית!",
         [Strings.Close]: "סגירה",
         [Strings.Error]: "שגיאה",
-        [Strings.Bonus]: "בונוס על שימוש בכל האותיות"
+        [Strings.Bonus]: "בונוס על שימוש בכל האותיות",
+        [Strings.PlayerSkippedMove]: "דילוג על התור"
     },
 }
 
