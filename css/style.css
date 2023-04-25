@@ -117,6 +117,10 @@ h1 {
     z-index: 2;
 }
 
+#swapTilesForm .game_tile {
+    margin-bottom: 7px;
+}
+
 .board_tile .active_tile {
     color: rgb(188, 0, 0);
 }
