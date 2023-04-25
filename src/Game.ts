@@ -427,6 +427,7 @@ export default class Game
             if ( (this.currentPlayer.rack.length == 0) )
             {
                 this.display.displayPlayerInfo(this.currentPlayer);
+                this.display.gameOver(this.getLeadingPlayer());
             }
             else
             {
@@ -451,6 +452,29 @@ export default class Game
                 this.board.setTile(tilePlacement.r, tilePlacement.c, null);
             });
         }
+    }
+
+    private getLeadingPlayer() : Player | null
+    {
+        let res = this.players[0];
+        let tie = true;
+        this.players.forEach((player) => {
+            if (player.points > res.points)
+            {
+                res = player;
+                tie = false;
+            }
+            else if (player.points < res.points)
+            {
+                tie = false;
+            }
+        });
+
+        if (tie)
+        {
+            return null;
+        }
+        return res;
     }
     
     private get currentPlayer(): Player 

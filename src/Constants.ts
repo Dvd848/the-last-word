@@ -214,6 +214,9 @@ export enum Strings {
     Bonus,
     PlayerSkippedMove,
     TilesSwapped,
+    GameOver,
+    Tie,
+    PlayerWon,
 }
 
 export const Translations : Record<Languages, Record<Strings, string>> = {
@@ -231,7 +234,10 @@ export const Translations : Record<Languages, Record<Strings, string>> = {
         [Strings.Error]: "Error",
         [Strings.Bonus]: "Bonus for using all letters",
         [Strings.PlayerSkippedMove]: "Move skipped.",
-        [Strings.TilesSwapped]: "The following tiles were swapped: ${tiles}"
+        [Strings.TilesSwapped]: "The following tiles were swapped: ${tiles}",
+        [Strings.GameOver]: "Game Over",
+        [Strings.Tie]: "The result is a tie.",
+        [Strings.PlayerWon]: "Player ${player} won!"
     },
 
     [Languages.Hebrew]: {
@@ -248,7 +254,10 @@ export const Translations : Record<Languages, Record<Strings, string>> = {
         [Strings.Error]: "שגיאה",
         [Strings.Bonus]: "בונוס על שימוש בכל האותיות",
         [Strings.PlayerSkippedMove]: "דילוג על התור",
-        [Strings.TilesSwapped]: "האותיות הבאות הוחלפו: ${tiles}"
+        [Strings.TilesSwapped]: "האותיות הבאות הוחלפו: ${tiles}",
+        [Strings.GameOver]: "המשחק הסתיים",
+        [Strings.Tie]: "התוצאה היא שיוויון",
+        [Strings.PlayerWon]: "${player} ניצח/ה!"
     },
 }
 

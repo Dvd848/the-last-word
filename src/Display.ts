@@ -453,8 +453,8 @@ export class Display
 
     public showError(message: string) : void 
     {
-        const myWarningModal = new BootstrapWarningModal('move-warning-modal', getStr(Constants.Strings.Error), message);
-        myWarningModal.openModal();
+        const errorModal = new BootstrapModal(BootstrapModal.Type.Error, 'move-warning-modal', getStr(Constants.Strings.Error), message);
+        errorModal.openModal();
     }
 
     public setTile(row: number, col: number, tile: Tile) : void
@@ -466,6 +466,26 @@ export class Display
         setTimeout(() => {
             tileElement.classList.remove("active_set_tile");
         }, 4000);
+    }
+
+    public gameOver(winner: Player | null) : void
+    {
+        let message = "";
+        if (winner == null)
+        {
+            message = getStr(Constants.Strings.Tie);
+        }
+        else
+        {
+            message = getStr(Constants.Strings.PlayerWon).replace("${player}", winner.name);
+        }
+        const winnerModal = new BootstrapModal(BootstrapModal.Type.Info, 'game-over-modal', getStr(Constants.Strings.GameOver), message);
+        winnerModal.openModal();
+        const endTurnButton = document.getElementById("end_turn_button") as HTMLButtonElement;
+        endTurnButton.disabled = true;
+        endTurnButton.classList.remove("button_blue");
+        endTurnButton.classList.add("button_disabled");
+        const active_rack = document.getElementById(`active_player_rack`)!.innerHTML = "";
     }
 }
 
@@ -549,24 +569,28 @@ class BootstrapToast
     }
 }
 
-
-class BootstrapWarningModal {
-    private readonly modalId: string;
-    private readonly modalTitle: string;
-    private readonly modalMessage: string;
+class BootstrapModal 
+{
+    private readonly id: string;
+    private readonly title: string;
+    private readonly message: string;
+    private readonly type : BootstrapModal.Type;
     
-    constructor(modalId: string, modalTitle: string, modalMessage: string) {
-        this.modalId = modalId;
-        this.modalTitle = modalTitle;
-        this.modalMessage = modalMessage;
+    constructor(type: BootstrapModal.Type, id: string, title: string, message: string) 
+    {
+        this.id = id;
+        this.title = title;
+        this.message = message;
+        this.type = type;
     }
     
-    public openModal(): void {
+    public openModal(): void 
+    {
         const modal = document.createElement('div');
         modal.classList.add('modal', 'fade');
-        modal.setAttribute('id', this.modalId);
+        modal.setAttribute('id', this.id);
         modal.setAttribute('tabindex', '-1');
-        modal.setAttribute('aria-labelledby', `${this.modalId}-title`);
+        modal.setAttribute('aria-labelledby', `${this.id}-title`);
         modal.setAttribute('aria-hidden', 'true');
         
         const modalDialog = document.createElement('div');
@@ -576,16 +600,25 @@ class BootstrapWarningModal {
         modalContent.classList.add('modal-content');
         
         const modalHeader = document.createElement('div');
-        modalHeader.classList.add('modal-header', 'bg-danger', 'text-white');
+        modalHeader.classList.add('modal-header', 'text-white');
+        switch (this.type)
+        {
+            case (BootstrapModal.Type.Error):
+                modalHeader.classList.add('bg-danger');
+                break;
+            case (BootstrapModal.Type.Info):
+                modalHeader.classList.add('bg-primary');
+                break;
+        }
         
         const modalTitle = document.createElement('h5');
         modalTitle.classList.add('modal-title');
-        modalTitle.setAttribute('id', `${this.modalId}-title`);
-        modalTitle.textContent = this.modalTitle;
+        modalTitle.setAttribute('id', `${this.id}-title`);
+        modalTitle.textContent = this.title;
         
         const modalBody = document.createElement('div');
         modalBody.classList.add('modal-body');
-        modalBody.textContent = this.modalMessage;
+        modalBody.textContent = this.message;
         
         const modalFooter = document.createElement('div');
         modalFooter.classList.add('modal-footer');
@@ -619,3 +652,11 @@ class BootstrapWarningModal {
     }
 }
   
+namespace BootstrapModal
+{
+    export enum Type
+    {
+        Error,
+        Info
+    }
+}

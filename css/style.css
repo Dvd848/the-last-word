@@ -155,9 +155,15 @@ h1 {
     text-align: center;
 }
 
-/* CSS */
 .button_blue {
   background-image: linear-gradient(-180deg, #37AEE2 0%, #1E96C8 100%);
+}
+
+.button_disabled {
+    background-image: linear-gradient(-180deg, #7d7d7d 0%, #4d5153 100%);
+}
+
+.big_button {
   border-radius: .5rem;
   box-sizing: border-box;
   color: #FFFFFF;
