@@ -114,6 +114,7 @@ export class Display
         const configModal = new bootstrap.Modal('#configModal');
 
         showConfigMenu.addEventListener('click', function(e) {
+            that.moveActiveTilesBackToRack();
             const config = that.callbacks.getConfiguration();
 
             configPlayer1Name.value = config.playerDetails[0].name;
@@ -159,6 +160,7 @@ export class Display
         const swapTilesForm = document.getElementById("swapTilesForm")!;
         const swapTilesModal = new bootstrap.Modal('#swapTilesModal');
         showSwapTilesMenu.addEventListener('click', function(e) {
+            that.moveActiveTilesBackToRack();
             swapTilesForm.innerHTML = '';
             let numTilesInBag = that.callbacks.getNumTilesInBag();
 
@@ -229,6 +231,15 @@ export class Display
             activeTile.classList.remove("active_tile");
             activeTile.classList.remove('grabbable');
             activeTile.setAttribute("draggable", "false");
+        });
+    }
+
+    private moveActiveTilesBackToRack() 
+    {
+        const rack = document.getElementById("active_player_rack");
+        const activeTiles = document.querySelectorAll(".active_tile");
+        activeTiles.forEach((activeTile) => {
+            rack!.appendChild(activeTile);
         });
     }
 
