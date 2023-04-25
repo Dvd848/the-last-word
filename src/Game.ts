@@ -1,5 +1,5 @@
 import * as Constants from './Constants';
-import Board from './Board'
+import {ModifiableBoard, Board} from './Board'
 import {Player, HumanPlayer, ComputerPlayer, PlayerType} from './Player';
 import Bag from './Bag';
 import Tile from './Tile';
@@ -40,7 +40,7 @@ class UserError extends Error {
 
 export default class Game 
 {
-    private board: Board;
+    private board: ModifiableBoard;
     private players: Player[];
     private currentPlayerIndex: number;
     private bag: Bag;
@@ -52,8 +52,7 @@ export default class Game
     constructor(players: PlayerDetails[]) 
     {
         const that = this;
-        this.board = new Board(Constants.BOARD_DIMENSIONS);
-        //this.players = players.map((name, index) => new Player(name, index + 1, Constants.TILES_PER_PLAYER));
+        this.board = new ModifiableBoard(Constants.BOARD_DIMENSIONS);
         this.currentPlayerIndex = 0;
         this.bag = new Bag(Constants.DefaultLanguage);
         this.firstTurnPlayed = false;

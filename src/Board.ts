@@ -2,10 +2,10 @@ import BoardTile from './BoardTile'
 import Tile from './Tile';
 import * as Constants from "./Constants";
 
-export default class Board 
+export class Board 
 {
-    private _size: number;
-    private tiles: BoardTile[][];
+    private   _size: number;
+    protected tiles: BoardTile[][];
   
     constructor(size: number) 
     {
@@ -42,11 +42,6 @@ export default class Board
         return this.tiles[row][col].tile;
     }
 
-    setTile(row: number, col: number, tile: Tile | null): void 
-    {
-        this.tiles[row][col].tile = tile;
-    }
-
     isTileEmpty(row: number, col: number) : boolean
     {
         return (this.getTile(row, col) == null);
@@ -67,4 +62,17 @@ export default class Board
         return this._size;
     }
 
+}
+
+export class ModifiableBoard extends Board
+{
+    constructor(size: number) 
+    {
+        super(size);
+    }
+
+    setTile(row: number, col: number, tile: Tile | null): void 
+    {
+        this.tiles[row][col].tile = tile;
+    }
 }

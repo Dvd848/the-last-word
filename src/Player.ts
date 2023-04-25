@@ -1,7 +1,7 @@
 import Bag from "./Bag";
 import { TilePlacement } from "./Game";
 import Tile from "./Tile";
-import Board from "./Board";
+import {Board} from "./Board";
 import Dictionary from "./Dictionary";
 import * as Constants from "./Constants"
 

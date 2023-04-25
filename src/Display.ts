@@ -1,4 +1,4 @@
-import Board from "./Board";
+import {Board} from "./Board";
 import {Player} from "./Player";
 import Tile from "./Tile";
 import { TilePlacement, WordInfo, GameConfiguration } from "./Game";
