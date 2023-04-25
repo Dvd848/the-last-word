@@ -1,5 +1,5 @@
 import {Board} from "./Board";
-import {Player} from "./Player";
+import {Player, PlayerType} from "./Player";
 import Tile from "./Tile";
 import { TilePlacement, WordInfo, GameConfiguration } from "./Game";
 import * as Constants from "./Constants"
@@ -103,16 +103,24 @@ export class Display
     {
         const that = this;
         const showConfigMenu = document.getElementById("showConfigMenu")!;
+
         const configPlayer1Name = document.getElementById("configPlayer1Name") as HTMLInputElement;
+        const configPlayer1Type = document.getElementById("configPlayer1Type") as HTMLSelectElement;
+
         const configPlayer2Name = document.getElementById("configPlayer2Name") as HTMLInputElement;
+        const configPlayer2Type = document.getElementById("configPlayer2Type") as HTMLSelectElement;
+
         const configCheckDict = document.getElementById("configCheckDict") as HTMLInputElement;
         const configModal = new bootstrap.Modal('#configModal');
 
         showConfigMenu.addEventListener('click', function(e) {
             const config = that.callbacks.getConfiguration();
 
-            configPlayer1Name.value = config.playerNames[0];
-            configPlayer2Name.value = config.playerNames[1];
+            configPlayer1Name.value = config.playerDetails[0].name;
+            configPlayer2Name.value = config.playerDetails[1].name;
+
+            configPlayer1Type.value = config.playerDetails[0].playerType.toString();
+            configPlayer2Type.value = config.playerDetails[1].playerType.toString();
 
             configCheckDict.checked = config.checkDict;
 
@@ -120,10 +128,24 @@ export class Display
         });
 
         const configOkButton = document.getElementById("configOkButton")!;
+        const playerTypeTranslator = function(s: string) : PlayerType
+        {
+            switch (s)
+            {
+                case "Human":
+                default:
+                    return PlayerType.Human;
+                case "Computer":
+                    return PlayerType.Computer;
+            }
+        }
         configOkButton.addEventListener("click", function(e) {
 
             that.callbacks.setConfiguration({
-                playerNames: [configPlayer1Name.value, configPlayer2Name.value],
+                playerDetails: [
+                    {name: configPlayer1Name.value, playerType: playerTypeTranslator(configPlayer1Type.value)},
+                    {name: configPlayer2Name.value, playerType: playerTypeTranslator(configPlayer2Type.value)}
+                ],
                 checkDict: configCheckDict.checked
             });
             configModal.hide();

@@ -6,22 +6,20 @@ import Dictionary from "./Dictionary";
 import * as Constants from "./Constants"
 
 export enum PlayerType {
-    Human,
-    Computer
+    Human = "Human",
+    Computer = "Computer"
 }
 
 export abstract class Player
 {
     private     _name        :   string;
     private     _id          :   number;
-    private     maxTileNum :   number;
+    private     maxTileNum   :   number;
     private     _rack        :   Set<Tile>;
     private     _points      :   number;
     private     _playerType  :   PlayerType;
-    protected   dictionary   : Dictionary | null;
-    protected   board        : Board | null;
 
-    protected constructor(name: string, id: number, maxTileNum: number, dictionary: Dictionary | null, board: Board | null, playerType: PlayerType)
+    protected constructor(name: string, id: number, maxTileNum: number, playerType: PlayerType)
     {
         this._name = name;
         this._id = id;
@@ -29,8 +27,6 @@ export abstract class Player
         this._points = 0;
         this._rack = new Set<Tile>();
         this._playerType = playerType;
-        this.dictionary = dictionary;
-        this.board = board;
     }
 
     public fillRack(bag: Bag) : void
@@ -39,6 +35,14 @@ export abstract class Player
         {
             this._rack.add(bag.draw()!);
         }
+    }
+
+    public setRack(tiles: Tile[]) : void
+    {
+        this._rack = new Set<Tile>();
+        tiles.forEach((tile) => {
+            this._rack.add(tile);
+        });
     }
 
     public removeTile(tile: Tile) : void
@@ -96,10 +100,8 @@ export abstract class Player
         {
             case (PlayerType.Computer):
                 return new ComputerPlayer(name, id, maxTileNum, dictionary, board);
-                break;
             case (PlayerType.Human):
                 return new HumanPlayer(name, id, maxTileNum);
-                break;
             default:
                 throw new Error(`Unknown player type '${playerType}!`);
         }
@@ -110,7 +112,7 @@ export class HumanPlayer extends Player
 {
     constructor(name: string, id: number, maxTileNum: number)
     {
-        super(name, id, maxTileNum, null, null, PlayerType.Human);
+        super(name, id, maxTileNum, PlayerType.Human);
     }
 
     public getMove() : TilePlacement[]
@@ -137,14 +139,14 @@ export class ComputerPlayer extends Player
     private direction           : Direction;
     private shadowRack          : Map<string, number>;
     private tilePlacements      : TilePlacement[][];
+    private dictionary          : Dictionary;
+    private board               : Board;
 
     constructor(name: string, id: number, maxTileNum: number, dictionary : Dictionary, board: Board)
     {
-        super(name, id, maxTileNum, dictionary, board, PlayerType.Computer);
-        if ( (dictionary == null) || (board == null))
-        {
-            throw new Error("Error creating Computer Player");
-        }
+        super(name, id, maxTileNum, PlayerType.Computer);
+        this.dictionary = dictionary;
+        this.board = board;
         this.crossCheckResults = new Map<number, Set<string>>();
         this.direction = Direction.DOWN;
         this.shadowRack = new Map<string, number>();
@@ -207,7 +209,7 @@ export class ComputerPlayer extends Player
         })
         while (wordIndex >= 0)
         {
-            if (this.board!.isTileEmpty(...playPosition))
+            if (this.board.isTileEmpty(...playPosition))
             {
                 let tile = rack[word[wordIndex]].slice(-1)[0];
                 let tilePlacement = {r : playPosition[0], c: playPosition[1], tile: tile};
@@ -223,33 +225,33 @@ export class ComputerPlayer extends Player
     private isLegalAndFilled(coordinate: [number, number]) : boolean
     {
         let [row, col] = coordinate;
-        return this.board!.isTileInBoard(row, col) && !this.board!.isTileEmpty(row, col);
+        return this.board.isTileInBoard(row, col) && !this.board.isTileEmpty(row, col);
     }
 
     private isLegalAndEmpty(coordinate: [number, number]) : boolean
     {
         let [row, col] = coordinate;
-        return this.board!.isTileInBoard(row, col) && this.board!.isTileEmpty(row, col);
+        return this.board.isTileInBoard(row, col) && this.board.isTileEmpty(row, col);
     }
 
     private index2Dto1D(row: number, col: number) : number
     {
-        return (row * this.board!.width) + col;
+        return (row * this.board.width) + col;
     }
 
     private index1Dto2D(index: number) : [number, number]
     {
-        let col = index % this.board!.width;
-        let row = Math.floor(index / this.board!.width);
+        let col = index % this.board.width;
+        let row = Math.floor(index / this.board.width);
         return [row, col];
     }
 
     private crossCheck() : Map<number, Set<string>>
     {
         let result = new Map<number, Set<string>>();
-        for (let r = 0; r < this.board!.height; r++)
+        for (let r = 0; r < this.board.height; r++)
         {
-            for (let c = 0; c < this.board!.width; c++)
+            for (let c = 0; c < this.board.width; c++)
             {
                 let pos : [number, number] = [r, c];
                 if (this.isLegalAndFilled(pos))
@@ -263,7 +265,7 @@ export class ComputerPlayer extends Player
                 while (this.isLegalAndFilled(this.beforeCross(scanPosition)))
                 {
                     scanPosition = this.beforeCross(scanPosition)
-                    lettersBefore = this.board!.getTile(...scanPosition)!.letter + lettersBefore
+                    lettersBefore = this.board.getTile(...scanPosition)!.letter + lettersBefore
                 }
 
                 let lettersAfter = "";
@@ -272,22 +274,22 @@ export class ComputerPlayer extends Player
                 while (this.isLegalAndFilled(this.afterCross(scanPosition)))
                 {
                     scanPosition = this.afterCross(scanPosition);
-                    lettersAfter = lettersAfter + this.board!.getTile(...scanPosition)!.letter;
+                    lettersAfter = lettersAfter + this.board.getTile(...scanPosition)!.letter;
                 }
 
                 let potentialLetters : Set<string>;
 
                 if (lettersBefore.length == 0 && lettersAfter.length == 0)
                 {
-                    potentialLetters = this.dictionary!.alphabet;
+                    potentialLetters = this.dictionary.alphabet;
                 }
                 else
                 {
                     potentialLetters = new Set();
-                    for (let letter of this.dictionary!.alphabet)
+                    for (let letter of this.dictionary.alphabet)
                     {
                         let word_formed = lettersBefore + letter + lettersAfter;
-                        if (this.dictionary!.contains(word_formed))
+                        if (this.dictionary.contains(word_formed))
                         {
                             potentialLetters.add(letter);
                         }
@@ -304,9 +306,9 @@ export class ComputerPlayer extends Player
     private findAnchors() : Set<number>
     {
         let anchors = new Set<number>();
-        for (let r = 0; r < this.board!.height; r++)
+        for (let r = 0; r < this.board.height; r++)
         {
-            for (let c = 0; c < this.board!.width; c++)
+            for (let c = 0; c < this.board.width; c++)
             {
                 let position : [number, number] = [r, c];
                 let isEmpty = this.isLegalAndEmpty(position);
@@ -329,7 +331,7 @@ export class ComputerPlayer extends Player
         this.extendAfter(partialWord, anchorPosition, false);
         if (limit > 0)
         {
-            for (let next_letter of this.dictionary!.edges(partialWord))
+            for (let next_letter of this.dictionary.edges(partialWord))
             {
                 const next_letter_count = this.shadowRack.get(next_letter) ?? 0;
                 if (next_letter_count > 0)
@@ -344,19 +346,19 @@ export class ComputerPlayer extends Player
 
     private extendAfter(partialWord: string, nextPosition: [number, number], isAnchorFilled: boolean) : void
     {
-        if (!this.isLegalAndFilled(nextPosition) && this.dictionary!.contains(partialWord) && isAnchorFilled)
+        if (!this.isLegalAndFilled(nextPosition) && this.dictionary.contains(partialWord) && isAnchorFilled)
         {
             this.wordFound(partialWord, this.before(nextPosition));
         }
 
-        if (this.board!.isTileInBoard(...nextPosition))
+        if (this.board.isTileInBoard(...nextPosition))
         {
-            if (this.board!.isTileEmpty(...nextPosition))
+            if (this.board.isTileEmpty(...nextPosition))
             {
-                let next_arr = this.dictionary!.alphabet;
+                let next_arr = this.dictionary.alphabet;
                 if (partialWord != "")
                 {
-                    next_arr = this.dictionary!.edges(partialWord);
+                    next_arr = this.dictionary.edges(partialWord);
                 }
 
                 next_arr.forEach((nextLetter: string) => {
@@ -375,8 +377,8 @@ export class ComputerPlayer extends Player
             }
             else
             {
-                let existing_letter = this.board!.getTile(...nextPosition)!.letter;
-                let edges = this.dictionary!.edges(partialWord);
+                let existing_letter = this.board.getTile(...nextPosition)!.letter;
+                let edges = this.dictionary.edges(partialWord);
                 if (edges.has(existing_letter))
                 {
                     this.extendAfter(partialWord + existing_letter, this.after(nextPosition), true);
@@ -391,7 +393,7 @@ export class ComputerPlayer extends Player
         {
             this.direction = direction;
             let anchors : Set<number>;
-            if (this.board!.isTileEmpty(Constants.CENTER_TILE_ROW, Constants.CENTER_TILE_COL))
+            if (this.board.isTileEmpty(Constants.CENTER_TILE_ROW, Constants.CENTER_TILE_COL))
             {
                 anchors = new Set<number>([this.index2Dto1D(Constants.CENTER_TILE_ROW, Constants.CENTER_TILE_COL)]);
             }
@@ -404,13 +406,13 @@ export class ComputerPlayer extends Player
                 if (this.isLegalAndFilled(this.before(this.index1Dto2D(anchorPosition))))
                 {
                     let scan_pos = this.before(this.index1Dto2D(anchorPosition));
-                    let partial_word = this.board!.getTile(...scan_pos)!.letter;
+                    let partial_word = this.board.getTile(...scan_pos)!.letter;
                     while (this.isLegalAndFilled(this.before(scan_pos)))
                     {
                         scan_pos = this.before(scan_pos)
-                        partial_word = this.board!.getTile(...scan_pos)!.letter + partial_word;
+                        partial_word = this.board.getTile(...scan_pos)!.letter + partial_word;
                     }
-                    let edges = this.dictionary!.edges(partial_word);
+                    let edges = this.dictionary.edges(partial_word);
                     if (edges.size > 0)
                     {
                         this.extendAfter(
