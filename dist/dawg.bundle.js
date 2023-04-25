@@ -59,6 +59,30 @@ class CompletionDAWG {
         }
         return res;
     }
+    edges(prefix = "") {
+        const encoder = new TextEncoder();
+        const decoder = new TextDecoder("utf-8");
+        const b_prefix = encoder.encode(prefix);
+        const res = [];
+        if ((this.dct == null) || (this.guide == null)) {
+            throw "Dictionary must be loaded first!";
+        }
+        const index = this.dct.follow_bytes(b_prefix, this.dct.ROOT);
+        if (index === null) {
+            return res;
+        }
+        const completer = new _dawg_wrapper__WEBPACK_IMPORTED_MODULE_0__/* .Completer */ .XB(this.dct, this.guide);
+        if (!completer.start_edges(index, b_prefix)) {
+            return res;
+        }
+        let key = decoder.decode(new Uint8Array(completer.key));
+        res.push(key.slice(-1));
+        while (completer.next_edge()) {
+            key = decoder.decode(new Uint8Array(completer.key));
+            res.push(key.slice(-1));
+        }
+        return res;
+    }
     contains(key) {
         const encoder = new TextEncoder();
         const b_key = encoder.encode(key);
@@ -307,6 +331,8 @@ class Completer {
         this._guide = guide;
         this._last_index = -1;
         this._index_stack = [];
+        this._parent_index = -1;
+        this._sib_index = null;
         this.key = [];
     }
     value() {
@@ -321,6 +347,36 @@ class Completer {
         else {
             this._index_stack = [];
         }
+    }
+    start_edges(index, prefix) {
+        this.key = [...prefix];
+        this._parent_index = index;
+        this._sib_index = null;
+        if (this._guide.size() > 0) {
+            let child_label = this._guide.child(index);
+            if (child_label) {
+                let next_index = this._dic.follow_char(child_label, index);
+                if (index != null) {
+                    this._sib_index = next_index;
+                    this.key.push(child_label);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    next_edge() {
+        if (this._sib_index == null) {
+            return false;
+        }
+        let sibling_label = this._guide.sibling(this._sib_index);
+        this._sib_index = this._dic.follow_char(sibling_label, this._parent_index);
+        if (this._sib_index == null) {
+            return false;
+        }
+        this.key.pop();
+        this.key.push(sibling_label);
+        return true;
     }
     /**
      * Gets the next key
