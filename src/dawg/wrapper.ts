@@ -198,6 +198,8 @@ export class Completer
     private _guide : Guide;
     private _last_index : number;
     private _index_stack : number[];
+    private _parent_index : number;
+    private _sib_index : number | null;
     public key : number[];
     
     constructor(dic: Dictionary, guide: Guide) 
@@ -206,6 +208,8 @@ export class Completer
         this._guide = guide;
         this._last_index = -1;
         this._index_stack = [];
+        this._parent_index = -1;
+        this._sib_index = null;
         this.key = [];
     }
 
@@ -227,6 +231,48 @@ export class Completer
         {
             this._index_stack = [];
         }
+    }
+
+    start_edges(index: number, prefix: Uint8Array) : boolean
+    {
+        this.key = [...prefix];
+        this._parent_index = index;
+        this._sib_index = null;
+        if (this._guide.size() > 0)
+        {
+            let child_label = this._guide.child(index);
+
+            if (child_label)
+            {
+                let next_index = this._dic.follow_char(child_label, index);
+                if (index != null)
+                {
+                    this._sib_index = next_index;
+                    this.key.push(child_label);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    next_edge() : boolean
+    {
+        if (this._sib_index == null)
+        {
+            return false;
+        }
+
+        let sibling_label = this._guide.sibling(this._sib_index);
+        this._sib_index = this._dic.follow_char(sibling_label, this._parent_index);
+        if (this._sib_index == null)
+        {
+            return false;
+        }
+
+        this.key.pop();
+        this.key.push(sibling_label);
+        return true;
     }
 
     /**

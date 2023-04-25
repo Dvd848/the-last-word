@@ -68,6 +68,42 @@ export class CompletionDAWG
         return res;
     }
 
+    edges(prefix = "") : string[]
+    {
+        const encoder = new TextEncoder();
+        const decoder = new TextDecoder("utf-8");
+        const b_prefix = encoder.encode(prefix);
+        const res : string[] = [];
+
+        if ( (this.dct == null) || (this.guide == null) )
+        {
+            throw "Dictionary must be loaded first!";
+        }
+
+        const index = this.dct.follow_bytes(b_prefix, this.dct.ROOT);
+        if (index === null) 
+        {
+            return res;
+        }
+
+        const completer = new Completer(this.dct, this.guide);
+        if (!completer.start_edges(index, b_prefix))
+        {
+            return res;
+        }
+
+        let key = decoder.decode(new Uint8Array(completer.key));
+        res.push(key.slice(-1));
+
+        while (completer.next_edge()) 
+        {
+            key = decoder.decode(new Uint8Array(completer.key));
+            res.push(key.slice(-1));
+        }
+
+        return res;
+    }
+
     contains(key: string) : boolean
     {
         const encoder = new TextEncoder();
