@@ -22,3 +22,7 @@ yarn-error.log*
 
 tmp.txt
 utils/words/words_*.txt
+utils/words/words_*.bak
+wolig.txt
+woo.txt
+launch.json
