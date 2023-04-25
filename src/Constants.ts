@@ -4,6 +4,7 @@ export const TILES_PER_PLAYER = 7;
 export const CENTER_TILE_ROW = 7;
 export const CENTER_TILE_COL = 7;
 export const BINGO_BONUS_POINTS = 50;
+export const MAX_CONSECUTIVE_PASS = 6;
 
 export enum Languages {
     English = "English",

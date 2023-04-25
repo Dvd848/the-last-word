@@ -48,6 +48,7 @@ export default class Game
     private firstTurnPlayed : boolean;
     private dictionary : Dictionary;
     private checkDict : boolean;
+    private consecutivePasses : number;
   
     constructor(players: PlayerDetails[]) 
     {
@@ -61,6 +62,7 @@ export default class Game
 
         this.players = players.map((details, index) => Player.createPlayer(details.name, index + 1, Constants.TILES_PER_PLAYER, 
                                                                               this.dictionary, this.board, details.type));
+        this.consecutivePasses = 0;
 
         this.display = new Display(this.board, {
             endTurn: function(tilePlacements: TilePlacement[]){that.endTurnCallback(tilePlacements);},
@@ -156,6 +158,8 @@ export default class Game
         this.bag.shuffle();
 
         this.display.logSwap(this.currentPlayer, oldTiles);
+
+        this.consecutivePasses += 1;
 
         this.moveToNextPlayer();
     }
@@ -423,7 +427,16 @@ export default class Game
 
             this.currentPlayer.fillRack(this.bag);
 
-            if ( (this.currentPlayer.rack.length == 0) )
+            if (tilePlacements.length == 0)
+            {
+                this.consecutivePasses += 1;
+            }
+            else
+            {
+                this.consecutivePasses = 0;
+            }
+
+            if ( (this.currentPlayer.rack.length == 0) || (this.consecutivePasses == Constants.MAX_CONSECUTIVE_PASS) )
             {
                 this.display.displayPlayerInfo(this.currentPlayer);
                 this.display.gameOver(this.getLeadingPlayer());
@@ -432,6 +445,7 @@ export default class Game
             {
                 this.moveToNextPlayer();
             }
+
         }
         catch(err) 
         {
