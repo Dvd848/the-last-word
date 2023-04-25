@@ -33,7 +33,34 @@
         "\u05ea": "t",
         "\u05ea'": "t"
     },
-    "list_source": {
-        "hspell": "dawg"
+    "reverse_translate_mapping": {
+        "a": "\u05d0",
+        "b": "\u05d1",
+        "g": "\u05d2",
+        "d": "\u05d3",
+        "h": "\u05d4",
+        "v": "\u05d5",
+        "z": "\u05d6",
+        "H": "\u05d7",
+        "T": "\u05d8",
+        "y": "\u05d9",
+        "c": "\u05db",
+        "l": "\u05dc",
+        "m": "\u05de",
+        "n": "\u05e0",
+        "s": "\u05e1",
+        "e": "\u05e2",
+        "p": "\u05e4",
+        "w": "\u05e6",
+        "k": "\u05e7",
+        "r": "\u05e8",
+        "S": "\u05e9",
+        "t": "\u05ea"
+    },
+    "wordlists": {
+        "hspell": {
+            "type": "dawg",
+            "filename": "eHebDict.dawg"
+        }
     }
 }

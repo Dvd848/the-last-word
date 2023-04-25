@@ -9,6 +9,7 @@ from pathlib import Path
 INPUT_DIR = Path(__file__).parent
 INPUT_PREFIX = "words_"
 OUTPUT_DIR = Path(__file__).parent / ".." / ".." / "wordlists"
+OUTPUT_NAME = "HebDict"
 
 TRANSLATE_CHARS = re.compile(r"([\u0590-\u05fe]'?)")
 
@@ -19,6 +20,15 @@ translate_mapping = {
     "ן": "n", "ס": "s", "ע": "e", "פ": "p", "ף": "p", "צ": "w", 
     "צ'": "w", "ץ": "w", "ץ'": "w", "ק": "k", "ר": "r", "ש": "S", 
     "ת": "t", "ת'": "t"
+}
+
+reverse_translate_mapping = {
+    "a": "א", "b": "ב", "g": "ג", "d": "ד", "h": "ה", 
+    "v": "ו", "z": "ז", "H": "ח", "T": "ט", "y": "י", 
+    "c": "כ", "l": "ל", "m": "מ", "n": "נ", 
+    "s": "ס", "e": "ע", "p": "פ", "w": "צ", 
+    "k": "ק", "r": "ר", "S": "ש", 
+    "t": "ת"
 }
 
 def init():
@@ -52,7 +62,7 @@ def process_words_to_text():
                 num_words += 1
 
         for words, prefix in [(words_mapping, "h"), (words_mapping_translated, "e")]:
-            with open(output_path / f"{prefix}.txt", "w", encoding = "utf8") as o:
+            with open(output_path / f"{prefix}{OUTPUT_NAME}.txt", "w", encoding = "utf8") as o:
                 o.write("\n".join(sorted(words)))
 
         license_path = INPUT_DIR / f"license_{identifier}.txt"
@@ -88,20 +98,24 @@ def create_config():
     with open(OUTPUT_DIR / "config.json", "w", encoding="utf8") as o:
         config = {}
         config["translate_mapping"] = translate_mapping
+        config["reverse_translate_mapping"] = reverse_translate_mapping
 
         list_source = {}
         for directory in OUTPUT_DIR.iterdir():
             if not directory.is_dir():
                 continue
-            current_list_source = None
+            base_name = f"e{OUTPUT_NAME}"
             
-            txt_file = Path(directory) / "e.txt"
+            txt_file = Path(directory) / f"{base_name}.txt"
             txt_size = txt_file.stat().st_size
             dawg_size = Path(txt_file.with_suffix(".dawg")).stat().st_size
             current_list_source = "txt" if txt_size <= dawg_size else "dawg"
-            list_source[directory.name] = current_list_source
+            list_source[directory.name] = {
+                "type": current_list_source,
+                "filename": f"{base_name}.{current_list_source}"
+            }
         
-        config["list_source"] = list_source
+        config["wordlists"] = list_source
             
         o.write(json.dumps(config, indent=4))
     print("Done creating configuration")
