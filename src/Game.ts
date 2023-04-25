@@ -1,6 +1,6 @@
 import * as Constants from './Constants';
 import Board from './Board'
-import Player from './Player';
+import {Player, HumanPlayer, ComputerPlayer, PlayerType} from './Player';
 import Bag from './Bag';
 import Tile from './Tile';
 import { Display, DisplayCallBacks } from './Display';
@@ -26,6 +26,12 @@ export type GameConfiguration =
     checkDict: boolean;
 }
 
+export type PlayerDetails = 
+{
+    name: string,
+    type: PlayerType
+}
+
 class UserError extends Error {
     constructor(message: string) {
         super(message);
@@ -43,16 +49,19 @@ export default class Game
     private dictionary : Dictionary;
     private checkDict : boolean;
   
-    constructor(players: string[]) 
+    constructor(players: PlayerDetails[]) 
     {
         const that = this;
         this.board = new Board(Constants.BOARD_DIMENSIONS);
-        this.players = players.map((name, index) => new Player(name, index + 1, Constants.TILES_PER_PLAYER));
+        //this.players = players.map((name, index) => new Player(name, index + 1, Constants.TILES_PER_PLAYER));
         this.currentPlayerIndex = 0;
         this.bag = new Bag(Constants.DefaultLanguage);
         this.firstTurnPlayed = false;
         this.dictionary = new Dictionary(Constants.DefaultLanguage);
         this.checkDict = true;
+
+        this.players = players.map((details, index) => Player.createPlayer(details.name, index + 1, Constants.TILES_PER_PLAYER, 
+                                                                              this.dictionary, this.board, details.type));
 
         this.display = new Display(this.board, {
             endTurn: function(tilePlacements: TilePlacement[]){that.endTurnCallback(tilePlacements);},
@@ -73,7 +82,9 @@ export default class Game
     public async init()
     {
         await this.dictionary.init();
-        this.display.setActivePlayer(this.currentPlayer);
+        //this.display.setActivePlayer(this.currentPlayer);
+        this.currentPlayerIndex = this.players.length - 1;
+        this.moveToNextPlayer();
     }
 
     public start() : void
@@ -311,6 +322,18 @@ export default class Game
         this.display.displayPlayerInfo(this.currentPlayer);
         this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
         this.display.setActivePlayer(this.currentPlayer);
+
+        if (this.currentPlayer.automaticMode())
+        {
+            const that = this;
+            setTimeout(function(){
+                let tilePlacements: TilePlacement[] = that.currentPlayer.getMove();
+                tilePlacements.forEach((tilePlacement) => {
+                    that.display.setTile(tilePlacement.r, tilePlacement.c, tilePlacement.tile);
+                });
+                that.endTurnCallback(tilePlacements);
+            }, 10);
+        }
     }
 
     private endTurnCallback(tilePlacements: TilePlacement[]) : void
@@ -401,7 +424,14 @@ export default class Game
 
             this.currentPlayer.fillRack(this.bag);
 
-            this.moveToNextPlayer();
+            if ( (this.currentPlayer.rack.length == 0) )
+            {
+                this.display.displayPlayerInfo(this.currentPlayer);
+            }
+            else
+            {
+                this.moveToNextPlayer();
+            }
         }
         catch(err) 
         {

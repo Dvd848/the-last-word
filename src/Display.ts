@@ -1,5 +1,5 @@
 import Board from "./Board";
-import Player from "./Player";
+import {Player} from "./Player";
 import Tile from "./Tile";
 import { TilePlacement, WordInfo, GameConfiguration } from "./Game";
 import * as Constants from "./Constants"
@@ -455,6 +455,17 @@ export class Display
     {
         const myWarningModal = new BootstrapWarningModal('move-warning-modal', getStr(Constants.Strings.Error), message);
         myWarningModal.openModal();
+    }
+
+    public setTile(row: number, col: number, tile: Tile) : void
+    {
+        const boardTile = document.querySelector(`div.board_tile[data-r="${row}"][data-c="${col}"]`);
+        const tileElement = this.createTile(tile, false, false);
+        tileElement.classList.add("active_set_tile");
+        boardTile?.appendChild(tileElement);
+        setTimeout(() => {
+            tileElement.classList.remove("active_set_tile");
+        }, 4000);
     }
 }
 

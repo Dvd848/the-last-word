@@ -120,6 +120,10 @@ h1 {
 .board_tile .active_tile {
     color: rgb(188, 0, 0);
 }
+
+.board_tile .active_set_tile {
+    color: rgb(132, 17, 17);
+}
  
 .points {
     position: absolute;
