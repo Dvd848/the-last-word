@@ -1,7 +1,7 @@
 import string, re
 
 with open("words_hspell.txt", "w", encoding="utf8") as o:
-    for filename in ["wolig.txt", "woo.txt"]:
+    for filename in ["wolig.txt", "woo.txt", "shemp.txt"]:
         with open(filename, encoding="utf8") as f:
             firstWord = True
             for line in f:
