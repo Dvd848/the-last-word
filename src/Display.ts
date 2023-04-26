@@ -244,11 +244,23 @@ export class Display
         const searchButton = document.getElementById("searchButton")!;
         const showSearchMenu = document.getElementById("showSearchMenu")!;
         
-        showSearchMenu.addEventListener("click", function(e) {
+        const showSearch = () => {
             searchResults.innerHTML = "";
             searchWordInput.value = "";
-            searchWordInput.focus();
             searchModal.show();
+            searchWordInput.focus();
+        }
+
+        showSearchMenu.addEventListener("click", function(e) {
+            showSearch();
+        });
+
+        document.body.addEventListener("keydown", function(e) {
+            if (e.key == "/" || e.key == ".")
+            {
+                showSearch();
+                e.preventDefault();
+            }
         });
 
         const hebrewOnly = (str: string) => {return str.replace(/[^\u0590-\u05FF]/g, '');}
