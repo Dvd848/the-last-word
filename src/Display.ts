@@ -15,6 +15,7 @@ export interface DisplayCallBacks
     swapTiles:           (tiles: Tile[]) => void;
     getNumTilesInBag:    () => number;
     newGame:             () => void;
+    checkWord:           (word: string) => boolean;
 }
 
 function getStr(id: Constants.Strings) : string
@@ -228,12 +229,57 @@ export class Display
         });
     }
 
+    private configureButtonSearch() : void
+    {
+        const that = this;
+        const searchModal = new bootstrap.Modal('#searchModal');
+        const searchWordInput = document.getElementById("searchWordInput")! as HTMLInputElement;
+        const searchResults = document.getElementById("searchResults")!;
+        const searchButton = document.getElementById("searchButton")!;
+        const showSearchMenu = document.getElementById("showSearchMenu")!;
+        
+        showSearchMenu.addEventListener("click", function(e) {
+            searchResults.innerHTML = "";
+            searchWordInput.value = "";
+            searchWordInput.focus();
+            searchModal.show();
+        });
+
+        const hebrewOnly = (str: string) => {return str.replace(/[^\u0590-\u05FF]/g, '');}
+
+        const search = () => {
+            searchResults.innerText = "";
+            const value = hebrewOnly(searchWordInput.value);
+            let included = getStr(Constants.Strings.Included);
+            let icon = "✓";
+            if (!that.callbacks.checkWord(value))
+            {
+                included = getStr(Constants.Strings.NotIncluded);
+                icon = "✕"
+            }
+            searchResults.innerText = icon + " " + getStr(Constants.Strings.IsWordInDict).replace("${word}", value).replace("${included}", included);
+        }
+
+        searchButton.addEventListener("click", function(e) {
+            search();
+        });
+
+        searchWordInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') 
+            {
+                search();
+            }
+        });
+
+    }
+
     private configureButtons() : void
     {
         this.configureButtonEndTurn();
         this.configureButtonConfigMenu();
         this.configureButtonSwapTiles();
         this.configureButtonNewGame();
+        this.configureButtonSearch();
     }
 
     public finalizePlacements() : void

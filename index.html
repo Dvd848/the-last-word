@@ -41,6 +41,9 @@
                     <a class="nav-link" href="#" data-bs-target="#newGameModal" data-bs-toggle="modal">משחק חדש</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="#" id="showSearchMenu">חיפוש במילון</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="#" id="showSwapTilesMenu">החלפת אותיות</a>
                 </li>
                 <li class="nav-item">
@@ -208,7 +211,7 @@
         </div>
     </div>
 
-    <div class="modal" tabindex="-1" id="rulesModal"  aria-hidden="true">
+    <div class="modal" tabindex="-1" id="rulesModal" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -241,6 +244,32 @@
             </div>
         </div>
     </div>
+    
+    <div class="modal" tabindex="-1" id="searchModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">חיפוש מילה</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <input type="search" class="form-control rounded" 
+                            placeholder="חיפוש מילה במילון" aria-label="Search" aria-describedby="search-addon"
+                            id="searchWordInput" />
+                        <button type="button" class="btn btn-outline-primary" id="searchButton">חיפוש</button>
+                      </div>
+                    <div id="searchResults">
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">סגירה</button>
+                </div>
+            </div>
+        </div>
+    </div>
+      
 
       
     <script src="dist/runtime.bundle.js" type="module"></script>

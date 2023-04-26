@@ -62,7 +62,8 @@ export default class Game
             setConfiguration: function(config: GameConfiguration){that.setConfigurationCallback(config);},
             swapTiles: function(tiles: Tile[]){that.swapTilesCallback(tiles);},
             getNumTilesInBag: function(){return that.bag.length;},
-            newGame: function(){that.newGame(that.getConfiguration())}
+            newGame: function(){that.newGame(that.getConfiguration())},
+            checkWord: function(word: string) {return that.checkWordCallback(word);}
         });
 
         this.newGame(gameConfiguration);
@@ -155,6 +156,11 @@ export default class Game
         {
             return false;
         }
+    }
+
+    private checkWordCallback(word: string) : boolean
+    {
+        return this.dictionary.contains(word);
     }
 
     private swapTilesCallback(tiles: Tile[]) : void

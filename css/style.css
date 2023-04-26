@@ -318,3 +318,9 @@ h1 {
     text-align: center;
     margin-top: 20px;
 }
+
+#searchResults { 
+    padding: 15px 0 0 0;
+    text-align: center;
+    font-weight: bold;
+}

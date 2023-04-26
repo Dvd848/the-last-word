@@ -218,6 +218,9 @@ export enum Strings {
     GameOver,
     Tie,
     PlayerWon,
+    Included,
+    NotIncluded,
+    IsWordInDict
 }
 
 export const Translations : Record<Languages, Record<Strings, string>> = {
@@ -238,7 +241,10 @@ export const Translations : Record<Languages, Record<Strings, string>> = {
         [Strings.TilesSwapped]: "The following tiles were swapped: ${tiles}",
         [Strings.GameOver]: "Game Over",
         [Strings.Tie]: "The result is a tie.",
-        [Strings.PlayerWon]: "Player ${player} won!"
+        [Strings.PlayerWon]: "Player ${player} won!",
+        [Strings.Included]: "is included",
+        [Strings.NotIncluded]: "is not included",
+        [Strings.IsWordInDict]: "The word \"${word}\" ${included} in the dictionary"
     },
 
     [Languages.Hebrew]: {
@@ -258,7 +264,10 @@ export const Translations : Record<Languages, Record<Strings, string>> = {
         [Strings.TilesSwapped]: "האותיות הבאות הוחלפו: ${tiles}",
         [Strings.GameOver]: "המשחק הסתיים",
         [Strings.Tie]: "התוצאה היא שיוויון",
-        [Strings.PlayerWon]: "${player} ניצח/ה!"
+        [Strings.PlayerWon]: "${player} ניצח/ה!",
+        [Strings.Included]: "נכללת",
+        [Strings.NotIncluded]: "לא נכללת",
+        [Strings.IsWordInDict]: "המילה \"${word}\" ${included} במילון"
     },
 }
 
