@@ -40,36 +40,46 @@ class UserError extends Error {
 
 export default class Game 
 {
-    private board: ModifiableBoard;
-    private players: Player[];
-    private currentPlayerIndex: number;
-    private bag: Bag;
-    private display : Display;
-    private firstTurnPlayed : boolean;
-    private dictionary : Dictionary;
-    private checkDict : boolean;
-    private consecutivePasses : number;
+    private board!              : ModifiableBoard;
+    private players!            : Player[];
+    private currentPlayerIndex! : number;
+    private bag!                : Bag;
+    private display!            : Display;
+    private firstTurnPlayed!    : boolean;
+    private dictionary!         : Dictionary;
+    private checkDict!          : boolean;
+    private consecutivePasses!  : number;
+    private isGameOver!           : boolean;
   
-    constructor(players: PlayerDetails[]) 
+    constructor(gameConfiguration: GameConfiguration, dictionary: Dictionary) 
     {
+        this.dictionary = dictionary;
+
         const that = this;
+        this.display = new Display({
+            endTurn: function(tilePlacements: TilePlacement[]){that.endTurnCallback(tilePlacements);},
+            getConfiguration: function(){return that.getConfiguration();},
+            setConfiguration: function(config: GameConfiguration){that.setConfigurationCallback(config);},
+            swapTiles: function(tiles: Tile[]){that.swapTilesCallback(tiles);},
+            getNumTilesInBag: function(){return that.bag.length;},
+            newGame: function(){that.newGame(that.getConfiguration())}
+        });
+
+        this.newGame(gameConfiguration);
+    }
+
+    public newGame(gameConfiguration: GameConfiguration) : void
+    {
         this.board = new ModifiableBoard(Constants.BOARD_DIMENSIONS);
         this.currentPlayerIndex = 0;
         this.bag = new Bag(Constants.DefaultLanguage);
         this.firstTurnPlayed = false;
-        this.dictionary = new Dictionary(Constants.DefaultLanguage);
-        this.checkDict = true;
+        this.checkDict = gameConfiguration.checkDict;
         this.consecutivePasses = 0;
-
-        this.players = this.createPlayers(players);
-
-        this.display = new Display(this.board, {
-            endTurn: function(tilePlacements: TilePlacement[]){that.endTurnCallback(tilePlacements);},
-            getConfiguration: function(){return that.getConfigurationCallback();},
-            setConfiguration: function(config: GameConfiguration){that.setConfigurationCallback(config);},
-            swapTiles: function(tiles: Tile[]){that.swapTilesCallback(tiles);},
-            getNumTilesInBag: function(){return that.bag.length;}
-        });
+        this.display.init(this.board);
+        this.isGameOver = false;
+        
+        this.players = this.createPlayers(gameConfiguration.playerDetails, false);
 
         this.players.forEach((player) => {
             player.fillRack(this.bag);
@@ -77,22 +87,14 @@ export default class Game
         });
 
         this.display.setPlayerNames(this.players);
-    }
 
-    public async init()
-    {
-        await this.dictionary.init();
-        //this.display.setActivePlayer(this.currentPlayer);
         this.currentPlayerIndex = this.players.length - 1;
         this.moveToNextPlayer();
-    }
-
-    public start() : void
-    {
+        
         this.display.show();
     }
 
-    private createPlayers(players: PlayerDetails[]) : Player[]
+    private createPlayers(players: PlayerDetails[], basedOnCurrent: boolean) : Player[]
     {
         if (this.players && (players.length != this.players.length))
         {
@@ -103,7 +105,7 @@ export default class Game
         players.forEach((player, index) => {
             const newPlayer = Player.createPlayer(player.name, index + 1, Constants.TILES_PER_PLAYER, 
                 this.dictionary, this.board, player.playerType);
-            if (this.players)
+            if (basedOnCurrent && this.players)
             {
                 newPlayer.points = this.players[index].points;
                 newPlayer.setRack(this.players[index].rack);
@@ -114,7 +116,7 @@ export default class Game
         return newPlayers;
     }
 
-    private getConfigurationCallback() : GameConfiguration
+    public getConfiguration() : GameConfiguration
     {
         return {
             playerDetails: this.players.map(player => {return {name: player.name, playerType: player.playerType}}),
@@ -141,7 +143,7 @@ export default class Game
             });
     
             this.checkDict = config.checkDict;
-            this.players = this.createPlayers(config.playerDetails);
+            this.players = this.createPlayers(config.playerDetails, true);
         
             this.display.setPlayerNames(this.players);
 
@@ -343,16 +345,24 @@ export default class Game
 
     private playAutoTurnIfNeeded() : void
     {
-        if (this.currentPlayer.automaticMode())
+        if (!this.isGameOver)
         {
-            const that = this;
-            setTimeout(function(){
-                let tilePlacements: TilePlacement[] = that.currentPlayer.getMove();
-                tilePlacements.forEach((tilePlacement) => {
-                    that.display.setTile(tilePlacement.r, tilePlacement.c, tilePlacement.tile);
-                });
-                that.endTurnCallback(tilePlacements);
-            }, 10);
+            if (this.currentPlayer.automaticMode())
+            {
+                this.display.toggleEndTurnButton(true);
+                const that = this;
+                setTimeout(function(){
+                    let tilePlacements: TilePlacement[] = that.currentPlayer.getMove();
+                    tilePlacements.forEach((tilePlacement) => {
+                        that.display.setTile(tilePlacement.r, tilePlacement.c, tilePlacement.tile);
+                    });
+                    that.endTurnCallback(tilePlacements);
+                }, 10);
+            }
+            else
+            {
+                this.display.toggleEndTurnButton(false);
+            }
         }
     }
 
@@ -466,6 +476,7 @@ export default class Game
             {
                 this.display.displayPlayerInfo(this.currentPlayer);
                 this.display.gameOver(this.getLeadingPlayer());
+                this.isGameOver = true;
             }
             else
             {

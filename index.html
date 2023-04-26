@@ -38,6 +38,9 @@
             <h1>משחק דמוי "שבץ נא" אונליין</h1>
             <ul class="navbar-nav ms-auto navbar-light-color">
                 <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-target="#newGameModal" data-bs-toggle="modal">משחק חדש</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="#" id="showSwapTilesMenu">החלפת אותיות</a>
                 </li>
                 <li class="nav-item">
@@ -179,6 +182,24 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ביטול</button>
                     <button type="button" class="btn btn-primary" id="swapTilesOkButton">אישור</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="newGameModal" tabindex="-1" aria-labelledby="newGameModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newGameModalLabel">משחק חדש</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    האם להתחיל משחק חדש?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ביטול</button>
+                    <button type="button" class="btn btn-primary" id="newGameOkButton">אישור</button>
                 </div>
             </div>
         </div>

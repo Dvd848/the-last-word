@@ -195,7 +195,7 @@ export class ComputerPlayer extends Player
 
     private wordFound(word: string, lastPosition: [number, number]) : void
     {
-        console.log('Found a word: ', word);
+        //console.log('Found a word: ', word);
         let playPosition = lastPosition;
         let wordIndex = word.length - 1;
         let tilePlacements : TilePlacement[] = [];

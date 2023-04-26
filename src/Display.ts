@@ -14,6 +14,7 @@ export interface DisplayCallBacks
     setConfiguration:    (config: GameConfiguration) => void;
     swapTiles:           (tiles: Tile[]) => void;
     getNumTilesInBag:    () => number;
+    newGame:             () => void;
 }
 
 function getStr(id: Constants.Strings) : string
@@ -24,23 +25,29 @@ function getStr(id: Constants.Strings) : string
 export class Display
 {
     private board        : Element;
-    private activeTiles  : Map<number, Tile>;
+    private activeTiles! : Map<number, Tile>;
     private callbacks    : DisplayCallBacks;
-    private activePlayer : Player | null;
+    private activePlayer : Player | null = null;
 
-    constructor(board: Board, callbacks: DisplayCallBacks)
+    constructor(callbacks: DisplayCallBacks)
     {
         this.board = document.getElementById("board")!;
-        this.activeTiles = new Map<number, Tile>();
         this.callbacks = callbacks;
-        this.activePlayer = null;
+        this.makeElementDroppable(document.getElementById("active_player_rack")!);
+        this.configureButtons();
+    }
+
+    public init(board: Board) : void
+    {
         this.createBoard(board);
+        this.activeTiles = new Map<number, Tile>();
+        this.activePlayer = null;
     }
 
     public show() : void
     {
         document.getElementById("game")!.classList.remove("hide");
-        document.getElementById("loader")!.remove();
+        document.getElementById("loader")?.remove();
     }
 
     private createBoard(board: Board) : void
@@ -61,14 +68,7 @@ export class Display
                 this.board.appendChild(tileElement);
             }
         }
-        this.attachEvents();
-    }
-
-    private attachEvents() : void
-    {
         this.makeBoardDroppable();
-        this.makeElementDroppable(document.getElementById("active_player_rack")!);
-        this.configureButtons();
     }
 
     private configureButtonEndTurn() : void
@@ -194,7 +194,6 @@ export class Display
                 swapTilesForm.appendChild(row);
             }
 
-
             document.getElementById("remainingTilesInBag")!.textContent = numTilesInBag.toString();
 
             swapTilesModal.show();
@@ -217,11 +216,24 @@ export class Display
         });
     }
 
+    private configureButtonNewGame() : void
+    {
+        const newGameModal = new bootstrap.Modal('#newGameModal');
+        const newGameOkButton = document.getElementById("newGameOkButton")!;
+        const that = this;
+        newGameOkButton.addEventListener("click", function(e) {
+            that.callbacks.newGame();
+            
+            newGameModal.hide();
+        });
+    }
+
     private configureButtons() : void
     {
         this.configureButtonEndTurn();
         this.configureButtonConfigMenu();
         this.configureButtonSwapTiles();
+        this.configureButtonNewGame();
     }
 
     public finalizePlacements() : void
@@ -382,6 +394,17 @@ export class Display
         });
     }
 
+    public toggleEndTurnButton(disable: boolean) : void
+    {
+        const endTurnButton = document.getElementById("end_turn_button") as HTMLButtonElement;
+
+        const enabledClass = "button_blue";
+        const disabledClass = "button_disabled";
+        endTurnButton.disabled = disable;
+        endTurnButton.classList.remove((disable) ? enabledClass : disabledClass);
+        endTurnButton.classList.add((disable) ? disabledClass : enabledClass);
+    }
+
     public displayPlayerInfo(player: Player) : void
     {
         const rack = document.getElementById(`player${player.id}_rack`);
@@ -514,10 +537,7 @@ export class Display
         }
         const winnerModal = new BootstrapModal(BootstrapModal.Type.Info, 'game-over-modal', getStr(Constants.Strings.GameOver), message);
         winnerModal.openModal();
-        const endTurnButton = document.getElementById("end_turn_button") as HTMLButtonElement;
-        endTurnButton.disabled = true;
-        endTurnButton.classList.remove("button_blue");
-        endTurnButton.classList.add("button_disabled");
+        this.toggleEndTurnButton(true);
         const active_rack = document.getElementById(`active_player_rack`)!.innerHTML = "";
     }
 }
@@ -660,7 +680,7 @@ class BootstrapModal
         closeButton.setAttribute('type', 'button');
         closeButton.classList.add('btn', 'btn-secondary');
         closeButton.setAttribute('data-bs-dismiss', 'modal');
-        closeButton.textContent = getStr(Constants.Strings.Close);
+                closeButton.textContent = getStr(Constants.Strings.Close);
         
         modalHeader.appendChild(modalTitle);
         modalContent.appendChild(modalHeader);
