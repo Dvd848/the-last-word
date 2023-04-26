@@ -132,6 +132,10 @@ const enum Direction
     DOWN
 }
 
+/*
+    The algorithm in this class is based on the paper by Andrew W. Appel and Guy J. Jacobson:
+    "The World’s Fastest Scrabble Program".
+*/
 export class ComputerPlayer extends Player
 {
 
