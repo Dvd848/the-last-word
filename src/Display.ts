@@ -203,14 +203,20 @@ export class Display
         const swapTilesOkButton = document.getElementById("swapTilesOkButton")!;
         swapTilesOkButton.addEventListener("click", function(e) {
 
+            const checkedCheckboxes = swapTilesForm.querySelectorAll<HTMLInputElement>('input[name="swapTile"]:checked');
+            const tilesToSwap : Tile[] = [];
+
+            for (let i = 0; i < checkedCheckboxes.length; i++) {
+                tilesToSwap.push(that.activeTiles.get(parseInt(checkedCheckboxes[i].value))!);
+            }
+
+            if (tilesToSwap.length == 0)
+            {
+                return false;
+            }
+
             if (that.callbacks.getNumTilesInBag() > 0)
             {
-                const checkedCheckboxes = swapTilesForm.querySelectorAll<HTMLInputElement>('input[name="swapTile"]:checked');
-                const tilesToSwap : Tile[] = [];
-    
-                for (let i = 0; i < checkedCheckboxes.length; i++) {
-                    tilesToSwap.push(that.activeTiles.get(parseInt(checkedCheckboxes[i].value))!);
-                }
                 that.callbacks.swapTiles(tilesToSwap);
             }
             swapTilesModal.hide();
