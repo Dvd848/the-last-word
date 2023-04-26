@@ -25,4 +25,5 @@ utils/words/words_*.txt
 utils/words/words_*.bak
 wolig.txt
 woo.txt
+extrawords.txt
 launch.json

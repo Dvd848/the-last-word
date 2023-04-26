@@ -16,4 +16,10 @@ with open("words_hspell.txt", "w", encoding="utf8") as o:
                     firstWord = True
                 else:
                     continue
+    
+    for filename in ["extrawords.txt"]:
+        with open(filename, encoding="utf8") as f:
+            for line in f:
+                line = line.rstrip()
+                o.write(line + "\n")
 
