@@ -285,24 +285,25 @@ h1 {
     color: orange;
 }
 
-@media (max-width: 800px) {
-    #header_tiles {
+nav h1 {
+    display: inline-block;
+    color: white;
+}
+
+
+#header_tiles {
+    display: inline-flex;
+    min-width: 510px;
+}
+
+@media (max-width: 1300px) {
+    nav h1 {
         display: none;
-    }
-    h2 {
-        display: block;
-        color: white;
-        margin: 0 0 0 20px;
     }
 }
 
-@media (min-width: 801px) {
-    #header_tiles {
-        display: inline-flex;
-    }
-    h2 {
-        display: none;
-    }
+nav.bg-dark {
+    background-color: #000080  !important;
 }
 
 .player_name {
