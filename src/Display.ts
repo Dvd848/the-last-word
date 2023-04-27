@@ -1,7 +1,7 @@
 import {Board} from "./Board";
 import {Player, PlayerType} from "./Player";
 import Tile from "./Tile";
-import { TilePlacement, WordInfo, GameConfiguration } from "./Game";
+import { TilePlacement, WordInfo, GameConfiguration, GameErrorTypes as GameErrorTypes } from "./Game";
 import * as Constants from "./Constants"
 import * as Utils from "./Utils"
 
@@ -515,6 +515,16 @@ export class Display
         });
     }
 
+    private translateLastLetter(word: string) : string
+    {
+        let lastChar = word.slice(-1);
+        if (Utils.isKeyOfObject(lastChar, Constants.lastLetterTranslations[Constants.DefaultLanguage]))
+        {
+            word = word.slice(0, -1) + Constants.lastLetterTranslations[Constants.DefaultLanguage][lastChar];
+        }
+        return word;
+    }
+
     public logMoveDetails(player: Player, points: number, placedWords: WordInfo[], bonusPoints: number) : void
     {
         const header = getStr(Constants.Strings.PlayerInfoTitle).replace("${name}", player.name);
@@ -534,12 +544,7 @@ export class Display
             }
 
             placedWords.forEach((wordInfo) => {
-                let word = wordInfo.word;
-                let lastChar = word.slice(-1);
-                if (Utils.isKeyOfObject(lastChar, Constants.lastLetterTranslations[Constants.DefaultLanguage]))
-                {
-                    word = word.slice(0, -1) + Constants.lastLetterTranslations[Constants.DefaultLanguage][lastChar];
-                }
+                let word = this.translateLastLetter(wordInfo.word);
                 addListItem(wordInfo.points, word);
             });
 
@@ -571,9 +576,34 @@ export class Display
         toast.show();
     }
 
-    public showError(message: string) : void 
+    public showError(errorType: GameErrorTypes, extraData: any) : void 
     {
-        const errorModal = new BootstrapModal(BootstrapModal.Type.Error, 'move-warning-modal', getStr(Constants.Strings.Error), message);
+        const mapping : Record<GameErrorTypes, Constants.Strings> = {
+            [GameErrorTypes.PlacementConsecutive]       : Constants.Strings.ErrorConsecutive,
+            [GameErrorTypes.PlacementConnected]         : Constants.Strings.ErrorConnected,
+            [GameErrorTypes.PlacementExisting]          : Constants.Strings.ErrorExisting,
+            [GameErrorTypes.PlacementIllegalWord]       : Constants.Strings.ErrorIllegalWord,
+            [GameErrorTypes.PlacementFirstWordMin]      : Constants.Strings.ErrorFirstWordMin,
+            [GameErrorTypes.PlacementFirstWordLocation] : Constants.Strings.ErrorFirstWordLocation,
+        };
+
+        const body = document.createElement("div");
+        const message = document.createTextNode(getStr(mapping[errorType]));
+        body.appendChild(message);
+
+        if (errorType == GameErrorTypes.PlacementIllegalWord)
+        {
+            const list = document.createElement("ul");
+            let words = extraData as string[];
+            words.forEach((word) => {
+                const li = document.createElement("li");
+                li.appendChild(document.createTextNode(this.translateLastLetter(word)));
+                list.appendChild(li);
+            });
+            body.appendChild(list);
+        }
+
+        const errorModal = new BootstrapModal(BootstrapModal.Type.Error, 'move-warning-modal', getStr(Constants.Strings.Error), body);
         errorModal.openModal();
     }
 
@@ -599,7 +629,13 @@ export class Display
         {
             message = getStr(Constants.Strings.PlayerWon).replace("${player}", winner.name);
         }
-        const winnerModal = new BootstrapModal(BootstrapModal.Type.Info, 'game-over-modal', getStr(Constants.Strings.GameOver), message);
+
+        const body = document.createElement("div")
+        body.appendChild(document.createTextNode(message));
+
+        const winnerModal = new BootstrapModal(BootstrapModal.Type.Info, 'game-over-modal', 
+                                               getStr(Constants.Strings.GameOver), 
+                                               body);
         winnerModal.openModal();
         this.toggleEndTurnButton(true);
         const active_rack = document.getElementById(`active_player_rack`)!.innerHTML = "";
@@ -690,14 +726,14 @@ class BootstrapModal
 {
     private readonly id: string;
     private readonly title: string;
-    private readonly message: string;
+    private readonly body: HTMLElement;
     private readonly type : BootstrapModal.Type;
     
-    constructor(type: BootstrapModal.Type, id: string, title: string, message: string) 
+    constructor(type: BootstrapModal.Type, id: string, title: string, body: HTMLElement) 
     {
         this.id = id;
         this.title = title;
-        this.message = message;
+        this.body = body;
         this.type = type;
     }
     
@@ -735,7 +771,7 @@ class BootstrapModal
         
         const modalBody = document.createElement('div');
         modalBody.classList.add('modal-body');
-        modalBody.textContent = this.message;
+        modalBody.appendChild(this.body);
         
         const modalFooter = document.createElement('div');
         modalFooter.classList.add('modal-footer');

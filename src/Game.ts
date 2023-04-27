@@ -32,9 +32,23 @@ export type PlayerDetails =
     playerType  : PlayerType
 }
 
+export enum GameErrorTypes {
+    PlacementConsecutive,
+    PlacementConnected,
+    PlacementExisting,
+    PlacementIllegalWord,
+    PlacementFirstWordMin,
+    PlacementFirstWordLocation
+}
+
 class UserError extends Error {
-    constructor(message: string) {
-        super(message);
+    public extraData : any;
+    public type : GameErrorTypes;
+    constructor(type: GameErrorTypes, extraData: any = null) 
+    {
+        super(`The following error occurred: ${type.toString()}`);
+        this.extraData = extraData;
+        this.type = type;
     }
 }
 
@@ -385,27 +399,23 @@ export default class Game
     {
         const actualTilePlacements : TilePlacement[] = [];
 
-        const getError = (id: Constants.Strings) => {
-            return Utils.getTranslation(Constants.DefaultLanguage, id);
-        };
-
         try
         {
             if (!this.verifyPlacementConsecutive(tilePlacements))
             {
-                throw new UserError(getError(Constants.Strings.ErrorConsecutive));
+                throw new UserError(GameErrorTypes.PlacementConsecutive);
             }
 
             if (!this.verifyPlacementConnected(tilePlacements))
             {
-                throw new UserError(getError(Constants.Strings.ErrorConnected));
+                throw new UserError(GameErrorTypes.PlacementConnected);
             }
 
             for (const tilePlacement of tilePlacements) 
             {
                 if (!this.board.isTileEmpty(tilePlacement.r, tilePlacement.c)) 
                 {
-                    throw new UserError(getError(Constants.Strings.ErrorExisting));
+                    throw new UserError(GameErrorTypes.PlacementExisting);
                 }
 
                 // Mark the placed tile as placed
@@ -416,22 +426,27 @@ export default class Game
             const placedWords: WordInfo[] = this.getCreatedWords(tilePlacements);
 
             // Check if all placedWords are valid words
+            const illegalWords : string[] = [];
             if (this.checkDict)
             {
                 for (const placedWord of placedWords) 
                 {
                     if (!this.dictionary.contains(placedWord.word))
                     {
-                        throw new UserError(getError(Constants.Strings.ErrorIllegalWord).replace("${word}", placedWord.word));
+                        illegalWords.push(placedWord.word);
                     }
                 }
+            }
+            if (illegalWords.length > 0)
+            {
+                throw new UserError(GameErrorTypes.PlacementIllegalWord, illegalWords);
             }
 
             if (!this.firstTurnPlayed)
             {
                 if (tilePlacements.length == 1)
                 {
-                    throw new UserError(getError(Constants.Strings.ErrorFirstWordMin));
+                    throw new UserError(GameErrorTypes.PlacementFirstWordMin);
                 }
                 else if (tilePlacements.length > 0)
                 {
@@ -446,7 +461,7 @@ export default class Game
 
                     if (!centerTileUsed)
                     {
-                        throw new UserError(getError(Constants.Strings.ErrorFirstWordLocation));
+                        throw new UserError(GameErrorTypes.PlacementFirstWordLocation);
                     }
 
                     this.firstTurnPlayed = true;
@@ -494,7 +509,7 @@ export default class Game
         {
             if (err instanceof UserError) 
             {
-                this.display.showError(err.message);
+                this.display.showError(err.type, err.extraData);
             }
             else if (err instanceof Error)
             {
