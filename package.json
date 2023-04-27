@@ -1,16 +1,19 @@
 {
   "name": "the-last-word",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A word game",
-  "main": "dist/Game.js",
+  "main": "dist/app.bundle.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "watch": "tsc -w",
+    "build": "npx webpack --mode production",
     "start": "webpack serve --live-reload --mode development"
   },
   "author": "Dvd848",
   "license": "AGPLv3",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dvd848/the-last-word.git"
+  },
   "dependencies": {
     "@popperjs/core": "^2.11.7",
     "@types/bootstrap": "^5.2.6",
