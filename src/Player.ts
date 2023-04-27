@@ -6,8 +6,9 @@ import Dictionary from "./Dictionary";
 import * as Constants from "./Constants"
 
 export enum PlayerType {
-    Human = "Human",
-    Computer = "Computer"
+    Human           = "Human",
+    ComputerNovice  = "ComputerNovice",
+    ComputerExpert  = "ComputerExpert"
 }
 
 export abstract class Player
@@ -90,7 +91,7 @@ export abstract class Player
         return this._playerType;
     }
 
-    public abstract getMove() : TilePlacement[];
+    public abstract getMove(calculatePoints: (tilePlacements: TilePlacement[]) => number) : TilePlacement[];
 
     public abstract automaticMode() : boolean;
 
@@ -98,8 +99,9 @@ export abstract class Player
     {
         switch(playerType)
         {
-            case (PlayerType.Computer):
-                return new ComputerPlayer(name, id, maxTileNum, dictionary, board);
+            case (PlayerType.ComputerNovice):
+            case (PlayerType.ComputerExpert):
+                return new ComputerPlayer(name, id, maxTileNum, dictionary, board, playerType);
             case (PlayerType.Human):
                 return new HumanPlayer(name, id, maxTileNum);
             default:
@@ -115,7 +117,7 @@ export class HumanPlayer extends Player
         super(name, id, maxTileNum, PlayerType.Human);
     }
 
-    public getMove() : TilePlacement[]
+    public getMove(calculatePoints: (tilePlacements: TilePlacement[]) => number) : TilePlacement[]
     {
         throw new Error("Not implemented!");
     }
@@ -146,9 +148,17 @@ export class ComputerPlayer extends Player
     private dictionary          : Dictionary;
     private board               : Board;
 
-    constructor(name: string, id: number, maxTileNum: number, dictionary : Dictionary, board: Board)
+    constructor(name: string, id: number, maxTileNum: number, dictionary : Dictionary, board: Board, playerType: PlayerType)
     {
-        super(name, id, maxTileNum, PlayerType.Computer);
+        switch (playerType)
+        {
+            case (PlayerType.ComputerNovice):
+            case (PlayerType.ComputerExpert):
+                break;
+            default:
+                throw Error("Illegal player type for computer");
+        }
+        super(name, id, maxTileNum, playerType);
         this.dictionary = dictionary;
         this.board = board;
         this.crossCheckResults = new Map<number, Set<string>>();
@@ -441,7 +451,7 @@ export class ComputerPlayer extends Player
         }
     }
 
-    public getMove() : TilePlacement[]
+    public getMove(calculatePoints: (tilePlacements: TilePlacement[]) => number) : TilePlacement[]
     {
         this.tilePlacements = [];
 
@@ -457,7 +467,25 @@ export class ComputerPlayer extends Player
             return [];
         }
 
-        return this.tilePlacements[Math.floor(Math.random() * this.tilePlacements.length)];
+        switch(this.playerType)
+        {
+            case (PlayerType.ComputerExpert):
+                let bestResult : [number, TilePlacement[] | null] = [0, null];
+                this.tilePlacements.forEach((tilePlacement) => {
+                    let points = calculatePoints(tilePlacement);
+                    if (points > bestResult[0])
+                    {
+                        bestResult = [points, tilePlacement];
+                    }
+                });
+                return bestResult[1]!;
+            case (PlayerType.ComputerNovice):
+                return this.tilePlacements[Math.floor(Math.random() * this.tilePlacements.length)];
+
+        }
+
+        console.log("Error: Was not able to find move");
+        return [];
     }
 
     public automaticMode() : boolean

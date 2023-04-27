@@ -369,10 +369,13 @@ export default class Game
         {
             if (this.currentPlayer.automaticMode())
             {
+                const calcPoints = (tilePlacements: TilePlacement[]) => {
+                    return this.calculatePointsForPlayerMove(tilePlacements);
+                }
                 this.display.toggleEndTurnButton(true);
                 const that = this;
                 setTimeout(function(){
-                    let tilePlacements: TilePlacement[] = that.currentPlayer.getMove();
+                    let tilePlacements: TilePlacement[] = that.currentPlayer.getMove(calcPoints);
                     tilePlacements.forEach((tilePlacement) => {
                         that.display.setTile(tilePlacement.r, tilePlacement.c, tilePlacement.tile);
                     });
@@ -393,6 +396,31 @@ export default class Game
         this.display.setActivePlayer(this.currentPlayer);
 
         this.playAutoTurnIfNeeded();
+    }
+
+    private calculatePointsForPlayerMove(tilePlacements: TilePlacement[]) : number
+    {
+        try
+        {
+            tilePlacements.forEach((tilePlacement) => {
+                this.board.setTile(tilePlacement.r, tilePlacement.c, tilePlacement.tile);
+            });
+            const placedWords: WordInfo[] = this.getCreatedWords(tilePlacements);
+            let [newPoints, bonusPoints] = this.calculatePoints(tilePlacements, placedWords);
+            return newPoints + bonusPoints;
+        }
+        catch (err)
+        {
+            console.log(err);
+        }
+        finally
+        {
+            tilePlacements.forEach((tilePlacement) => {
+                this.board.setTile(tilePlacement.r, tilePlacement.c, null);
+            });
+        }
+
+        return 0;
     }
 
     private endTurnCallback(tilePlacements: TilePlacement[], forceObjection: boolean) : void

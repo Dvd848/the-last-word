@@ -6,7 +6,7 @@ import { PlayerType } from './Player';
 let defaultConfig : GameConfiguration = {
     playerDetails: [
         {name: "שחקן/ית א'", playerType: PlayerType.Human}, 
-        {name: "מחשב", playerType: PlayerType.Computer}
+        {name: "מחשב", playerType: PlayerType.ComputerNovice}
     ],
     checkDict: true
 };

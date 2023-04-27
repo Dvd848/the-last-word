@@ -119,8 +119,10 @@ export class Display
                 case "Human":
                 default:
                     return PlayerType.Human;
-                case "Computer":
-                    return PlayerType.Computer;
+                case "ComputerNovice":
+                    return PlayerType.ComputerNovice;
+                case "ComputerExpert":
+                    return PlayerType.ComputerExpert;
             }
         }
         configOkButton.addEventListener("click", function(e) {
