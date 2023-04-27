@@ -9,7 +9,7 @@ import * as bootstrap from 'bootstrap';
 
 export interface DisplayCallBacks
 {
-    endTurn:             (tile_placements: TilePlacement[]) => void;
+    endTurn:             (tile_placements: TilePlacement[], forceObjection: boolean) => void;
     getConfiguration:    () => GameConfiguration;
     setConfiguration:    (config: GameConfiguration) => void;
     swapTiles:           (tiles: Tile[]) => void;
@@ -78,25 +78,7 @@ export class Display
         const endTurnButton = document.getElementById("end_turn_button")!;
         endTurnButton.innerText = getStr(Constants.Strings.EndTurn);
         endTurnButton.addEventListener('click', function(e){
-            const tilePlacements : TilePlacement[] = [];
-
-            const activeTiles = document.querySelectorAll(".active_tile");
-
-            activeTiles.forEach((activeTile) => {
-                const parent = activeTile.parentElement;
-                if (parent?.classList.contains("board_tile"))
-                {
-                    const tileId = parseInt(activeTile.id.replace("game_tile_", ""));
-
-                    tilePlacements.push({
-                        tile: that.activeTiles.get(tileId)!, 
-                        r: parseInt(parent.dataset.r!), 
-                        c: parseInt(parent.dataset.c!)
-                    });
-                }
-            });
-
-            that.callbacks.endTurn(tilePlacements);
+            that.endTurn(false);
         });
     }
 
@@ -308,6 +290,30 @@ export class Display
             activeTile.classList.remove('grabbable');
             activeTile.setAttribute("draggable", "false");
         });
+    }
+
+    private endTurn(forceObjection: boolean) : void
+    {
+        const that = this;
+        const tilePlacements : TilePlacement[] = [];
+
+        const activeTiles = document.querySelectorAll(".active_tile");
+
+        activeTiles.forEach((activeTile) => {
+            const parent = activeTile.parentElement;
+            if (parent?.classList.contains("board_tile"))
+            {
+                const tileId = parseInt(activeTile.id.replace("game_tile_", ""));
+
+                tilePlacements.push({
+                    tile: that.activeTiles.get(tileId)!, 
+                    r: parseInt(parent.dataset.r!), 
+                    c: parseInt(parent.dataset.c!)
+                });
+            }
+        });
+
+        that.callbacks.endTurn(tilePlacements, forceObjection);
     }
 
     private moveActiveTilesBackToRack() 
@@ -593,6 +599,7 @@ export class Display
 
         if (errorType == GameErrorTypes.PlacementIllegalWord)
         {
+            const that = this;
             const list = document.createElement("ul");
             let words = extraData as string[];
             words.forEach((word) => {
@@ -601,6 +608,20 @@ export class Display
                 list.appendChild(li);
             });
             body.appendChild(list);
+
+            const objectionDiv = document.createElement("div");
+            objectionDiv.classList.add("objection");
+            const objectionButton = document.createElement("button");
+            objectionButton.appendChild(document.createTextNode(getStr(Constants.Strings.Objection)));
+
+            objectionButton.setAttribute('data-bs-dismiss', 'modal');
+            objectionButton.addEventListener('click', function(e){
+                that.endTurn(true);
+                errorModal
+            });
+
+            objectionDiv.appendChild(objectionButton);
+            body.appendChild(objectionDiv);
         }
 
         const errorModal = new BootstrapModal(BootstrapModal.Type.Error, 'move-warning-modal', getStr(Constants.Strings.Error), body);
@@ -780,7 +801,7 @@ class BootstrapModal
         closeButton.setAttribute('type', 'button');
         closeButton.classList.add('btn', 'btn-secondary');
         closeButton.setAttribute('data-bs-dismiss', 'modal');
-                closeButton.textContent = getStr(Constants.Strings.Close);
+        closeButton.textContent = getStr(Constants.Strings.Close);
         
         modalHeader.appendChild(modalTitle);
         modalContent.appendChild(modalHeader);

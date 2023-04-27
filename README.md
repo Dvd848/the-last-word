@@ -39,7 +39,7 @@ However, this is far from being ideal for several reasons:
 
 Therefore, an attempt was made to select only a subset of the words accepted by Hspell. Details on the process are available [here](https://github.com/Dvd848/the-last-word/tree/main/utils/words).
 
-It's possible to disable the dictionary-check via the Settings menu of the game.  
+As a partial mitigation, it's possible to force the game to accept the words in a certain move by using an "objection". Alternatively, it's possible to disable the dictionary-check via the Settings menu of the game.  
 Suggestion for alternative dictionaries are welcome (the dictionaries must have a license compatible with "The Last Word"'s own license as listed below).
 
 ## References

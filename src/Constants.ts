@@ -220,7 +220,8 @@ export enum Strings {
     PlayerWon,
     Included,
     NotIncluded,
-    IsWordInDict
+    IsWordInDict,
+    Objection
 }
 
 export const Translations : Record<Languages, Record<Strings, string>> = {
@@ -244,7 +245,8 @@ export const Translations : Record<Languages, Record<Strings, string>> = {
         [Strings.PlayerWon]: "Player ${player} won!",
         [Strings.Included]: "is included",
         [Strings.NotIncluded]: "is not included",
-        [Strings.IsWordInDict]: "The word \"${word}\" ${included} in the dictionary"
+        [Strings.IsWordInDict]: "The word \"${word}\" ${included} in the dictionary",
+        [Strings.Objection]: "Objection"
     },
 
     [Languages.Hebrew]: {
@@ -267,7 +269,8 @@ export const Translations : Record<Languages, Record<Strings, string>> = {
         [Strings.PlayerWon]: "${player} ניצח/ה!",
         [Strings.Included]: "נכללת",
         [Strings.NotIncluded]: "לא נכללת",
-        [Strings.IsWordInDict]: "המילה \"${word}\" ${included} במילון"
+        [Strings.IsWordInDict]: "המילה \"${word}\" ${included} במילון",
+        [Strings.Objection]: "ערעור"
     },
 }
 

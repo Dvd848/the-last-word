@@ -71,7 +71,7 @@ export default class Game
 
         const that = this;
         this.display = new Display({
-            endTurn: function(tilePlacements: TilePlacement[]){that.endTurnCallback(tilePlacements);},
+            endTurn: function(tilePlacements: TilePlacement[], forceObjection: boolean){that.endTurnCallback(tilePlacements, forceObjection);},
             getConfiguration: function(){return that.getConfiguration();},
             setConfiguration: function(config: GameConfiguration){that.setConfigurationCallback(config);},
             swapTiles: function(tiles: Tile[]){that.swapTilesCallback(tiles);},
@@ -376,7 +376,7 @@ export default class Game
                     tilePlacements.forEach((tilePlacement) => {
                         that.display.setTile(tilePlacement.r, tilePlacement.c, tilePlacement.tile);
                     });
-                    that.endTurnCallback(tilePlacements);
+                    that.endTurnCallback(tilePlacements, false);
                 }, 10);
             }
             else
@@ -395,7 +395,7 @@ export default class Game
         this.playAutoTurnIfNeeded();
     }
 
-    private endTurnCallback(tilePlacements: TilePlacement[]) : void
+    private endTurnCallback(tilePlacements: TilePlacement[], forceObjection: boolean) : void
     {
         const actualTilePlacements : TilePlacement[] = [];
 
@@ -427,7 +427,7 @@ export default class Game
 
             // Check if all placedWords are valid words
             const illegalWords : string[] = [];
-            if (this.checkDict)
+            if (this.checkDict && !forceObjection)
             {
                 for (const placedWord of placedWords) 
                 {
