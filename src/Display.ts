@@ -536,7 +536,7 @@ export class Display
     public logMoveDetails(player: Player, points: number, placedWords: WordInfo[], bonusPoints: number) : void
     {
         const header = getStr(Constants.Strings.PlayerInfoTitle).replace("${name}", player.name);
-        const subheader = getStr(Constants.Strings.PlayerInfoPoints).replace("${points}", points.toString());
+        const subheader = getStr(Constants.Strings.PlayerInfoPoints).replace("${points}", (points + bonusPoints).toString());
 
         let content : HTMLElement;
         if (placedWords.length > 0)
