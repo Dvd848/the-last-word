@@ -21,6 +21,7 @@ yarn-debug.log*
 yarn-error.log*
 
 tmp.txt
+tmp*.py
 utils/words/words_*.txt
 utils/words/words_*.bak
 wolig.txt

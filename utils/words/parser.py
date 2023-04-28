@@ -17,9 +17,11 @@ with open("words_hspell.txt", "w", encoding="utf8") as o:
                 else:
                     continue
     
-    for filename in ["extrawords.txt"]:
+    for filename in ["extrawords.txt", "customwords.txt"]:
         with open(filename, encoding="utf8") as f:
             for line in f:
                 line = line.rstrip()
+                if line.startswith("#"):
+                    continue
                 o.write(line + "\n")
 
