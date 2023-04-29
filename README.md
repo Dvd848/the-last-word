@@ -48,6 +48,11 @@ Suggestion for alternative dictionaries are welcome (the dictionaries must have 
 
 The computer's AI is based on a paper by Andrew W. Appel and Guy J. Jacobson titled "[The World’s Fastest Scrabble Program](https://www.cs.cmu.edu/afs/cs/academic/class/15451-s06/www/lectures/scrabble.pdf)". For whoever's interested in diving into the algorithm, there's a good video walkthrough [here](https://www.youtube.com/watch?v=9cytoYiF9uY).
 
+Currently the AI supports two difficulty levels:
+
+ * Novice: The computer randomly selects a legal move
+ * Expert: The computer selects the move that will maximize the amount of points for the current turn
+
 ### Dictionary Storage
 
 The dictionary is stored as a DAWG (Directed Acyclic Word Graph) which significantly reduces its size. 
@@ -74,8 +79,11 @@ The project includes a Docker file that can be used to setup the game locally.
  1. Build the container with `docker-compose up -d --build`
  2. Run the container with `docker-compose up -d`
  3. Attach to the container with `docker-compose exec app sh`
- 4. Run `npm start` to start the server
- 5. Alternatively run `npx webpack --mode production` to bundle the code. This would result in some `*.js` files being written to `dist`
+ 4. (First time only) Install the packages from `npm` using `npm install`
+ 5. Run `npm start` to start the server
+ 6. Alternatively run `npx webpack --mode production` to bundle the code. This would result in some `*.js` files being written to `dist`
+ 7. When done, execute `exit` to exit the shell
+ 8. Execute `docker-compose down` to stop the container
 
 For the online version hosted in GitHub Pages, changes to the Typescript files only take effect once the code is bundled and submitted to GitHub.
 
