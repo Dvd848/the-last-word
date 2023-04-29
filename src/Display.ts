@@ -2,27 +2,63 @@ import {Board} from "./Board";
 import {Player, PlayerType} from "./Player";
 import Tile from "./Tile";
 import { TilePlacement, WordInfo, GameConfiguration, GameErrorTypes as GameErrorTypes } from "./Game";
-import * as Constants from "./Constants"
-import * as Utils from "./Utils"
+import { Strings, getStr, translateLastLetter } from "./Strings";
 
 import * as bootstrap from 'bootstrap';
 
+/**
+ * Callbacks that the Game must provide to the Display.
+ */
 export interface DisplayCallBacks
 {
+    /**
+     * Ends the current turn.
+     * @param tile_placements - The tile placements for this turn.
+     * @param forceObjection - Whether to force an objection or not.
+     */
     endTurn:             (tile_placements: TilePlacement[], forceObjection: boolean) => void;
+
+    /**
+     * Gets the current game configuration.
+     * @returns The current game configuration.
+     */
     getConfiguration:    () => GameConfiguration;
+
+    /**
+     * Sets the current game configuration.
+     * @param config - The new game configuration to set.
+     */
     setConfiguration:    (config: GameConfiguration) => void;
+
+    /**
+     * Swaps tiles in the player's rack with tiles from the bag.
+     * @param tiles - The tiles to swap with tiles from the bag.
+     */
     swapTiles:           (tiles: Tile[]) => void;
+
+    /**
+     * Gets the number of tiles remaining in the bag.
+     * @returns The number of tiles remaining in the bag.
+     */
     getNumTilesInBag:    () => number;
+
+    /**
+     * Starts a new game.
+     */
     newGame:             () => void;
+
+    /**
+     * Checks if a word is in the dictionary or not.
+     * @param word - The word to check for validity.
+     * @returns True if the word is valid, false otherwise.
+     */
     checkWord:           (word: string) => boolean;
 }
 
-function getStr(id: Constants.Strings) : string
-{
-    return Utils.getTranslation(Constants.DefaultLanguage, id);
-}
-
+/**
+ * Display class handles the user interface.
+ * @class
+ */
 export class Display
 {
     private board        : Element;
@@ -38,6 +74,10 @@ export class Display
         this.configureButtons();
     }
 
+    /**
+     * Initializes the Display class with a board object.
+     * @param board - The board object to initialize with.
+     */
     public init(board: Board) : void
     {
         this.createBoard(board);
@@ -45,12 +85,19 @@ export class Display
         this.activePlayer = null;
     }
 
+    /**
+     * Shows the game board.
+     */
     public show() : void
     {
         document.getElementById("game")!.classList.remove("hide");
         document.getElementById("loader")?.remove();
     }
 
+    /**
+     * Creates the board element in HTML based on the given board object.
+     * @param board - The board object that contains information about the board's dimensions and tiles.
+     */
     private createBoard(board: Board) : void
     {
         this.board.innerHTML = '';
@@ -64,7 +111,7 @@ export class Display
                 tileElement.dataset.r = r.toString();
                 tileElement.dataset.c = c.toString();
 
-                tileElement.classList.add(`tile_type_${board.getBoardTile(r, c).type}`);
+                tileElement.classList.add(`tile_type_${board.getBoardTileType(r, c)}`);
 
                 this.board.appendChild(tileElement);
             }
@@ -72,16 +119,29 @@ export class Display
         this.makeBoardDroppable();
     }
 
+    
+    /**
+     * Configures the end turn button.
+     */
     private configureButtonEndTurn() : void
     {
         const that = this;
         const endTurnButton = document.getElementById("end_turn_button")!;
-        endTurnButton.innerText = getStr(Constants.Strings.EndTurn);
+        endTurnButton.innerText = getStr(Strings.EndTurn);
         endTurnButton.addEventListener('click', function(e){
             that.endTurn(false);
         });
     }
 
+    /**
+     * Configures the configuration menu button and its associated modal.
+     * 
+     * @remarks
+     * - The configuration menu button is used to display the configuration modal.
+     * - The configuration modal allows the user to change the game configuration.
+     * - The configuration modal contains two player name inputs and two player type dropdowns.
+     * - The configuration modal also contains a checkbox to enable/disable dictionary checking.
+     */
     private configureButtonConfigMenu() : void
     {
         const that = this;
@@ -138,6 +198,9 @@ export class Display
         });
     }
 
+    /**
+     * Configures the swap tiles button and its associated modal.
+     */
     private configureButtonSwapTiles() : void
     {
         const that = this;
@@ -207,6 +270,9 @@ export class Display
         });
     }
 
+    /**
+     * Configure the new game button.
+     */
     private configureButtonNewGame() : void
     {
         const newGameModal = new bootstrap.Modal('#newGameModal');
@@ -219,6 +285,9 @@ export class Display
         });
     }
 
+    /**
+     * Configures the search button and its associated modal.
+     */
     private configureButtonSearch() : void
     {
         const that = this;
@@ -252,14 +321,14 @@ export class Display
         const search = () => {
             searchResults.innerText = "";
             const value = hebrewOnly(searchWordInput.value);
-            let included = getStr(Constants.Strings.Included);
+            let included = getStr(Strings.Included);
             let icon = "✓";
             if (!that.callbacks.checkWord(value))
             {
-                included = getStr(Constants.Strings.NotIncluded);
+                included = getStr(Strings.NotIncluded);
                 icon = "✕"
             }
-            searchResults.innerText = icon + " " + getStr(Constants.Strings.IsWordInDict).replace("${word}", value).replace("${included}", included);
+            searchResults.innerText = icon + " " + getStr(Strings.IsWordInDict).replace("${word}", value).replace("${included}", included);
         }
 
         searchButton.addEventListener("click", function(e) {
@@ -275,6 +344,13 @@ export class Display
 
     }
 
+    /**
+     * Configures the buttons for the game.
+     * 
+     * This function sets up the event listeners for the buttons in the game, such as the "End Turn" button and the "Swap Tiles" button.
+     * It also handles displaying the configuration menu and swapping tiles.
+     * 
+     */
     private configureButtons() : void
     {
         this.configureButtonEndTurn();
@@ -284,6 +360,9 @@ export class Display
         this.configureButtonSearch();
     }
 
+    /**
+     * Finalize a placement on the board, preventing the tiles from being moved from their (now final) location.
+     */
     public finalizePlacements() : void
     {
         const activeTiles = document.querySelectorAll(".active_tile");
@@ -294,6 +373,13 @@ export class Display
         });
     }
 
+    /**
+     * End the current turn, identity the current placement and check if it's legal.
+     * @param forceObjection - A boolean indicating whether the user wishes to force the validity 
+     *                         of the words even if some of them aren't in the dictionary.
+     *                         This parameter only allows to override the dictionary check, 
+     *                         all other rules apply.
+     */
     private endTurn(forceObjection: boolean) : void
     {
         const that = this;
@@ -318,6 +404,9 @@ export class Display
         that.callbacks.endTurn(tilePlacements, forceObjection);
     }
 
+    /**
+     * Move active tiles back to rack.
+     */
     private moveActiveTilesBackToRack() 
     {
         const rack = document.getElementById("active_player_rack");
@@ -327,6 +416,10 @@ export class Display
         });
     }
 
+    /**
+     * Makes an element droppable by adding event listeners for drag and drop events.
+     * @param element - The element to make droppable.
+     */
     private makeElementDroppable(element: Element) : void
     {
         element.classList.add('droppable');
@@ -391,6 +484,9 @@ export class Display
         });
     }
 
+    /**
+     * Make the board a valid droppable area.
+     */
     private makeBoardDroppable() : void
     {
         const tiles = document.querySelectorAll('.board_tile');
@@ -399,6 +495,14 @@ export class Display
         });
     }
 
+    /**
+     * Create a tile with the given attributes.
+     * 
+     * @param tile The tile to create
+     * @param is_draggable Whether this tile should be draggable.
+     * @param is_active Whether this tile is active, i.e. part of the current turn
+     * @returns The HTML tile element
+     */
     private createTile(tile: Tile, is_draggable: boolean, is_active: boolean) : Element
     {
         const tileElement = document.createElement('div');
@@ -458,6 +562,11 @@ export class Display
         return tileElement
     }
 
+    /**
+     * Set the player names on the board.
+     * 
+     * @param players The players.
+     */
     public setPlayerNames(players: Player[])
     {
         players.forEach((player) => {
@@ -466,6 +575,10 @@ export class Display
         });
     }
 
+    /**
+     * Enable or disable the "End Turn" button.
+     * @param disable True to disable the button, False to enable it.
+     */
     public toggleEndTurnButton(disable: boolean) : void
     {
         const endTurnButton = document.getElementById("end_turn_button") as HTMLButtonElement;
@@ -477,6 +590,11 @@ export class Display
         endTurnButton.classList.add((disable) ? disabledClass : enabledClass);
     }
 
+    /**
+     * Displays the player information on the screen.
+     * This includes moving their tiles to their rack, and updating their points.
+     * @param player - The player whose information is to be displayed.
+     */
     public displayPlayerInfo(player: Player) : void
     {
         const rack = document.getElementById(`player${player.id}_rack`);
@@ -497,10 +615,13 @@ export class Display
             throw new Error(`Can't find player points for player ${player.id}`);
         }
         points.innerText = player.points.toString();
-
-        
     }
 
+    /**
+     * Sets the active player and updates the display accordingly.
+     * This includes moving the tiles from their rack to the active rack.
+     * @param player - The player to set as active.
+     */
     public setActivePlayer(player: Player) : void
     {
         const player_rack = document.getElementById(`player${player.id}_rack`);
@@ -523,20 +644,17 @@ export class Display
         });
     }
 
-    private translateLastLetter(word: string) : string
-    {
-        let lastChar = word.slice(-1);
-        if (Utils.isKeyOfObject(lastChar, Constants.lastLetterTranslations[Constants.DefaultLanguage]))
-        {
-            word = word.slice(0, -1) + Constants.lastLetterTranslations[Constants.DefaultLanguage][lastChar];
-        }
-        return word;
-    }
-
+    /**
+     * Log the move details (display a Toast with the details).
+     * @param player The player that performed the move
+     * @param points The amount of points (excluding Bonus points) that the user got for this move
+     * @param placedWords The words that the user placed as part of this move, together with their points
+     * @param bonusPoints The amount of bonus points received during this turn
+     */
     public logMoveDetails(player: Player, points: number, placedWords: WordInfo[], bonusPoints: number) : void
     {
-        const header = getStr(Constants.Strings.PlayerInfoTitle).replace("${name}", player.name);
-        const subheader = getStr(Constants.Strings.PlayerInfoPoints).replace("${points}", (points + bonusPoints).toString());
+        const header = getStr(Strings.PlayerInfoTitle).replace("${name}", player.name);
+        const subheader = getStr(Strings.PlayerInfoPoints).replace("${points}", (points + bonusPoints).toString());
 
         let content : HTMLElement;
         if (placedWords.length > 0)
@@ -545,54 +663,64 @@ export class Display
             list.style.margin = "10px";
             const addListItem = (numPoints:number, description: string) => {
                 const listItem = document.createElement('li');
-                const wordPoints = getStr(Constants.Strings.PlayerInfoPoints).replace("${points}", numPoints.toString());
+                const wordPoints = getStr(Strings.PlayerInfoPoints).replace("${points}", numPoints.toString());
                 const textNode = document.createTextNode(`${description}: ${wordPoints}`);
                 listItem.appendChild(textNode);
                 list.appendChild(listItem);
             }
 
             placedWords.forEach((wordInfo) => {
-                let word = this.translateLastLetter(wordInfo.word);
+                let word = translateLastLetter(wordInfo.word);
                 addListItem(wordInfo.points, word);
             });
 
             if (bonusPoints > 0)
             {
-                addListItem(bonusPoints, getStr(Constants.Strings.Bonus));
+                addListItem(bonusPoints, getStr(Strings.Bonus));
             }
             content = list;
         }
         else
         {
             content = document.createElement("p");
-            content.appendChild(document.createTextNode(getStr(Constants.Strings.PlayerSkippedMove)));
+            content.appendChild(document.createTextNode(getStr(Strings.PlayerSkippedMove)));
         }
 
         const toast = new BootstrapToast(header, subheader, content, 10000);
         toast.show();
     }
 
+    /**
+     * Log the details of a letter swap.
+     * @param player The player that swapped their letters.
+     * @param oldTiles The old tiles that were swapped.
+     */
     public logSwap(player: Player, oldTiles: Tile[]) : void
     {
-        const header = getStr(Constants.Strings.PlayerInfoTitle).replace("${name}", player.name);
+        const header = getStr(Strings.PlayerInfoTitle).replace("${name}", player.name);
         const p = document.createElement('p');
 
         const tilesSwapped = oldTiles.map((tile) => tile.letter + "'");
 
-        p.textContent = getStr(Constants.Strings.TilesSwapped).replace("${tiles}", tilesSwapped.join(", "));
+        p.textContent = getStr(Strings.TilesSwapped).replace("${tiles}", tilesSwapped.join(", "));
         const toast = new BootstrapToast(header, "", p, 10000);
         toast.show();
     }
 
+    /**
+     * Display an error to the user.
+     * @param errorType The error ID.
+     * @param extraData Extra data to show as part of the error. The data is error specific.
+     */
     public showError(errorType: GameErrorTypes, extraData: any) : void 
     {
-        const mapping : Record<GameErrorTypes, Constants.Strings> = {
-            [GameErrorTypes.PlacementConsecutive]       : Constants.Strings.ErrorConsecutive,
-            [GameErrorTypes.PlacementConnected]         : Constants.Strings.ErrorConnected,
-            [GameErrorTypes.PlacementExisting]          : Constants.Strings.ErrorExisting,
-            [GameErrorTypes.PlacementIllegalWord]       : Constants.Strings.ErrorIllegalWord,
-            [GameErrorTypes.PlacementFirstWordMin]      : Constants.Strings.ErrorFirstWordMin,
-            [GameErrorTypes.PlacementFirstWordLocation] : Constants.Strings.ErrorFirstWordLocation,
+        const mapping : Record<GameErrorTypes, Strings> = {
+            [GameErrorTypes.PlacementConsecutive]       : Strings.ErrorConsecutive,
+            [GameErrorTypes.PlacementConnected]         : Strings.ErrorConnected,
+            [GameErrorTypes.PlacementExisting]          : Strings.ErrorExisting,
+            [GameErrorTypes.PlacementIllegalWord]       : Strings.ErrorIllegalWord,
+            [GameErrorTypes.PlacementFirstWordMin]      : Strings.ErrorFirstWordMin,
+            [GameErrorTypes.PlacementFirstWordLocation] : Strings.ErrorFirstWordLocation,
         };
 
         const body = document.createElement("div");
@@ -606,7 +734,7 @@ export class Display
             let words = extraData as string[];
             words.forEach((word) => {
                 const li = document.createElement("li");
-                li.appendChild(document.createTextNode(this.translateLastLetter(word)));
+                li.appendChild(document.createTextNode(translateLastLetter(word)));
                 list.appendChild(li);
             });
             body.appendChild(list);
@@ -614,7 +742,7 @@ export class Display
             const objectionDiv = document.createElement("div");
             objectionDiv.classList.add("objection");
             const objectionButton = document.createElement("button");
-            objectionButton.appendChild(document.createTextNode(getStr(Constants.Strings.Objection)));
+            objectionButton.appendChild(document.createTextNode(getStr(Strings.Objection)));
 
             objectionButton.setAttribute('data-bs-dismiss', 'modal');
             objectionButton.addEventListener('click', function(e){
@@ -626,10 +754,16 @@ export class Display
             body.appendChild(objectionDiv);
         }
 
-        const errorModal = new BootstrapModal(BootstrapModal.Type.Error, 'move-warning-modal', getStr(Constants.Strings.Error), body);
+        const errorModal = new BootstrapModal(BootstrapModal.Type.Error, 'move-warning-modal', getStr(Strings.Error), body);
         errorModal.openModal();
     }
 
+    /**
+     * Set a tile on the board.
+     * @param row The row to set the tile on.
+     * @param col The column to set the tile on.
+     * @param tile The tile to set.
+     */
     public setTile(row: number, col: number, tile: Tile) : void
     {
         const boardTile = document.querySelector(`div.board_tile[data-r="${row}"][data-c="${col}"]`);
@@ -641,23 +775,27 @@ export class Display
         }, 4000);
     }
 
+    /**
+     * Handle the end of the game.
+     * @param winner The winner, or null if there's a tie.
+     */
     public gameOver(winner: Player | null) : void
     {
         let message = "";
         if (winner == null)
         {
-            message = getStr(Constants.Strings.Tie);
+            message = getStr(Strings.Tie);
         }
         else
         {
-            message = getStr(Constants.Strings.PlayerWon).replace("${player}", winner.name);
+            message = getStr(Strings.PlayerWon).replace("${player}", winner.name);
         }
 
         const body = document.createElement("div")
         body.appendChild(document.createTextNode(message));
 
         const winnerModal = new BootstrapModal(BootstrapModal.Type.Info, 'game-over-modal', 
-                                               getStr(Constants.Strings.GameOver), 
+                                               getStr(Strings.GameOver), 
                                                body);
         winnerModal.openModal();
         this.toggleEndTurnButton(true);
@@ -665,6 +803,9 @@ export class Display
     }
 }
 
+/**
+ * Represents a Bootstrap Toast.
+ */
 class BootstrapToast 
 {
     private readonly header: string;
@@ -745,6 +886,9 @@ class BootstrapToast
     }
 }
 
+/**
+ * Represents a Bootstrap Modal.
+ */
 class BootstrapModal 
 {
     private readonly id: string;
@@ -803,7 +947,7 @@ class BootstrapModal
         closeButton.setAttribute('type', 'button');
         closeButton.classList.add('btn', 'btn-secondary');
         closeButton.setAttribute('data-bs-dismiss', 'modal');
-        closeButton.textContent = getStr(Constants.Strings.Close);
+        closeButton.textContent = getStr(Strings.Close);
         
         modalHeader.appendChild(modalTitle);
         modalContent.appendChild(modalHeader);
@@ -827,7 +971,8 @@ class BootstrapModal
         });
     }
 }
-  
+
+
 namespace BootstrapModal
 {
     export enum Type

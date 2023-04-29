@@ -11,6 +11,9 @@ export enum PlayerType {
     ComputerExpert  = "ComputerExpert"
 }
 
+/**
+ * Represents a Player
+ */
 export abstract class Player
 {
     private     _name        :   string;
@@ -30,6 +33,10 @@ export abstract class Player
         this._playerType = playerType;
     }
 
+    /**
+     * Fill the rack with up to maxTileNum from the Bag
+     * @param bag The bag to fill the rack from
+     */
     public fillRack(bag: Bag) : void
     {
         while ( (this._rack.size < this.maxTileNum) && (bag.length > 0) )
@@ -38,6 +45,10 @@ export abstract class Player
         }
     }
 
+    /**
+     * Replace the current rack with the provided one
+     * @param tiles The tiles to add to the rack
+     */
     public setRack(tiles: Tile[]) : void
     {
         this._rack = new Set<Tile>();
@@ -46,36 +57,58 @@ export abstract class Player
         });
     }
 
+    /**
+     * Remove the given tile from the rack
+     * @param tile The tile to remove from the rack
+     */
     public removeTile(tile: Tile) : void
     {
         this._rack.delete(tile);
     }
 
+    /**
+     * Return a copy of the rack
+     */
     get rack() : Tile[]
     {
         return [...this._rack];
     }
 
+    /**
+     * Return the player number
+     */
     get id() : number
     {
         return this._id;
     }
 
+    /**
+     * Return the player name
+     */
     get name() : string
     {
         return this._name;
     }
 
+    /**
+     * Set the player name
+     */
     set name(value: string)
     {
         this._name = value;
     }
 
+    /**
+     * Return the player points
+     */
     get points() : number
     {
         return this._points;
     }
 
+    /**
+     * Set the player points
+     */
     set points(value: number)
     {
         if (value < 0)
@@ -86,15 +119,35 @@ export abstract class Player
         this._points = value;
     }
 
+    /**
+     * Return the player type
+     */
     get playerType() : PlayerType
     {
         return this._playerType;
     }
 
+    /**
+     * Get the player's move. Relevant only if automaticMode() == True, i.e. if it's not a human player
+     * @param calculatePoints 
+     */
     public abstract getMove(calculatePoints: (tilePlacements: TilePlacement[]) => number) : TilePlacement[];
 
+    /**
+     * Returns true if and only if this player performs moves automatically, i.e. it's not a human player
+     */
     public abstract automaticMode() : boolean;
 
+    /**
+     * Factory method to create players.
+     * @param name The player name
+     * @param id The player number
+     * @param maxTileNum The maximum number of tiles for the player rack
+     * @param dictionary The game dictionary
+     * @param board The game board
+     * @param playerType The player type
+     * @returns A new player
+     */
     public static createPlayer(name: string, id: number, maxTileNum: number, dictionary: Dictionary, board: Board, playerType: PlayerType) : Player
     {
         switch(playerType)

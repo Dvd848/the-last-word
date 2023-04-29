@@ -1,6 +1,9 @@
 import * as Constants from "./Constants"
 
-// https://stackoverflow.com/questions/48083353/
+/**
+ * Shuffle an array
+ * https://stackoverflow.com/questions/48083353/
+ */
 export function shuffle<T>(array: T[]): T[] {
     let currentIndex = array.length,  randomIndex;
     
@@ -19,11 +22,12 @@ export function shuffle<T>(array: T[]): T[] {
     return array;
 };
     
-export function getTranslation(lang: Constants.Languages, str: Constants.Strings) : string
-{
-    return Constants.Translations[lang]?.[str] || "";
-}
-
+/**
+ * Returns True of the given key is a key of the given object
+ * @param key The key
+ * @param obj The object
+ * @returns True if the given key is a key of the given object
+ */
 export function isKeyOfObject<T extends object>(
     key: string | number | symbol,
     obj: T,

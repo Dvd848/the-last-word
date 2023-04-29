@@ -1,7 +1,7 @@
-import * as Constants from './Constants';
 import Dictionary from './Dictionary';
 import Game, {GameConfiguration} from './Game';
 import { PlayerType } from './Player';
+import { DefaultLanguage } from './Strings';
 
 let defaultConfig : GameConfiguration = {
     playerDetails: [
@@ -13,7 +13,7 @@ let defaultConfig : GameConfiguration = {
 
 let game : Game;
 document.addEventListener("DOMContentLoaded", async function() {
-    const dictionary = new Dictionary(Constants.DefaultLanguage);
+    const dictionary = new Dictionary(DefaultLanguage);
     await dictionary.init();
 
     game = new Game(defaultConfig, dictionary);

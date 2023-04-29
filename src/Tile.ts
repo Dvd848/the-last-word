@@ -1,6 +1,9 @@
 
 let counter = 0;
 
+/**
+ * Represents a game tile
+ */
 export default class Tile 
 {
     private readonly _letter: string;
@@ -14,16 +17,25 @@ export default class Tile
         this._id     = counter++;
     }
   
+    /**
+     * Returns the letter for this tile
+     */
     get letter(): string 
     {
         return this._letter;
     }
   
+    /**
+     * Returns the points for this tile
+     */
     get points(): number 
     {
         return this._points;
     }
 
+    /**
+     * Returns the tile ID
+     */
     get id(): number 
     {
         return this._id;

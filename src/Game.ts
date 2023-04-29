@@ -5,7 +5,7 @@ import Bag from './Bag';
 import Tile from './Tile';
 import { Display } from './Display';
 import Dictionary from './Dictionary';
-import * as Utils from './Utils';
+import { DefaultLanguage } from './Strings';
 
 export type WordInfo = {
     word: string;
@@ -83,11 +83,15 @@ export default class Game
         this.newGame(gameConfiguration);
     }
 
+    /**
+     * Starts a new game based on the given configuration
+     * @param gameConfiguration The game configuration for the game
+     */
     public newGame(gameConfiguration: GameConfiguration) : void
     {
-        this.board = new ModifiableBoard(Constants.BOARD_DIMENSIONS);
+        this.board = new ModifiableBoard(Constants.BOARD_DIMENSIONS, Constants.tileMultipliers);
         this.currentPlayerIndex = 0;
-        this.bag = new Bag(Constants.DefaultLanguage);
+        this.bag = new Bag(Constants.gameTiles[DefaultLanguage]);
         this.firstTurnPlayed = false;
         this.checkDict = gameConfiguration.checkDict;
         this.consecutivePasses = 0;
@@ -109,6 +113,12 @@ export default class Game
         this.display.show();
     }
 
+    /**
+     * Create the players for the game
+     * @param players The player details to use for creating the players
+     * @param basedOnCurrent True if the new players should inherit the rack and points from the current players, False otherwise
+     * @returns The new players created
+     */
     private createPlayers(players: PlayerDetails[], basedOnCurrent: boolean) : Player[]
     {
         if (this.players && (players.length != this.players.length))
@@ -131,6 +141,10 @@ export default class Game
         return newPlayers;
     }
 
+    /**
+     * Return the current game configuration
+     * @returns The current game configuration
+     */
     public getConfiguration() : GameConfiguration
     {
         return {
@@ -139,6 +153,11 @@ export default class Game
         }
     }
 
+    /**
+     * Set the current game configuration
+     * @param config The configuration to be used
+     * @returns True if the configuration was legal, False otherwise
+     */
     private setConfigurationCallback(config: GameConfiguration) : boolean
     {
         try
@@ -172,11 +191,20 @@ export default class Game
         }
     }
 
+    /**
+     * Callback for the Display to check if a given word exists in the dictionary
+     * @param word The word to check
+     * @returns True if the word exists in the dictionary, False otherwise
+     */
     private checkWordCallback(word: string) : boolean
     {
         return this.dictionary.contains(word);
     }
 
+    /**
+     * Callback for the Display to swap tiles for the current player
+     * @param tiles The tiles to swap
+     */
     private swapTilesCallback(tiles: Tile[]) : void
     {
         if (tiles.length > this.currentPlayer.rack.length)
@@ -207,6 +235,11 @@ export default class Game
         this.moveToNextPlayer();
     }
 
+    /**
+     * Given a tile placement, return all the word (and points) for the words created as part of this placement
+     * @param tilePlacements An array representing the tiles placed on the board
+     * @returns The different words (and their matching points) created as part of this placement
+     */
     private getCreatedWords(tilePlacements: TilePlacement[]): WordInfo[] 
     {
         const words = new Set<string>();
@@ -258,6 +291,12 @@ export default class Game
         return Array.from(words, (JSONEntry) => JSON.parse(JSONEntry));
     }
 
+    /**
+     * Calculate the amount of points the player is entitled to as part of the given placement
+     * @param tilePlacements An array representing the tiles placed on the board 
+     * @param placedWords An array representing the words created as part of this placement
+     * @returns A tuple with the amount of points for the word placement and the amount of bonus points for this placement
+     */
     private calculatePoints(tilePlacements: TilePlacement[], placedWords: WordInfo[]) : [number, number]
     {
         let newPoints = 0;
@@ -275,6 +314,11 @@ export default class Game
         return [newPoints, bonusPoints];
     }
 
+    /**
+     * Verify that the given tiles were placed in a consecutive manner
+     * @param tilePlacements An array representing the tiles placed on the board 
+     * @returns True if the tiles were placed consecutively on the board
+     */
     private verifyPlacementConsecutive(tilePlacements: TilePlacement[]) : boolean
     {
         if (tilePlacements.length > 0)
@@ -336,6 +380,11 @@ export default class Game
         return true;
     }
 
+    /**
+     * Verify that all the tiles placed during this turn are connected legally
+     * @param tilePlacements An array representing the tiles placed on the board 
+     * @returns True if all the tiles are connected legally
+     */
     private verifyPlacementConnected(tilePlacements: TilePlacement[]) : boolean
     {
         if (this.firstTurnPlayed && tilePlacements.length > 0)
@@ -363,6 +412,9 @@ export default class Game
         return true;
     }
 
+    /**
+     * If the current place is a computer, play their turn
+     */
     private playAutoTurnIfNeeded() : void
     {
         if (!this.isGameOver)
@@ -389,6 +441,9 @@ export default class Game
         }
     }
 
+    /**
+     * Move to the next player after the current player ended their turn
+     */
     private moveToNextPlayer() : void
     {
         this.display.displayPlayerInfo(this.currentPlayer);
@@ -398,6 +453,11 @@ export default class Game
         this.playAutoTurnIfNeeded();
     }
 
+    /**
+     * Callback function to allow a (computer) player to get the number of points for a theoretical placement.
+     * @param tilePlacements An array representing the tiles to be placed on the board 
+     * @returns The amount of points for the given placement
+     */
     private calculatePointsForPlayerMove(tilePlacements: TilePlacement[]) : number
     {
         try
@@ -423,6 +483,11 @@ export default class Game
         return 0;
     }
 
+    /**
+     * Callback for the Display to handle the end of a turn
+     * @param tilePlacements An array representing the tiles placed on the board 
+     * @param forceObjection True if the user requests to override the dictionary check
+     */
     private endTurnCallback(tilePlacements: TilePlacement[], forceObjection: boolean) : void
     {
         const actualTilePlacements : TilePlacement[] = [];
@@ -553,6 +618,10 @@ export default class Game
         }
     }
 
+    /**
+     * Returns the leading player at this time, according to the amount of points (or null if there's a tie)
+     * @returns The leading player at this time
+     */
     private getLeadingPlayer() : Player | null
     {
         let res = this.players[0];
@@ -576,6 +645,9 @@ export default class Game
         return res;
     }
     
+    /**
+     * Returns the current player
+     */
     private get currentPlayer(): Player 
     {
         return this.players[this.currentPlayerIndex];
