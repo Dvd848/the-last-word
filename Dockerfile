@@ -3,7 +3,7 @@ FROM node:alpine
 
 RUN apk add --no-cache bash python3 build-base
 
-RUN npm install -g npm@latest
+RUN npm install -g npm@10.2.1
 
 # Create a directory for our app
 WORKDIR /app
