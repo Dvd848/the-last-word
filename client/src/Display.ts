@@ -282,6 +282,17 @@ export class Display
 
     }
 
+    private configureTitleListener() : void
+    {
+        // Remove "(1)" from the title when the tab becomes active again
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible" && document.title.startsWith("(1) ")) 
+            {
+                document.title = document.title.slice(4);
+            }
+        });
+    }
+
     /**
      * Configures all game control buttons by calling their respective configuration functions.
      */
@@ -291,6 +302,7 @@ export class Display
         this.configureButtonSwapTiles();
         this.configureButtonNewGame();
         this.configureButtonSearch();
+        this.configureTitleListener();
     }
 
     /**
@@ -603,6 +615,7 @@ export class Display
         if (activePlayerIndex === player.index)
         {
             this.toggleEndTurnButton(false);
+            this.notifyTurnIfInactive();
         }
         else
         {
@@ -616,6 +629,30 @@ export class Display
                 points_elem.innerText = value.toString();
             }
         });
+    }
+
+    /**
+     * Utility to notify the user when it's their turn and they're not on the tab.
+     */
+    private notifyTurnIfInactive() {
+        // Only notify if the tab is not active
+        if (document.visibilityState !== "visible") {
+            // Add "(1)" to the beginning of the title if not already present
+            if (!document.title.startsWith("(1)")) {
+                document.title = "(1) " + document.title;
+            }
+            // Show browser notification
+            const notificationTitle = "המילה האחרונה: תורך!";
+            if (Notification.permission === "granted") {
+                new Notification(notificationTitle);
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        new Notification(notificationTitle);
+                    }
+                });
+            }
+        }
     }
 
     /**
