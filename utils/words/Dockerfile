@@ -16,5 +16,5 @@ WORKDIR /app
 
 
 # docker build -t hspell .
-# docker run -it --rm --mount type=bind,source="${PWD}",target=/app --mount type=bind,source="${PWD}\..\..\wordlists",target=/words hspell /bin/bash
+# docker run -it --rm --mount type=bind,source="${PWD}",target=/app --mount type=bind,source="${PWD}\..\..\server\wordlists",target=/words hspell /bin/bash
 # find /words -type f -iname "e*.txt" -exec bash -c 'dawgdic-build -g "$1" > "${1%.txt}.dawg"' _ {} \;

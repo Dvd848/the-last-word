@@ -16,7 +16,7 @@ const port = process.env.PORT || 8080; // Get port from env var, default to 8080
 
 async function initializeServer() {
     const dictionary = new Dictionary();
-    await dictionary.init(path.join(__dirname, '..', '..', 'client', 'public'));
+    await dictionary.init(path.join(__dirname, '..', '..', 'server'));
 
     const server = http.createServer(app);
     const io = new Server(server, {

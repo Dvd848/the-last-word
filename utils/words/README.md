@@ -4,11 +4,11 @@ In order to generate the word-list for the application:
 
  1. Using [hspell](http://hspell.ivrix.org.il/), generate `woo.txt`, `wolig.txt`, `extrawords.txt` and `shemp.txt` (see reference below)
     a. `extrawords.txt` might require a bit of manual editing since it mixes legal words with illegal words (names etc.) in a way that's hard to programmatically separate
- 2. Copy both files to this directory.
+ 2. Copy all text files to this directory.
  3. Run `parser.py` from this directory. This should produce a file called `words_hspell.txt`.
  4. Run `word_processor.py` from this directory to process the output of step #3, create a database of words and compress it as a DAWG.  
     This also creates the `config.json` file for the application.  
-    The output is saved under `../../wordlists/`
+    The output is saved under `../../server/wordlists/`
 
 ## HSpell Reference
 
