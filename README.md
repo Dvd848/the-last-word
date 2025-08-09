@@ -74,16 +74,17 @@ All the logic is implemented on the client side and only requires a static serve
 
 The project includes a Docker file that can be used to setup the game locally.  
 
-### Running Locally
+### Developing / Running Locally
 
  1. Build the container with `docker-compose up -d --build`
  2. Run the container with `docker-compose up -d`
  3. Attach to the container with `docker-compose exec app sh`
  4. (First time only) Install the packages from `npm` using `npm install`
  5. (First time only) Install the server packages from `npm` using `cd server && npm install && cd ..`
- 6. Run `npm run dev` to start the server
- 7. When done, execute `exit` to exit the shell
- 8. Execute `docker-compose down` to stop the container
+ 6. In one terminal, run `npm watch-client` to start watching client side code
+ 7. In another terminal, run `npm run dev` to start the server
+ 8. When done, execute `exit` to exit the shell
+ 9. Execute `docker-compose down` to stop the container
 
 For the online version hosted in GitHub Pages, changes to the Typescript files only take effect once the code is bundled and submitted to GitHub.
 

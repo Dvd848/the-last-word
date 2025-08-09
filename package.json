@@ -11,7 +11,7 @@
     "watch-client": "npx webpack --watch --mode development --output-path client/public/dist --stats-error-details",
     "start": "webpack serve --live-reload --mode development --open --output-path client/public/dist",
     "build": "npm run build-client && npm run build-server",
-    "clean": "tsc --build --clean && rm -rf server/dist && rm -rf client/public/dist && rm -rf dist"
+    "clean": "tsc --build --clean && rm -rf server/dist && rm -rf client/public/dist && rm -rf dist && rm -rf server/*.mjs && rm -rf server/*.d.ts && rm -rf client/public/dist/*.js && rm -rf client/public/dist/*.js.map"
   },
   "author": "Dvd848",
   "license": "AGPLv3",

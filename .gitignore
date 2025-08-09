@@ -34,3 +34,12 @@ launch.json
 
 *.d.ts
 tsconfig.tsbuildinfo
+
+
+server/dist
+client/public/dist
+dist
+server/*.mjs
+server/*.d.ts
+client/public/dist/*.js
+client/public/dist/*.js.map
