@@ -8,7 +8,7 @@ from pathlib import Path
 
 INPUT_DIR = Path(__file__).parent
 INPUT_PREFIX = "words_"
-OUTPUT_DIR = Path(__file__).parent / ".." / ".." / "wordlists"
+OUTPUT_DIR = Path(__file__).parent / ".." / ".." / "client" / "public" / "wordlists"
 OUTPUT_NAME = "HebDict"
 
 TRANSLATE_CHARS = re.compile(r"([\u0590-\u05fe]'?)")

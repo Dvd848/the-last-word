@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+    <meta charset="utf-8" />
+    <title>המילה האחרונה - משחק דמוי "שבץ נא" אונליין</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.rtl.min.css" 
+          integrity="sha384-DOXMLfHhQkvFFp+rWTZwVlPVqdIhpDVYT9csOnHSgWQWPX0v5MCGtjCJbY6ERspU" crossorigin="anonymous">
+
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link href="/css/style.css" rel="stylesheet" />
+    <link href="/css/hebrew.css" rel="stylesheet" />
+    <meta name="description" content="משחק דמוי שבץ-נא בעברית, אונליין">
+    <meta name="keywords" content="שבץ נא, שבץ-נא,Scrabble">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JTZ82LNDSY"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-JTZ82LNDSY');
+    </script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <div id="navLogoWrapper">
+                <div id="header_tiles">
+                    <div class="header_word">
+                        <div class="game_tile">ה</div>
+                        <div class="game_tile">מ</div>
+                        <div class="game_tile">י</div>
+                        <div class="game_tile">ל</div>
+                        <div class="game_tile">ה</div>
+                    </div>
+                    <div class="header_word">
+                        <div class="game_tile">ה</div>
+                        <div class="game_tile">א</div>
+                        <div class="game_tile">ח</div>
+                        <div class="game_tile">ר</div>
+                        <div class="game_tile">ו</div>
+                        <div class="game_tile">נ</div>
+                        <div class="game_tile">ה</div>
+                    </div>
+                </div>
+                <h2 class="hide">המילה האחרונה</h2>
+                <h1>משחק דמוי "שבץ נא" אונליין</h1>
+            </div>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" 
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent" style="justify-content: left;">
+                <ul class="navbar-nav navbar-light-color">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-target="#newGameModal" data-bs-toggle="modal">משחק חדש</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="showSearchMenu">חיפוש במילון</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="showSwapTilesMenu">החלפת אותיות</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="showConfigMenu">הגדרות</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-target="#rulesModal" data-bs-toggle="modal">חוקים</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-target="#aboutModal" data-bs-toggle="modal">אודות</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="home-form" class="container d-flex vh-100 hide">
+        <div class="row m-auto w-100 justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-lg rounded-4">
+                    <div class="card-body p-5 text-center">
+
+                    <!-- Start New Game -->
+                    <div class="mb-4">
+                        <button id="create-game-button" class="btn btn-primary btn-lg w-100">
+                        התחלת משחק חדש
+                        </button>
+                    </div>
+
+                    <hr class="my-4">
+                    <p>
+                        או
+                    </p>
+                    <hr class="my-4">
+
+                    <!-- Join Existing Game -->
+                    <form id="joinGameForm">
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-success btn-lg w-100 mb-2" id="join-game-button">
+                            הצטרפות למשחק קיים
+                            </button>
+                            <input
+                                type="text"
+                                class="form-control form-control-lg"
+                                id="game-id-input"
+                                placeholder="מזהה משחק"
+                                required
+                            />
+                            <div id="joinError"></div>
+                        </div>
+                    </form>
+                    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="game" class="hide">
+        <div id="game_top">
+            <div class="player_info">
+                <div id="player1_turn" class="player_turn"></div>
+                <div id="player1_name" class="player_name">שחקן/ית 1</div>
+                <div id="player1_points" class="player_points">0</div>
+            </div>
+            <div id="board"></div>
+            <div class="player_info">
+                <div id="player2_turn" class="player_turn"></div>
+                <div id="player2_name" class="player_name">שחקן/ית 2</div>
+                <div id="player2_points" class="player_points">0</div>
+            </div>
+        </div>
+        <div id="game_bottom">
+            <div id="active_player_rack" class="rack"></div>
+            <div id="game_control">
+                <button id="end_turn_button" class="button_blue big_button"></button>
+            </div>
+        </div>
+    </div>
+    <div id="loader">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">טוען...</span>
+        </div>
+    </div>
+
+    <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title fs-5" id="aboutModalLabel">אודות</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        "המילה האחרונה" הוא משחק דמוי "שבץ נא" אונליין לשחקן יחיד (מול המחשב) או לשני שחקנים.
+                    </p>
+                    <p>
+                        המשחק עושה שימוש במילון <a href="http://hspell.ivrix.org.il/">HSpell</a>
+                         המשוחרר תחת רישיון <a href="http://www.gnu.org/licenses/agpl.html">AGPLv3</a>.
+                    </p>
+                    <p>
+                        קוד המקור של המשחק זמין ב-<a href="https://github.com/Dvd848/the-last-word">GitHub</a>. 
+                        <a href="https://github.com/Dvd848/the-last-word/issues">הערות</a> ו<a href="https://github.com/Dvd848/the-last-word/pulls">תרומות קוד</a> יתקבלו בברכה.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">סגירה</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="configModal" tabindex="-1" aria-labelledby="configModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="configModalLabel">הגדרות</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="player_details_group">
+                            <div class="mb-3 row">
+                                <label for="configPlayer1Name" class="col-sm-3 col-form-label">שחקן/ית א'</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="configPlayer1Name" placeholder="שם השחקן/ית" maxlength="10">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="configPlayer1Type" class="col-sm-3 col-form-label"></label>
+                                <div class="col-sm-8">
+                                    <select class="form-select" id="configPlayer1Type">
+                                        <option value="Human" selected="selected">שחקן/ית אנושי/ת</option>
+                                        <option value="ComputerNovice">מחשב - רמה קלה</option>
+                                        <option value="ComputerExpert">מחשב - רמה קשה</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="configPlayer2Name" class="col-sm-3 col-form-label">שחקן/ית ב'</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="configPlayer2Name" placeholder="שם השחקן/ית" maxlength="10">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="configPlayer2Type" class="col-sm-3 col-form-label"></label>
+                            <div class="col-sm-8">
+                                <select class="form-select" id="configPlayer2Type">
+                                    <option value="Human" selected="selected">שחקן/ית אנושי/ת</option>
+                                    <option value="ComputerNovice">מחשב - רמה קלה</option>
+                                    <option value="ComputerExpert">מחשב - רמה קשה</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="configCheckDict" class="col-sm-3 col-form-label">אימות מול מילון</label>
+                            <div class="col-sm-8 d-flex align-items-center">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="configCheckDict">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ביטול</button>
+                    <button type="button" class="btn btn-primary" id="configOkButton">אישור</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="swapTilesModal" tabindex="-1" aria-labelledby="swapTilesModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="swapTilesModalLabel">החלפת אותיות</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="swapTilesForm">
+                        
+                    </form>
+                    <div id="tilesInBagWrapper">מספר האותיות שנותרו בשקית: <span id="remainingTilesInBag">0</span></div>
+                    <div id="swapTilesMessage">ניתן להחליף אותיות רק במהלך התור שלך!</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ביטול</button>
+                    <button type="button" class="btn btn-primary" id="swapTilesOkButton">אישור</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="waitPlayersModal" tabindex="-1" aria-labelledby="waitPlayersModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="waitPlayersModalLabel">משחק חדש</h5>
+                </div>
+                <div class="modal-body text-center">
+                    <div>ממתין להצטרפות היריב/ה...</div>
+                    <div class="p-4">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">ממתין...</span>
+                        </div>
+                    </div>
+                    <div>שלחו ליריב/ה את מזהה המשחק הבא: <span id="gameId_code"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="newGameModal" tabindex="-1" aria-labelledby="newGameModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newGameModalLabel">משחק חדש</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    האם להתחיל משחק חדש?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ביטול</button>
+                    <button type="button" class="btn btn-primary" id="newGameOkButton">אישור</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" tabindex="-1" id="rulesModal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">חוקים</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                    "המילה האחרונה" הוא משחק מילים דמוי "שבץ נא" בעברית.
+                    </p>
+                    <ol>
+                        <li>כל שחקן מקבל בתחילת המשחק שבע אותיות מתוך שקית שמכילה אוסף אותיות.</li>
+                        <li>על כל שחקן, בתורו, לנסות וליצור מילים על לוח המשחק תוך שימוש באותיות שלו.</li>
+                        <li>ניתן ליצור מילים מלמעלה למטה או מימין לשמאל.</li>
+                        <li>בתחילת המשחק, על המילה הראשונה לכלול אות שמונחת על המשבצת המרכזית.</li>
+                        <li>על כל מילה נוספת (מלבד הראשונה) שמונחת על הלוח להתחבר למילה קיימת אחת לפחות. ניתן להתחבר מלמעלה, מלמטה, משמאל או מימין.</li>
+                        <li>על כל המילים שנוצרות על הלוח במסגרת התור הנוכחי להיות מילים חוקיות. כלומר, על כל אות שמונחת על הלוח להיות חלק ממילה חוקית.</li>
+                        <li>לאחר כל תור, כל שחקן משלים את אוסף האותיות שלו לשבע על ידי הוצאות אותיות מהשקית, וזאת כל עוד השקית אינה ריקה.</li>
+                        <li>לכל אות יש ערך נקוב. בכל תור, השחקן הנוכחי מקבל ניקוד על כל המילים שיצר בתור הנוכחי, בהתאם לניקוד של כל אות ואות. חלק מהמשבצות על הלוח משפיעות על הניקוד, כאשר ישנן משבצות שמכפילות או משלשות את הערך של האות או של המילה.</li>
+                        <li>המשבצות המיוחדות שמשפיעות על הניקוד באות לידי ביטוי רק בתור הראשון שבו שחקן מניח עליהן אות. אין השפעה על הניקוד בתורות מאוחרים יותר.</li>
+                        <li>מעבר לניקוד של המילים עצמן, שחקן שמשתמש בכל שבע האותיות שלו בתור אחד מקבל 50 נקודות בונוס.</li>
+                        <li>שחקן שמעוניין להחליף אות אחת או יותר מהאותיות שברשותו יכול לעשות זאת, ובתנאי שנותרו אותיות בשקית. החלפת אותיות גוררת ויתור על התור הנוכחי.</li>
+                        <li>המשחק נגמר כאשר אחד השחקנים סיים את כל האותיות שלו או כאשר כל השחקנים מוותרים על תורם במשך 3 תורות ברצף.</li>
+                        <li>השחקן עם התוצאה הגבוהה ביותר בסיום המשחק הוא המנצח.</li>    
+                    </ol>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">סגירה</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" tabindex="-1" id="searchModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">חיפוש מילה</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <input type="search" class="form-control rounded" 
+                            placeholder="חיפוש מילה במילון" aria-label="Search" aria-describedby="search-addon"
+                            id="searchWordInput" />
+                        <button type="button" class="btn btn-outline-primary" id="searchButton">חיפוש</button>
+                      </div>
+                    <div id="searchResults">
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">סגירה</button>
+                </div>
+            </div>
+        </div>
+    </div>
+                        
+    <script src="/dist/runtime.bundle.js" type="module"></script>
+    <script src="/dist/app.bundle.js" type="module"></script>
+</body>
+
+</html>

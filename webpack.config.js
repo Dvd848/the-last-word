@@ -3,10 +3,8 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
     entry: {
-      dawg: ['./src/dawg/dawgs.ts', './src/dawg/units.ts', './src/dawg/wrapper.ts'],
       app: {
-        import: './src/app.ts',
-        dependOn: 'dawg'
+        import: './client/src/app.ts'
       }
     },
     watchOptions: {
@@ -17,7 +15,7 @@ module.exports = {
     output: {
       filename: '[name].bundle.js',
       chunkFilename: '[name].chunk.js',
-      path: path.resolve(__dirname, 'dist')
+      path: path.resolve(__dirname, 'client/public/dist')
     },
     optimization: {
       runtimeChunk: 'single',
@@ -34,13 +32,13 @@ module.exports = {
         }),
       ],
     },
-    devServer: {
-        static: path.resolve(__dirname),
+    devServer: {    
+      static: path.join(__dirname, 'client/public'),
         devMiddleware: {
-            publicPath: '/dist/',
-            writeToDisk: false,
+            publicPath: '/client/public/dist/',
+            writeToDisk: true,
          },
-        port: 8080,
+        port: 8081,
         hot: false
     },
     module: {

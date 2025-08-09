@@ -80,8 +80,8 @@ The project includes a Docker file that can be used to setup the game locally.
  2. Run the container with `docker-compose up -d`
  3. Attach to the container with `docker-compose exec app sh`
  4. (First time only) Install the packages from `npm` using `npm install`
- 5. Run `npm start` to start the server
- 6. Alternatively run `npx webpack --mode production` to bundle the code. This would result in some `*.js` files being written to `dist`
+ 5. (First time only) Install the server packages from `npm` using `cd server && npm install && cd ..`
+ 6. Run `npm run dev` to start the server
  7. When done, execute `exit` to exit the shell
  8. Execute `docker-compose down` to stop the container
 

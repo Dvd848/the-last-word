@@ -2,11 +2,16 @@
   "name": "the-last-word",
   "version": "1.0.0",
   "description": "A word game",
-  "main": "dist/app.bundle.js",
+  "main": "client/public/dist/app.bundle.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx webpack --mode production",
-    "start": "webpack serve --live-reload --mode development"
+    "dev": "cd server && npm run dev",
+    "test": "jest --config client/jest.config.js",
+    "build-server": "tsc --build server",
+    "build-client": "npx webpack --mode production --output-path client/public/dist",
+    "watch-client": "npx webpack --watch --mode development --output-path client/public/dist --stats-error-details",
+    "start": "webpack serve --live-reload --mode development --open --output-path client/public/dist",
+    "build": "npm run build-client && npm run build-server",
+    "clean": "tsc --build --clean && rm -rf server/dist && rm -rf client/public/dist && rm -rf dist"
   },
   "author": "Dvd848",
   "license": "AGPLv3",
@@ -17,20 +22,30 @@
   "dependencies": {
     "@popperjs/core": "^2.11.7",
     "@types/bootstrap": "^5.2.6",
-    "bootstrap": "^5.2.3"
+    "bootstrap": "^5.2.3",
+    "cors": "^2.8.5",
+    "js-cookie": "^3.0.5",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^18.15.13",
+    "@types/uuid": "^10.0.0",
     "autoprefixer": "^10.4.14",
     "css-loader": "^6.7.3",
+    "jest": "^29.5.0",
     "postcss-loader": "^7.2.4",
     "sass": "^1.62.0",
     "sass-loader": "^13.2.2",
     "style-loader": "^3.3.2",
     "ts-loader": "^9.4.2",
+    "tsup": "^8.4.0",
     "typescript": "^5.0.4",
     "webpack": "^5.80.0",
     "webpack-cli": "^5.0.2",
-    "webpack-dev-server": "^5.2.2"
+    "webpack-dev-server": "^4.13.3"
   }
 }

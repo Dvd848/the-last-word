@@ -1,5 +1,7 @@
 # dependencies
 /node_modules
+server/node_modules
+client/node_modules
 /.pnp
 .pnp.js
 
@@ -29,3 +31,6 @@ woo.txt
 extrawords.txt
 shemp.txt
 launch.json
+
+*.d.ts
+tsconfig.tsbuildinfo

@@ -1,0 +1,54 @@
+import { PlayerType } from "./Player";
+import { Tile } from "./Tile";
+
+export type PlayerDetails = 
+{
+    id          : string,
+    name        : string,
+    playerType  : PlayerType
+}
+
+export type GameConfiguration = 
+{
+    playerDetails: PlayerDetails[];
+    checkDict: boolean;
+}
+
+export enum GameErrorTypes {
+    PlacementConsecutive,
+    PlacementConnected,
+    PlacementExisting,
+    PlacementIllegalWord,
+    PlacementFirstWordMin,
+    PlacementFirstWordLocation,
+    UserDoesntHaveTile
+}
+
+export class UserError extends Error {
+    public extraData : any;
+    public type : GameErrorTypes;
+    constructor(type: GameErrorTypes, extraData: any = null) 
+    {
+        super(`The following error occurred: ${type.toString()}`);
+        this.extraData = extraData;
+        this.type = type;
+    }
+}
+
+export type WordInfo = {
+    word: string;
+    startIndex: { x: number, y: number };
+    points: number;
+}
+
+export type MoveDetails = {
+    playerIndex: number;
+    points: number, 
+    placedWords: WordInfo[], 
+    bonusPoints: number
+}
+
+export type SwapDetails = {
+    playerIndex: number;
+    oldTiles: Tile[]
+}
