@@ -5,7 +5,6 @@ import { dirname } from 'path';
 import http from 'http';
 import { Server } from 'socket.io';
 import { onlineGameManager, createNewGame, checkGameId } from './onlineGameManager.js';
-import cors from 'cors'; // Import cors
 import Dictionary from './Dictionary.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -19,15 +18,8 @@ async function initializeServer() {
     await dictionary.init(path.join(__dirname, '..', '..', 'server'));
 
     const server = http.createServer(app);
-    const io = new Server(server, {
-        cors: {
-            // TODO: Is this really needed?
-            origin: "*", // Allow requests from any origin
-            methods: ["GET", "POST"], // Allow these HTTP methods
-        }
-    });
+    const io = new Server(server);
     
-    app.use(cors()); // Enable CORS for all routes
     app.use(express.json());
     onlineGameManager(io, dictionary);
 
