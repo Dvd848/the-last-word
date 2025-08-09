@@ -103,9 +103,9 @@ export default class Game
     /**
      * Callback for the Display to check if a given word exists in the dictionary.
      * @param word The word to check.
-     * @returns True if the word exists in the dictionary, False otherwise.
+     * @returns The full response object from the server.
      */
-    private async checkWordCallback(word: string): Promise<boolean> {
+    private async checkWordCallback(word: string): Promise<any> {
         try 
         {
             const response = await fetch('/checkWord', {
@@ -115,14 +115,14 @@ export default class Game
                 },
                 body: JSON.stringify({ word: word }),
             });
-    
+
             const data = await response.json();
-            return data.isValid;
+            return data; // Return the full object
         } 
         catch (error) 
         {
             console.error('Error:', error);
-            return false;
+            return { error: error };
         }
     }  
 

@@ -6,12 +6,23 @@ import http from 'http';
 import { Server } from 'socket.io';
 import { onlineGameManager, createNewGame, checkGameId } from './onlineGameManager.js';
 import Dictionary from './Dictionary.js';
+import rateLimit from 'express-rate-limit';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 8080; // Get port from env var, default to 8080
+
+const apiLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 100, // limit each IP to 100 requests per windowMs
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    message: { error: "יותר מדי בקשות, אנא נסו שוב מאוחר יותר" }
+});
+
+app.use(apiLimiter)
 
 async function initializeServer() {
     const dictionary = new Dictionary();
@@ -25,7 +36,7 @@ async function initializeServer() {
 
     createNewGame(dictionary, "test");
 
-    app.post('/createGame', (req, res) => {
+    app.post('/createGame', apiLimiter, (req, res) => {
         try 
         {
             const gameId = createNewGame(dictionary, null);
@@ -38,7 +49,7 @@ async function initializeServer() {
         }
     });
 
-    app.post('/gameExists', (req, res) => {
+    app.post('/gameExists', apiLimiter, (req, res) => {
         try 
         {
             const gameId = req.body.gameId; // Get the word from the request body
@@ -59,7 +70,7 @@ async function initializeServer() {
         }
     });
 
-    app.post('/checkWord', (req, res) => {
+    app.post('/checkWord', apiLimiter, (req, res) => {
         try 
         {
             //console.log("checkWord", req.body)

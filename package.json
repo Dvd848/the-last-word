@@ -24,6 +24,7 @@
     "@types/bootstrap": "^5.2.6",
     "bootstrap": "^5.2.3",
     "cors": "^2.8.5",
+    "express-rate-limit": "^8.0.1",
     "js-cookie": "^3.0.5",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",

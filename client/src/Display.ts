@@ -32,9 +32,9 @@ export interface DisplayCallBacks
     /**
      * Checks if a word is in the dictionary or not.
      * @param word - The word to check for validity.
-     * @returns True if the word is valid, false otherwise.
+     * @returns The response from the server.
      */
-    checkWord:           (word: string) => Promise<boolean>;
+    checkWord:           (word: string) => Promise<any>;
 
     /**
      * Checks if it's the current player's turn.
@@ -260,13 +260,20 @@ export class Display
             const value = hebrewOnly(searchWordInput.value);
             let included = getStr(Strings.Included);
             let icon = "✓";
-            const isValid = await that.callbacks.checkWord(value);
-            if (!isValid)
+            const response = await that.callbacks.checkWord(value);
+            if (response.error)
             {
-                included = getStr(Strings.NotIncluded);
-                icon = "✕"
+                searchResults.innerText = "שגיאה: " + response.error;
             }
-            searchResults.innerText = icon + " " + getStr(Strings.IsWordInDict).replace("${word}", value).replace("${included}", included);
+            else
+            {
+                if (!response.isValid)
+                {
+                    included = getStr(Strings.NotIncluded);
+                    icon = "✕"
+                }
+                searchResults.innerText = icon + " " + getStr(Strings.IsWordInDict).replace("${word}", value).replace("${included}", included);
+            }
         }
 
         searchButton.addEventListener("click", function(e) {
