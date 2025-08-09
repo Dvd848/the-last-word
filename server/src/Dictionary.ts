@@ -1,7 +1,6 @@
 
 
 import { CompletionDAWG } from "./dawg/dawgs.js";
-import {Languages} from '../../shared/src/Constants.js'
 import { promises as fs } from 'fs';
 import * as path from 'path';
 

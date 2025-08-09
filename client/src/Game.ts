@@ -1,9 +1,9 @@
 import * as Constants from '../../shared/src/Constants';
-import {ModifiableBoard, Board} from '../../shared/src/Board'
-import {Player, PlayerType} from '../../shared/src/Player';
+import {Board} from '../../shared/src/Board'
+import {Player} from '../../shared/src/Player';
 import {TilePlacement, Tile} from '../../shared/src/Tile';
 import { DisplayCallBacks, Display } from './Display';
-import {GameConfiguration, PlayerDetails, UserError, GameErrorTypes, MoveDetails, SwapDetails} from '../../shared/src/SharedGame';
+import {GameConfiguration, UserError, GameErrorTypes, MoveDetails} from '../../shared/src/SharedGame';
 
 export default class Game 
 {
@@ -13,45 +13,34 @@ export default class Game
     private player              : Player | null = null;
     private display!            : Display;
     private firstTurnPlayed     : boolean = false;
-    private consecutivePasses!  : number;
-    private isGameOver!         : boolean;
     private onlineGameCallbacks : DisplayCallBacks;
     private currentPlayersTurn  : boolean = false;
   
-    constructor(/*gameConfiguration: GameConfiguration*/ callbacks: DisplayCallBacks) 
+    constructor(callbacks: DisplayCallBacks) 
     {
         const that = this;
         this.onlineGameCallbacks = callbacks;
 
         this.display = new Display({
-            endTurn: function(tilePlacements: TilePlacement[], forceObjection: boolean){that.endTurnCallback(tilePlacements, forceObjection);},
-            /*getConfiguration: function(){return that.getConfiguration();},*/
-            /*setConfiguration: function(config: GameConfiguration){that.setConfigurationCallback(config);},*/
+            endTurn: function(tilePlacements: TilePlacement[]){that.endTurnCallback(tilePlacements);},
             swapTiles: function(tiles: Tile[]){that.swapTilesCallback(tiles);},
             getNumTilesInBag: function(){return that.numTilesInBag;},
-            /*newGame: function(){that.newGame(that.getConfiguration())},*/
             checkWord: function(word: string) {return that.checkWordCallback(word);},
             isCurrentPlayersTurn: function() {return that.currentPlayersTurn;}
         });
-
-        //this.newGame(gameConfiguration);
     }
 
     /**
      * Starts a new game based on the given configuration
      * @param gameConfiguration The game configuration for the game
      */
-    public newGame(gameConfiguration: GameConfiguration) : void
+    public newGame() : void
     {
         this.board = new Board(Constants.BOARD_DIMENSIONS, Constants.tileMultipliers);
         this.firstTurnPlayed = false;
-        this.consecutivePasses = 0;
         this.display.init(this.board);
-        this.isGameOver = false;
         this.numTilesInBag = 0;
         this.currentPlayersTurn = false;
-        
-        //this.display.show();
     }
 
     public initBoard(board: Board)
@@ -59,7 +48,6 @@ export default class Game
         this.board = board;
         this.display.init(this.board);
         this.display.show();
-        
     }
 
     public waitForPlayers(gameId: string) {
@@ -84,61 +72,6 @@ export default class Game
     public updateTurn(currentPlayerIndex: number)
     {
         this.currentPlayersTurn = this.currentPlayer.index == currentPlayerIndex;
-    }
-
-    /**
-     * Return the current game configuration
-     * @returns The current game configuration
-     */
-    /*
-    public getConfiguration() : GameConfiguration
-    {
-        return {
-            playerDetails: this.players.map(player => {return {name: player.name, playerType: player.playerType}}),
-            checkDict: this.checkDict
-        }
-    }
-        */
-
-    /**
-     * Set the current game configuration
-     * @param config The configuration to be used
-     * @returns True if the configuration was legal, False otherwise
-     */
-    private setConfigurationCallback(config: GameConfiguration) : boolean
-    {
-        /*
-        try
-        {
-
-            if (config.playerDetails.length != this.players.length)
-            {
-                throw Error("Number of player names should match number of players");
-            }
-    
-            config.playerDetails.forEach((details) => {
-                details.name = details.name.trim();
-                if (details.name == "")
-                {
-                    throw Error("Player name can't be empty or only spaces");
-                }
-            });
-    
-            this.checkDict = config.checkDict;
-            this.players = this.createPlayers(config.playerDetails, true);
-        
-            this.display.setPlayerNames(this.players);
-
-            //this.playAutoTurnIfNeeded();
-    
-            return true;
-        }
-        catch (err)
-        {
-            return false;
-        }
-            */ 
-        return false;
     }
 
     /**
@@ -275,14 +208,14 @@ export default class Game
     /**
      * Callback for the Display to handle the end of a turn
      * @param tilePlacements An array representing the tiles placed on the board 
-     * @param forceObjection True if the user requests to override the dictionary check
      */
-    private endTurnCallback(tilePlacements: TilePlacement[], forceObjection: boolean) : void
+    private endTurnCallback(tilePlacements: TilePlacement[]) : void
     {
         const actualTilePlacements : TilePlacement[] = [];
 
         try
         {
+            // TODO: Share code with server side
             if (!this.verifyPlacementConsecutive(tilePlacements))
             {
                 throw new UserError(GameErrorTypes.PlacementConsecutive);
@@ -300,96 +233,10 @@ export default class Game
                     throw new UserError(GameErrorTypes.PlacementExisting);
                 }
 
-                // Mark the placed tile as placed
-                //this.board.setTile(tilePlacement.r, tilePlacement.c, tilePlacement.tile);
                 actualTilePlacements.push(tilePlacement);
             }
 
-            this.onlineGameCallbacks.endTurn(actualTilePlacements, false);
-
-            /*
-            const placedWords: WordInfo[] = this.getCreatedWords(tilePlacements);
-
-            // Check if all placedWords are valid words
-            const illegalWords : string[] = [];
-            if (this.checkDict && !forceObjection)
-            {
-                for (const placedWord of placedWords) 
-                {
-                    if (!this.dictionary.contains(placedWord.word))
-                    {
-                        illegalWords.push(placedWord.word);
-                    }
-                }
-            }
-            if (illegalWords.length > 0)
-            {
-                throw new UserError(GameErrorTypes.PlacementIllegalWord, illegalWords);
-            }
-
-            if (!this.firstTurnPlayed)
-            {
-                if (tilePlacements.length == 1)
-                {
-                    throw new UserError(GameErrorTypes.PlacementFirstWordMin);
-                }
-                else if (tilePlacements.length > 0)
-                {
-                    let centerTileUsed = false;
-
-                    tilePlacements.forEach((tilePlacement) => {
-                        if ( (tilePlacement.r == Constants.CENTER_TILE_ROW) && (tilePlacement.c == Constants.CENTER_TILE_COL) ) 
-                        {
-                            centerTileUsed = true;
-                        }
-                    });
-
-                    if (!centerTileUsed)
-                    {
-                        throw new UserError(GameErrorTypes.PlacementFirstWordLocation);
-                    }
-
-                    this.firstTurnPlayed = true;
-                }
-            }
-            
-            // All checks passed, move is good
-
-            let [newPoints, bonusPoints] = this.calculatePoints(tilePlacements, placedWords);
-            this.currentPlayer.points += newPoints + bonusPoints;
-            
-            tilePlacements.forEach((tilePlacement) => {
-                this.currentPlayer.removeTile(tilePlacement.tile);
-                this.board.getBoardTile(tilePlacement.r, tilePlacement.c).disableMultiplier();
-            });
-
-            this.display.finalizePlacements();
-
-            this.display.logMoveDetails(this.currentPlayer, newPoints, placedWords, bonusPoints);
-
-            this.currentPlayer.fillRack(this.bag);
-
-            if (tilePlacements.length == 0)
-            {
-                this.consecutivePasses += 1;
-            }
-            else
-            {
-                this.consecutivePasses = 0;
-            }
-
-            if ( (this.currentPlayer.rack.length == 0) || (this.consecutivePasses == Constants.MAX_CONSECUTIVE_PASS) )
-            {
-                this.display.displayPlayerInfo(this.currentPlayer);
-                this.display.gameOver(this.getLeadingPlayer());
-                this.isGameOver = true;
-            }
-            else
-            {
-                this.moveToNextPlayer();
-            }
-            */
-
+            this.onlineGameCallbacks.endTurn(actualTilePlacements);
         }
         catch(err) 
         {
@@ -405,9 +252,6 @@ export default class Game
             {
                 console.log(err);
             }
-            actualTilePlacements.forEach((tilePlacement) => {
-                //this.board.setTile(tilePlacement.r, tilePlacement.c, null);
-            });
         }
     }
 
@@ -417,7 +261,6 @@ export default class Game
      */
     private get currentPlayer(): Player 
     {
-        //return this.players[this.currentPlayerIndex];
         if (this.player == null)
         {
             throw new Error("Player not set");

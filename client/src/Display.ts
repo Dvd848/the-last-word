@@ -1,7 +1,7 @@
 import {Board} from "../../shared/src/Board";
 import {Player, PlayerType} from "../../shared/src/Player";
 import {TilePlacement, Tile} from "../../shared/src/Tile";
-import { WordInfo, GameConfiguration, GameErrorTypes as GameErrorTypes } from "../../shared/src/SharedGame";
+import { WordInfo, GameErrorTypes as GameErrorTypes } from "../../shared/src/SharedGame";
 import { Strings, getStr, translateLastLetter } from "./Strings";
 
 import * as bootstrap from 'bootstrap';
@@ -14,21 +14,8 @@ export interface DisplayCallBacks
     /**
      * Ends the current turn.
      * @param tile_placements - The tile placements for this turn.
-     * @param forceObjection - Whether to force an objection or not.
      */
-    endTurn:             (tile_placements: TilePlacement[], forceObjection: boolean) => void;
-
-    /**
-     * Gets the current game configuration.
-     * @returns The current game configuration.
-     */
-    /*getConfiguration:    () => GameConfiguration;*/
-
-    /**
-     * Sets the current game configuration.
-     * @param config - The new game configuration to set.
-     */
-    /*setConfiguration:    (config: GameConfiguration) => void;*/
+    endTurn:             (tile_placements: TilePlacement[]) => void;
 
     /**
      * Swaps tiles in the player's rack with tiles from the bag.
@@ -41,11 +28,6 @@ export interface DisplayCallBacks
      * @returns The number of tiles remaining in the bag.
      */
     getNumTilesInBag:    () => number;
-
-    /**
-     * Starts a new game.
-     */
-    /*newGame:             () => void;*/
 
     /**
      * Checks if a word is in the dictionary or not.
@@ -143,71 +125,6 @@ export class Display
     }
 
     /**
-     * Configures the configuration menu button and its associated modal.
-     * 
-     * @remarks
-     * - The configuration menu button is used to display the configuration modal.
-     * - The configuration modal allows the user to change the game configuration.
-     * - The configuration modal contains two player name inputs and two player type dropdowns.
-     * - The configuration modal also contains a checkbox to enable/disable dictionary checking.
-     */
-    private configureButtonConfigMenu() : void
-    {
-        const that = this;
-        const showConfigMenu = document.getElementById("showConfigMenu")!;
-
-        const configPlayer1Name = document.getElementById("configPlayer1Name") as HTMLInputElement;
-        const configPlayer1Type = document.getElementById("configPlayer1Type") as HTMLSelectElement;
-
-        const configPlayer2Name = document.getElementById("configPlayer2Name") as HTMLInputElement;
-        const configPlayer2Type = document.getElementById("configPlayer2Type") as HTMLSelectElement;
-
-        const configCheckDict = document.getElementById("configCheckDict") as HTMLInputElement;
-        const configModal = new bootstrap.Modal('#configModal');
-
-        /*
-        showConfigMenu.addEventListener('click', function(e) {
-            that.moveActiveTilesBackToRack();
-            const config = that.callbacks.getConfiguration();
-
-            configPlayer1Name.value = config.playerDetails[0].name;
-            configPlayer2Name.value = config.playerDetails[1].name;
-
-            configPlayer1Type.value = config.playerDetails[0].playerType.toString();
-            configPlayer2Type.value = config.playerDetails[1].playerType.toString();
-
-            configCheckDict.checked = config.checkDict;
-
-            configModal.show();
-        });
-        */
-
-        const configOkButton = document.getElementById("configOkButton")!;
-        const playerTypeTranslator = function(s: string) : PlayerType
-        {
-            switch (s)
-            {
-                case "Human":
-                default:
-                    return PlayerType.Human;
-            }
-        }
-        /*
-        configOkButton.addEventListener("click", function(e) {
-
-            that.callbacks.setConfiguration({
-                playerDetails: [
-                    {name: configPlayer1Name.value, playerType: playerTypeTranslator(configPlayer1Type.value)},
-                    {name: configPlayer2Name.value, playerType: playerTypeTranslator(configPlayer2Type.value)}
-                ],
-                checkDict: configCheckDict.checked
-            });
-            configModal.hide();
-        });
-        */
-    }
-
-    /**
      * Configures the swap tiles button and its associated modal.
      */
     private configureButtonSwapTiles() : void
@@ -288,7 +205,6 @@ export class Display
             {
                 that.callbacks.swapTiles(tilesToSwap);
             }
-            //swapTilesModal.hide();
         });
         
     }
@@ -298,9 +214,7 @@ export class Display
      */
     private configureButtonNewGame() : void
     {
-        const newGameModal = new bootstrap.Modal('#newGameModal');
         const newGameOkButton = document.getElementById("newGameOkButton")!;
-        const that = this;
         newGameOkButton.addEventListener("click", Display.newGame);
     }
 
@@ -374,7 +288,6 @@ export class Display
     private configureButtons() : void
     {
         this.configureButtonEndTurn();
-        this.configureButtonConfigMenu();
         this.configureButtonSwapTiles();
         this.configureButtonNewGame();
         this.configureButtonSearch();
@@ -395,12 +308,8 @@ export class Display
 
     /**
      * End the current turn, identity the current placement and check if it's legal.
-     * @param forceObjection - A boolean indicating whether the user wishes to force the validity 
-     *                         of the words even if some of them aren't in the dictionary.
-     *                         This parameter only allows to override the dictionary check, 
-     *                         all other rules apply.
      */
-    private endTurn(forceObjection: boolean) : void
+    private endTurn() : void
     {
         const that = this;
         const tilePlacements : TilePlacement[] = [];
@@ -421,7 +330,7 @@ export class Display
             }
         });
 
-        that.callbacks.endTurn(tilePlacements, forceObjection);
+        that.callbacks.endTurn(tilePlacements);
     }
 
     /**
@@ -625,34 +534,6 @@ export class Display
         endTurnButton.classList.add((disable) ? disabledClass : enabledClass);
     }
 
-    /**
-     * Displays the player information on the screen.
-     * This includes moving their tiles to their rack, and updating their points.
-     * @param player - The player whose information is to be displayed.
-     */
-    /*
-    public displayPlayerInfo(player: Player) : void
-    {
-        const rack = document.getElementById(`player${player.id}_rack`);
-        if (rack == null)
-        {
-            throw new Error(`Can't find player rack for player ${player.id}`);
-        }
-
-        rack.innerHTML = '';
-
-        player.rack.forEach((tile) => {
-            rack.appendChild(this.createTile(tile, false, false));
-        });
-
-        const points = document.getElementById(`player${player.id}_points`);
-        if (points == null)
-        {
-            throw new Error(`Can't find player points for player ${player.id}`);
-        }
-        points.innerText = player.points.toString();
-    }
-        */
 
     public initPlayer(player: Player) : void
     {
@@ -840,22 +721,6 @@ export class Display
                 list.appendChild(li);
             });
             body.appendChild(list);
-
-            /*
-            const objectionDiv = document.createElement("div");
-            objectionDiv.classList.add("objection");
-            const objectionButton = document.createElement("button");
-            objectionButton.appendChild(document.createTextNode(getStr(Strings.Objection)));
-
-            objectionButton.setAttribute('data-bs-dismiss', 'modal');
-            objectionButton.addEventListener('click', function(e){
-                that.endTurn(true);
-                errorModal
-            });
-
-            objectionDiv.appendChild(objectionButton);
-            body.appendChild(objectionDiv);
-            */
         }
 
         const errorModal = new BootstrapModal(BootstrapModal.Type.Error, 'move-warning-modal', getStr(Strings.Error), body);
@@ -915,8 +780,6 @@ export class Display
 
     public showWaitScreen(gameId: string) 
     {
-        const that = this;
-
         const waitPlayersModal = new bootstrap.Modal('#waitPlayersModal', {backdrop: 'static', keyboard: false});
         document.getElementById("gameId_code")!.textContent = gameId;
             
@@ -931,13 +794,11 @@ export class Display
 
     public static async newGame() {
         try {
-            // Make a POST request to the server to create a game
             const response = await fetch('/createGame', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                // You can send game configuration data in the body if needed
                 // body: JSON.stringify({ config: yourGameConfig })
             });
     
@@ -956,7 +817,6 @@ export class Display
             }
         } catch (error) {
             console.error("Error creating game:", error);
-            // Handle the error in the UI (e.g., show an error message)
         }
     }
 }
@@ -1186,7 +1046,6 @@ export function initHomePage() {
                     return false;
                 }
             } else {
-                // Handle empty input (e.g., show an error message)
                 console.log("Please enter a game ID");
             }
         });

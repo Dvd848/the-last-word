@@ -338,28 +338,6 @@ nav.bg-dark {
     font-weight: bold;
 }
 
-.objection {
-    text-align: center;
-}
-
-.objection button {
-    border-radius: .5rem;
-    box-sizing: border-box;
-    color: #FFFFFF;
-    font-size: 16px;
-    justify-content: center;
-    padding: 5px;
-    text-decoration: none;
-    width: 120px;
-    border: 0;
-    cursor: pointer;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    background-color: rgb(159, 66, 66);
-    font-weight: bold;
-}
-
 #swapTilesMessage {
     display: none;
     text-align: center;

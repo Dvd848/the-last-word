@@ -1,6 +1,5 @@
 import {Bag} from "./Bag";
 import {TilePlacement, Tile} from "./Tile";
-import {Board} from "./Board";
 
 export enum PlayerType {
     Human           = "Human",
@@ -238,10 +237,4 @@ export class HumanPlayer extends Player
         player.setRack(tiles);
         return player;
     }
-}
-
-const enum Direction 
-{
-    ACROSS,
-    DOWN
 }

@@ -1,11 +1,9 @@
 import { io, Socket } from 'socket.io-client';
-import { UserError } from '@shared/SharedGame';
 import Game from './Game'
-import {ModifiableBoard, Board} from '../../shared/src/Board'
+import {Board} from '../../shared/src/Board'
 import {Player} from '../../shared/src/Player'
 import { v4 as uuidv4, validate as uuidValidate, version as uuidVersion } from 'uuid';
 import Cookies from 'js-cookie'
-import { DisplayCallBacks } from './Display';
 import {TilePlacement, Tile} from '../../shared/src/Tile';
 
 function getGameId(urlString: string): string | null {
@@ -30,12 +28,9 @@ class OnlineGame {
     constructor() {
         const that = this;
         this.game = new Game({
-            endTurn: function(tilePlacements: TilePlacement[], forceObjection: boolean){that.makeMove(tilePlacements);},
-            /*getConfiguration: function(){return that.getConfiguration();},*/
-            /*setConfiguration: function(config: GameConfiguration){that.setConfigurationCallback(config);},*/
+            endTurn: function(tilePlacements: TilePlacement[]){that.makeMove(tilePlacements);},
             swapTiles: function(tiles: Tile[]){that.swapTiles(tiles);},
             getNumTilesInBag: function(){return -1;},
-            /*newGame: function(){that.newGame(that.getConfiguration())},*/
             checkWord: function(word: string) {return Promise.resolve(false);},
             isCurrentPlayersTurn: function(){return false;}
         });
@@ -143,8 +138,6 @@ class OnlineGame {
         // Emit the 'joinGame' event with the extracted gameId
         console.log("joinGame", this.gameId, this.playerId);
         this.socket.emit('joinGame', this.gameId, this.playerId);
-
-        // TODO: What if game ID not found? Show error and redirect home
     }
 
     makeMove(tilePlacements: TilePlacement[]) {

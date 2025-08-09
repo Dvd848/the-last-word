@@ -1,10 +1,10 @@
 import * as Constants from '@shared/Constants.js';
-import {ModifiableBoard, Board} from '@shared/Board.js'
-import {Player, PlayerType} from '@shared/Player.js';
+import {ModifiableBoard} from '@shared/Board.js'
+import {Player} from '@shared/Player.js';
 import {Bag} from '@shared/Bag.js';
 import {TilePlacement, Tile} from '@shared/Tile.js';
 import Dictionary from './Dictionary.js';
-import {GameConfiguration, PlayerDetails, UserError, GameErrorTypes, WordInfo, MoveDetails, SwapDetails} from '@shared/SharedGame.js'
+import {PlayerDetails, UserError, GameErrorTypes, WordInfo, MoveDetails, SwapDetails} from '@shared/SharedGame.js'
 
 export default class ServerGame 
 {
@@ -21,8 +21,6 @@ export default class ServerGame
   
     constructor(dictionary: Dictionary, numPlayers: number) 
     {
-        const that = this;
-
         this.dictionary = dictionary;
         this.numPlayers = numPlayers;
         this.players = [];
@@ -91,72 +89,6 @@ export default class ServerGame
     }
 
     public checkWord(word: string)
-    {
-        return this.dictionary.contains(word);
-    }
-
-    /**
-     * Return the current game configuration
-     * @returns The current game configuration
-     */
-    /*
-    public getConfiguration() : GameConfiguration
-    {
-        return {
-            playerDetails: this.players.map(player => {
-                return {name: player.name, playerType: player.playerType}
-            }),
-            checkDict: this.checkDict
-        }
-    }
-    */
-
-    /**
-     * Set the current game configuration
-     * @param config The configuration to be used
-     * @returns True if the configuration was legal, False otherwise
-     */
-    /*
-    private setConfigurationCallback(config: GameConfiguration) : boolean
-    {
-        try
-        {
-
-            if (config.playerDetails.length != this.players.length)
-            {
-                throw Error("Number of player names should match number of players");
-            }
-    
-            config.playerDetails.forEach((details) => {
-                details.name = details.name.trim();
-                if (details.name == "")
-                {
-                    throw Error("Player name can't be empty or only spaces");
-                }
-            });
-    
-            this.checkDict = config.checkDict;
-            this.players = this.createPlayers(config.playerDetails, true);
-        
-            //this.display.setPlayerNames(this.players);
-
-            this.playAutoTurnIfNeeded();
-    
-            return true;
-        }
-        catch (err)
-        {
-            return false;
-        }
-    }
-    */
-
-    /**
-     * Callback for the Display to check if a given word exists in the dictionary
-     * @param word The word to check
-     * @returns True if the word exists in the dictionary, False otherwise
-     */
-    private checkWordCallback(word: string) : boolean
     {
         return this.dictionary.contains(word);
     }
@@ -396,9 +328,8 @@ export default class ServerGame
     /**
      * Callback for the Display to handle the end of a turn
      * @param tilePlacements An array representing the tiles placed on the board 
-     * @param forceObjection True if the user requests to override the dictionary check
      */
-    public endTurnCallback(tilePlacements: TilePlacement[], forceObjection: boolean) : MoveDetails | null
+    public endTurnCallback(tilePlacements: TilePlacement[]) : MoveDetails | null
     {
         const actualTilePlacements : TilePlacement[] = [];
 
@@ -436,7 +367,7 @@ export default class ServerGame
 
             // Check if all placedWords are valid words
             const illegalWords : string[] = [];
-            if (this.checkDict && !forceObjection)
+            if (this.checkDict)
             {
                 for (const placedWord of placedWords) 
                 {
@@ -507,7 +438,6 @@ export default class ServerGame
 
             if ( (this.currentPlayer.rack.length == 0) || (this.consecutivePasses == Constants.MAX_CONSECUTIVE_PASS) )
             {
-                //this.display.gameOver(this.getLeadingPlayer());
                 this._isGameOver = true;
             }
             else

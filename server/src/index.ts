@@ -21,6 +21,7 @@ async function initializeServer() {
     const server = http.createServer(app);
     const io = new Server(server, {
         cors: {
+            // TODO: Is this really needed?
             origin: "*", // Allow requests from any origin
             methods: ["GET", "POST"], // Allow these HTTP methods
         }

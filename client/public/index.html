@@ -68,9 +68,6 @@
                         <a class="nav-link" href="#" id="showSwapTilesMenu">החלפת אותיות</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" id="showConfigMenu">הגדרות</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="#" data-bs-target="#rulesModal" data-bs-toggle="modal">חוקים</a>
                     </li>
                     <li class="nav-item">
@@ -172,67 +169,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">סגירה</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="configModal" tabindex="-1" aria-labelledby="configModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="configModalLabel">הגדרות</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="player_details_group">
-                            <div class="mb-3 row">
-                                <label for="configPlayer1Name" class="col-sm-3 col-form-label">שחקן/ית א'</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="configPlayer1Name" placeholder="שם השחקן/ית" maxlength="10">
-                                </div>
-                            </div>
-                            <div class="mb-3 row">
-                                <label for="configPlayer1Type" class="col-sm-3 col-form-label"></label>
-                                <div class="col-sm-8">
-                                    <select class="form-select" id="configPlayer1Type">
-                                        <option value="Human" selected="selected">שחקן/ית אנושי/ת</option>
-                                        <option value="ComputerNovice">מחשב - רמה קלה</option>
-                                        <option value="ComputerExpert">מחשב - רמה קשה</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label for="configPlayer2Name" class="col-sm-3 col-form-label">שחקן/ית ב'</label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control" id="configPlayer2Name" placeholder="שם השחקן/ית" maxlength="10">
-                            </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label for="configPlayer2Type" class="col-sm-3 col-form-label"></label>
-                            <div class="col-sm-8">
-                                <select class="form-select" id="configPlayer2Type">
-                                    <option value="Human" selected="selected">שחקן/ית אנושי/ת</option>
-                                    <option value="ComputerNovice">מחשב - רמה קלה</option>
-                                    <option value="ComputerExpert">מחשב - רמה קשה</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label for="configCheckDict" class="col-sm-3 col-form-label">אימות מול מילון</label>
-                            <div class="col-sm-8 d-flex align-items-center">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="configCheckDict">
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ביטול</button>
-                    <button type="button" class="btn btn-primary" id="configOkButton">אישור</button>
                 </div>
             </div>
         </div>

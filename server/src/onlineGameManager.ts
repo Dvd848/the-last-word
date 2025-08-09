@@ -178,7 +178,7 @@ export function onlineGameManager(io: Server, dictionary: Dictionary) {
                     return {tile: game.serverGame.bag.getTileById(Tile.fromJson(tilePlacement.tile).id), 
                                                                   r: tilePlacement.r, c: tilePlacement.c}
                 });
-                const moveDetails = game.serverGame.endTurnCallback(tilePlacements, false);
+                const moveDetails = game.serverGame.endTurnCallback(tilePlacements);
 
                 console.log(`End of turn in game ${gameId}`);
 
