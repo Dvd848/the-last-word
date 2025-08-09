@@ -55,7 +55,7 @@ export default class Dictionary
         try 
         {
             const buffer = await fs.readFile(dictPath);
-            rawDictionary = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+            rawDictionary = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer;
         } 
         catch (err: any) 
         {
