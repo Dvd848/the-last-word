@@ -782,6 +782,7 @@ export class Display
         }
         else
         {
+            console.log(`player${winnerIndex + 1}_name`)
             let name = document.getElementById(`player${winnerIndex + 1}_name`)!.innerText;
             message = getStr(Strings.PlayerWon).replace("${player}", name);
         }

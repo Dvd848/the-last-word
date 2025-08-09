@@ -359,7 +359,7 @@ export default class Game
      * Handles the end of the game and shows the winner.
      * @param winnerIndex The index of the winning player.
      */
-    public gameOver(winnerIndex: number) : void
+    public gameOver(winnerIndex: number | null) : void
     {
         this.display.gameOver(winnerIndex);
     }

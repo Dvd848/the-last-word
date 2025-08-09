@@ -175,8 +175,9 @@ export function onlineGameManager(io: Server, dictionary: Dictionary) {
 
                 if (game.serverGame.isGameOver())
                 {
+                    const winner = game.serverGame.getLeadingPlayer();
                     io.to(gameId).emit('gameOver', {
-                        winnerIndex: game.serverGame.getLeadingPlayer()
+                        winnerIndex: (winner != null) ? winner.index : null
                     });
                 }
             }
@@ -240,8 +241,9 @@ export function onlineGameManager(io: Server, dictionary: Dictionary) {
 
                 if (game.serverGame.isGameOver())
                 {
+                    const winner = game.serverGame.getLeadingPlayer();
                     io.to(gameId).emit('gameOver', {
-                        winnerIndex: game.serverGame.getLeadingPlayer()
+                        winnerIndex: (winner != null) ? winner.index : null
                     });
 
                     if (!game.isMarkedForDelete) 
