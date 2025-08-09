@@ -23,10 +23,18 @@ interface GameSocket extends Socket {
     player?: Player
 }
 
+/**
+ * Checks if the given game ID is valid (alphanumeric, underscore, dash, up to 32 chars).
+ * @param gameId The game ID to validate.
+ * @returns True if valid, false otherwise.
+ */
 function isValidGameID(gameId: string) {
     return /^[A-Za-z0-9_-]{1,32}$/.test(gameId);
 }
 
+/**
+ * Removes games that have been inactive for longer than INACTIVITY_THRESHOLD.
+ */
 function cleanupInactiveGames() {
     const now = Date.now();
     for (const gameId in games) {
@@ -38,10 +46,20 @@ function cleanupInactiveGames() {
     }
 }
 
+/**
+ * Generates a random game ID.
+ * @returns A new game ID string.
+ */
 function generateGameId(): string {
     return Math.random().toString(36).substring(2, 8);
 }
 
+/**
+ * Creates a new game and adds it to the games list.
+ * @param dictionary The dictionary instance to use.
+ * @param gameId Optional game ID to use; if null, generates a new one.
+ * @returns The created game ID.
+ */
 export function createNewGame(dictionary: Dictionary, gameId: string | null) : string {
     if (Object.keys(games).length > 100)
     {
@@ -66,11 +84,21 @@ export function createNewGame(dictionary: Dictionary, gameId: string | null) : s
     return gameId;
 }
 
+/**
+ * Checks if a game ID exists in the games list.
+ * @param gameId The game ID to check.
+ * @returns True if the game exists, false otherwise.
+ */
 export function checkGameId(gameId: string) : boolean {
     return gameId in games;
 }
 
 
+/**
+ * Sets up the online game manager, handling socket connections and game events.
+ * @param io The Socket.IO server instance.
+ * @param dictionary The dictionary instance to use for games.
+ */
 export function onlineGameManager(io: Server, dictionary: Dictionary) {
     console.log('onlineGameManager initialized');
 
@@ -79,6 +107,10 @@ export function onlineGameManager(io: Server, dictionary: Dictionary) {
     io.on('connection', (socket: GameSocket) => {
         console.log('User connected');
 
+        /**
+         * Handles a player joining a game.
+         * Validates game and player IDs, adds player, and emits initial game state.
+         */
         socket.on('joinGame', (gameId: string, playerId: string) => {
             try 
             {
@@ -95,9 +127,12 @@ export function onlineGameManager(io: Server, dictionary: Dictionary) {
                 }
                 
                 let game = null;
-                if(!games[gameId]) {
+                if(!games[gameId]) 
+                {
                     throw new Error(`Can't find Game ID: ${gameId}`);
-                } else {
+                } 
+                else 
+                {
                     game = games[gameId];
                     console.log(`Game existed: ${gameId}`);
                 }
@@ -154,21 +189,28 @@ export function onlineGameManager(io: Server, dictionary: Dictionary) {
             }
         });
 
+        /**
+         * Handles a player making a move.
+         * Validates turn, updates game state, and broadcasts changes.
+         */
         socket.on('makeMove', (move: any) => {
             try 
             {
                 const gameId = socket.gameId;
-                if (!gameId) {
+                if (!gameId) 
+                {
                     throw new Error("Game ID not found");
                 }
 
                 console.log(`user made a move in game ${gameId}`, move);
                 const game = games[gameId];
-                if (!game) {
+                if (!game) 
+                {
                     throw new Error(`Game ${gameId} not found`);
                 }
                                 
-                if (socket.player !== game.serverGame.currentPlayer) {
+                if (socket.player !== game.serverGame.currentPlayer) 
+                {
                     throw new Error("Not your turn");
                 }
 
@@ -202,7 +244,8 @@ export function onlineGameManager(io: Server, dictionary: Dictionary) {
                         winnerIndex: game.serverGame.getLeadingPlayer()
                     });
 
-                    if (!game.isMarkedForDelete) {
+                    if (!game.isMarkedForDelete) 
+                    {
                         setTimeout(() => {
                             console.log(`Removing game ${gameId} after game over`);
                             if (gameId in games)
@@ -225,22 +268,29 @@ export function onlineGameManager(io: Server, dictionary: Dictionary) {
             }
         });
 
+        /**
+         * Handles a player swapping tiles.
+         * Validates turn, performs swap, and broadcasts changes.
+         */
         socket.on('swapTiles', (tiles: any) => {
             // TODO: Code duplication with MakeMove
             try 
             {
                 const gameId = socket.gameId;
-                if (!gameId) {
+                if (!gameId) 
+                {
                     throw new Error("Game ID not found");
                 }
 
                 console.log(`user wants to swap tiles in game ${gameId}`, tiles);
                 const game = games[gameId];
-                if (!game) {
+                if (!game) 
+                {
                     throw new Error(`Game ${gameId} not found`);
                 }
                                 
-                if (socket.player !== game.serverGame.currentPlayer) {
+                if (socket.player !== game.serverGame.currentPlayer) 
+                {
                     throw new Error("Not your turn");
                 }
 
@@ -276,6 +326,10 @@ export function onlineGameManager(io: Server, dictionary: Dictionary) {
             }
         });
 
+        /**
+         * Handles player disconnect events.
+         * Broadcasts notification to other players in the game.
+         */
         socket.on('disconnect', () => {
             try
             {

@@ -31,7 +31,8 @@ export default class Game
     }
 
     /**
-     * Starts a new game based on the given configuration
+     * Starts a new game based on the given configuration.
+     * Initializes the board, resets turn state, and prepares the display.
      * @param gameConfiguration The game configuration for the game
      */
     public newGame() : void
@@ -43,6 +44,10 @@ export default class Game
         this.currentPlayersTurn = false;
     }
 
+    /**
+     * Initializes the board and shows it on the display.
+     * @param board The board to initialize.
+     */
     public initBoard(board: Board)
     {
         this.board = board;
@@ -50,37 +55,59 @@ export default class Game
         this.display.show();
     }
 
-    public waitForPlayers(gameId: string) {
+    /**
+     * Shows the waiting screen until all players have joined.
+     * @param gameId The game ID to display.
+     */
+    public waitForPlayers(gameId: string) 
+    {
         this.display.showWaitScreen(gameId);
     }
 
-    public allPlayersJoined() {
+    /**
+     * Hides the waiting screen when all players have joined.
+     */
+    public allPlayersJoined() 
+    {
         this.display.hideWaitScreen();
     }
 
+    /**
+     * Initializes the player and updates the display for the player.
+     * @param player The player to initialize.
+     */
     public initPlayer(player: Player)
     {
         this.player = player;
         this.display.initPlayer(player);
     }
 
+    /**
+     * Updates the current player reference.
+     * @param player The player to update.
+     */
     public updatePlayer(player: Player)
     {
         this.player = player;
     }
 
+    /**
+     * Updates the turn state to indicate if it's the current player's turn.
+     * @param currentPlayerIndex The index of the player whose turn it is.
+     */
     public updateTurn(currentPlayerIndex: number)
     {
         this.currentPlayersTurn = this.currentPlayer.index == currentPlayerIndex;
     }
 
     /**
-     * Callback for the Display to check if a given word exists in the dictionary
-     * @param word The word to check
-     * @returns True if the word exists in the dictionary, False otherwise
+     * Callback for the Display to check if a given word exists in the dictionary.
+     * @param word The word to check.
+     * @returns True if the word exists in the dictionary, False otherwise.
      */
     private async checkWordCallback(word: string): Promise<boolean> {
-        try {
+        try 
+        {
             const response = await fetch('/checkWord', {
                 method: 'POST',
                 headers: {
@@ -91,15 +118,17 @@ export default class Game
     
             const data = await response.json();
             return data.isValid;
-        } catch (error) {
+        } 
+        catch (error) 
+        {
             console.error('Error:', error);
             return false;
         }
     }  
 
     /**
-     * Callback for the Display to swap tiles for the current player
-     * @param tiles The tiles to swap
+     * Callback for the Display to swap tiles for the current player.
+     * @param tiles The tiles to swap.
      */
     private swapTilesCallback(tiles: Tile[]) : void
     {
@@ -108,9 +137,9 @@ export default class Game
     }
 
     /**
-     * Verify that the given tiles were placed in a consecutive manner
-     * @param tilePlacements An array representing the tiles placed on the board 
-     * @returns True if the tiles were placed consecutively on the board
+     * Verify that the given tiles were placed in a consecutive manner.
+     * @param tilePlacements An array representing the tiles placed on the board.
+     * @returns True if the tiles were placed consecutively on the board.
      */
     private verifyPlacementConsecutive(tilePlacements: TilePlacement[]) : boolean
     {
@@ -174,9 +203,9 @@ export default class Game
     }
 
     /**
-     * Verify that all the tiles placed during this turn are connected legally
-     * @param tilePlacements An array representing the tiles placed on the board 
-     * @returns True if all the tiles are connected legally
+     * Verify that all the tiles placed during this turn are connected legally.
+     * @param tilePlacements An array representing the tiles placed on the board.
+     * @returns True if all the tiles are connected legally.
      */
     private verifyPlacementConnected(tilePlacements: TilePlacement[]) : boolean
     {
@@ -206,8 +235,9 @@ export default class Game
     }
 
     /**
-     * Callback for the Display to handle the end of a turn
-     * @param tilePlacements An array representing the tiles placed on the board 
+     * Callback for the Display to handle the end of a turn.
+     * Validates the move and passes it to the game logic or shows an error.
+     * @param tilePlacements An array representing the tiles placed on the board.
      */
     private endTurnCallback(tilePlacements: TilePlacement[]) : void
     {
@@ -257,7 +287,8 @@ export default class Game
 
     
     /**
-     * Returns the current player
+     * Returns the current player.
+     * @returns The current Player object.
      */
     private get currentPlayer(): Player 
     {
@@ -268,11 +299,20 @@ export default class Game
         return this.player;
     }
 
+    /**
+     * Show an error to the user via the display.
+     * @param errorType The error type.
+     * @param extraData Additional error data.
+     */
     public showError(errorType: number, extraData: any) : void 
     {
         this.display.showError(errorType, extraData);
     }
 
+    /**
+     * Places tiles on the board and finalizes their placement in the display.
+     * @param board The board with tiles to place.
+     */
     public placeTilesOnBoard(board: Board) {
         this.board = board;
         this.display.finalizePlacements();
@@ -289,6 +329,12 @@ export default class Game
         }
     }
 
+    /**
+     * Handles the end of a turn, updating the display and player state.
+     * @param activePlayerIndex The index of the active player.
+     * @param moveDetails Details of the move performed.
+     * @param points Map of player indices to their points.
+     */
     public endTurn(activePlayerIndex : number, moveDetails: MoveDetails, points: Map<number, number>) : void
     {
         this.display.show();
@@ -300,16 +346,29 @@ export default class Game
         this.display.updatePlayerState(this.player!, activePlayerIndex, points);
     }
 
+    /**
+     * Logs a notification to the display.
+     * @param notification The notification message.
+     */
     public logNotification(notification: string) : void
     {
         this.display.logNotification(notification);
     }
     
+    /**
+     * Handles the end of the game and shows the winner.
+     * @param winnerIndex The index of the winning player.
+     */
     public gameOver(winnerIndex: number) : void
     {
         this.display.gameOver(winnerIndex);
     }
 
+    /**
+     * Completes a tile swap and logs it to the display.
+     * @param playerIndex The index of the player who swapped tiles.
+     * @param oldTiles The tiles that were swapped.
+     */
     public completeSwap(playerIndex: number, oldTiles: Tile[])
     {
         this.display.logSwap(playerIndex, oldTiles);

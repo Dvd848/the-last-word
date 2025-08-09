@@ -6,26 +6,39 @@ import { v4 as uuidv4, validate as uuidValidate, version as uuidVersion } from '
 import Cookies from 'js-cookie'
 import {TilePlacement, Tile} from '../../shared/src/Tile';
 
-function getGameId(urlString: string): string | null {
+/**
+ * Extracts the game ID from the given URL string.
+ * @param urlString The URL string to parse.
+ * @returns The game ID if found, otherwise null.
+ */
+function getGameId(urlString: string): string | null 
+{
     const url = new URL(urlString);
     const pathSegments = url.pathname.split('/').filter(Boolean); // removes empty strings
   
     const gameIndex = pathSegments.indexOf('game');
-    if (gameIndex !== -1 && gameIndex + 1 < pathSegments.length) {
+    if (gameIndex !== -1 && gameIndex + 1 < pathSegments.length) 
+    {
       return pathSegments[gameIndex + 1];
     }
   
     return null;
   }
 
-class OnlineGame {
+class OnlineGame 
+{
     socket: Socket;
     gameId: string | null;
     playerId: string;
     game: Game;
     waitingForAllPlayers : boolean = true;
 
-    constructor() {
+    /**
+     * Constructs an OnlineGame instance, sets up socket event handlers,
+     * initializes player ID, and prepares the game logic.
+     */
+    constructor() 
+    {
         const that = this;
         this.game = new Game({
             endTurn: function(tilePlacements: TilePlacement[]){that.makeMove(tilePlacements);},
@@ -41,7 +54,8 @@ class OnlineGame {
             && (uuidVersion(playerId) === 4)) {
             this.playerId = playerId;
         }
-        else {
+        else 
+        {
             this.playerId = uuidv4();
             Cookies.set("playerId", this.playerId);
         }
@@ -125,7 +139,11 @@ class OnlineGame {
         });
     }
 
-    joinGame() {
+    /**
+     * Joins the game by emitting a 'joinGame' event with the game ID and player ID.
+     */
+    joinGame() 
+    {
         // Extract the gameId (the part after "/game/")
         const gameId = getGameId(window.location.href);
         if (gameId == null)
@@ -140,8 +158,14 @@ class OnlineGame {
         this.socket.emit('joinGame', this.gameId, this.playerId);
     }
 
-    makeMove(tilePlacements: TilePlacement[]) {
-        if (!this.gameId) {
+    /**
+     * Emits a 'makeMove' event with the tile placements to the server.
+     * @param tilePlacements The tiles placed during the move.
+     */
+    makeMove(tilePlacements: TilePlacement[]) 
+    {
+        if (!this.gameId) 
+        {
             console.error("no game id");
             return;
         }
@@ -149,8 +173,14 @@ class OnlineGame {
         this.socket.emit('makeMove', tilePlacements);
     }
 
-    swapTiles(tiles: Tile[]) {
-        if (!this.gameId) {
+    /**
+     * Emits a 'swapTiles' event with the tiles to swap to the server.
+     * @param tiles The tiles to swap.
+     */
+    swapTiles(tiles: Tile[]) 
+    {
+        if (!this.gameId) 
+        {
             console.error("no game id");
             return;
         }
@@ -159,4 +189,5 @@ class OnlineGame {
     }
 
 }
+
 export { OnlineGame }

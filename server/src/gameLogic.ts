@@ -29,7 +29,8 @@ export default class ServerGame
     }
 
     /**
-     * Starts a new game based on the given configuration
+     * Starts a new game based on the given configuration.
+     * Initializes the board, bag, player state, and game flags.
      */
     public newGame() : void
     {
@@ -43,10 +44,11 @@ export default class ServerGame
     }
 
     /**
-     * Create the players for the game
-     * @param players The player details to use for creating the players
-     * @param basedOnCurrent True if the new players should inherit the rack and points from the current players, False otherwise
-     * @returns The new players created
+     * Create and add a player to the game.
+     * If the player already exists, returns the existing player.
+     * Throws if all players have already joined.
+     * @param player The player details to use for creating the player.
+     * @returns The new or existing player.
      */
     public addPlayer(player: PlayerDetails) : Player
     {
@@ -83,19 +85,30 @@ export default class ServerGame
         return newPlayer;
     }
 
+    /**
+     * Checks if all players have joined the game.
+     * @returns True if all players have joined, false otherwise.
+     */
     public allPlayersJoined() : boolean 
     {
         return (this.players.length == this.numPlayers);
     }
 
+    /**
+     * Checks if a word is in the dictionary.
+     * @param word The word to check.
+     * @returns True if the word is in the dictionary, false otherwise.
+     */
     public checkWord(word: string)
     {
         return this.dictionary.contains(word);
     }
 
     /**
-     * Callback for the Display to swap tiles for the current player
-     * @param tiles The tiles to swap
+     * Swaps tiles for the current player and updates the bag and rack.
+     * Returns swap details if successful, null otherwise.
+     * @param tiles The tiles to swap.
+     * @returns SwapDetails if swap is successful, null otherwise.
      */
     public swapTiles(tiles: Tile[]) : SwapDetails | null
     {
@@ -141,9 +154,9 @@ export default class ServerGame
     }
 
     /**
-     * Given a tile placement, return all the word (and points) for the words created as part of this placement
-     * @param tilePlacements An array representing the tiles placed on the board
-     * @returns The different words (and their matching points) created as part of this placement
+     * Given a tile placement, return all the words (and points) for the words created as part of this placement.
+     * @param tilePlacements An array representing the tiles placed on the board.
+     * @returns The different words (and their matching points) created as part of this placement.
      */
     private getCreatedWords(tilePlacements: TilePlacement[]): WordInfo[] 
     {
@@ -197,10 +210,10 @@ export default class ServerGame
     }
 
     /**
-     * Calculate the amount of points the player is entitled to as part of the given placement
-     * @param tilePlacements An array representing the tiles placed on the board 
-     * @param placedWords An array representing the words created as part of this placement
-     * @returns A tuple with the amount of points for the word placement and the amount of bonus points for this placement
+     * Calculate the amount of points the player is entitled to as part of the given placement.
+     * @param tilePlacements An array representing the tiles placed on the board.
+     * @param placedWords An array representing the words created as part of this placement.
+     * @returns A tuple with the amount of points for the word placement and the amount of bonus points for this placement.
      */
     private calculatePoints(tilePlacements: TilePlacement[], placedWords: WordInfo[]) : [number, number]
     {
@@ -220,9 +233,9 @@ export default class ServerGame
     }
 
     /**
-     * Verify that the given tiles were placed in a consecutive manner
-     * @param tilePlacements An array representing the tiles placed on the board 
-     * @returns True if the tiles were placed consecutively on the board
+     * Verify that the given tiles were placed in a consecutive manner.
+     * @param tilePlacements An array representing the tiles placed on the board.
+     * @returns True if the tiles were placed consecutively on the board.
      */
     private verifyPlacementConsecutive(tilePlacements: TilePlacement[]) : boolean
     {
@@ -286,9 +299,9 @@ export default class ServerGame
     }
 
     /**
-     * Verify that all the tiles placed during this turn are connected legally
-     * @param tilePlacements An array representing the tiles placed on the board 
-     * @returns True if all the tiles are connected legally
+     * Verify that all the tiles placed during this turn are connected legally.
+     * @param tilePlacements An array representing the tiles placed on the board.
+     * @returns True if all the tiles are connected legally.
      */
     private verifyPlacementConnected(tilePlacements: TilePlacement[]) : boolean
     {
@@ -318,7 +331,7 @@ export default class ServerGame
     }
 
     /**
-     * Move to the next player after the current player ended their turn
+     * Move to the next player after the current player ended their turn.
      */
     private moveToNextPlayer() : void
     {
@@ -326,8 +339,10 @@ export default class ServerGame
     }
 
     /**
-     * Callback for the Display to handle the end of a turn
-     * @param tilePlacements An array representing the tiles placed on the board 
+     * Handles the end of a turn, validates the move, updates the board and player state.
+     * Throws UserError if the move is invalid.
+     * @param tilePlacements An array representing the tiles placed on the board.
+     * @returns MoveDetails if the move is valid, null otherwise.
      */
     public endTurnCallback(tilePlacements: TilePlacement[]) : MoveDetails | null
     {
@@ -470,8 +485,8 @@ export default class ServerGame
     }
 
     /**
-     * Returns the leading player at this time, according to the amount of points (or null if there's a tie)
-     * @returns The leading player at this time
+     * Returns the leading player at this time, according to the amount of points (or null if there's a tie).
+     * @returns The leading player at this time, or null if there is a tie.
      */
     public getLeadingPlayer() : Player | null
     {
@@ -504,21 +519,26 @@ export default class ServerGame
     }
     
     /**
-     * Returns the current player
+     * Returns the current player.
+     * @returns The current Player object.
      */
     public get currentPlayer(): Player 
     {
         return this.players[this.currentPlayerIndex];
     }
 
+    /**
+     * Checks if the game is over.
+     * @returns True if the game is over, false otherwise.
+     */
     public isGameOver() : boolean
     {
         return this._isGameOver;
     }
 
     /**
-     * Get a map of the points for each player (player index -> player points)
-     * @returns A map of the points for each player
+     * Get a map of the points for each player (player index -> player points).
+     * @returns A map of the points for each player.
      */
     public getPoints() : Map<number, number>
     {

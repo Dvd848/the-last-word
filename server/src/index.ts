@@ -34,19 +34,24 @@ async function initializeServer() {
     createNewGame(dictionary, "test");
 
     app.post('/createGame', (req, res) => {
-        try {
+        try 
+        {
             const gameId = createNewGame(dictionary, null);
             res.json({ gameId: gameId }); // Send the game ID back to the client
-        } catch (error) {
+        } 
+        catch (error) 
+        {
             console.error("Error creating game:", error);
             res.status(500).json({ error: "Failed to create game" });
         }
     });
 
     app.post('/gameExists', (req, res) => {
-        try {
+        try 
+        {
             const gameId = req.body.gameId; // Get the word from the request body
-            if (!gameId) {
+            if (!gameId) 
+            {
                 return res.status(400).json({ error: "gameId is required" });
             }
 
@@ -54,17 +59,21 @@ async function initializeServer() {
 
             res.json({ gameId: gameId, gameExists: gameExists });
 
-        } catch (error) {
+        } 
+        catch (error) 
+        {
             console.error("Error checking gameId:", error);
             res.status(500).json({ error: "Failed to check gameId" });
         }
     });
 
     app.post('/checkWord', (req, res) => {
-        try {
+        try 
+        {
             //console.log("checkWord", req.body)
             const word = req.body.word; // Get the word from the request body
-            if (!word) {
+            if (!word) 
+            {
                 return res.status(400).json({ error: "Word is required" });
             }
 
@@ -73,7 +82,9 @@ async function initializeServer() {
             console.log(`Checked word: ${word}, Is Valid: ${isValid}`);
             res.json({ word: word, isValid: isValid }); // Send the result back
 
-        } catch (error) {
+        } 
+        catch (error) 
+        {
             console.error("Error checking word:", error);
             res.status(500).json({ error: "Failed to check word" });
         }

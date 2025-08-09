@@ -68,6 +68,7 @@ export class Display
 
     /**
      * Initializes the Display class with a board object.
+     * Sets up the board and initializes the active tiles map.
      * @param board - The board object to initialize with.
      */
     public init(board: Board) : void
@@ -77,7 +78,7 @@ export class Display
     }
 
     /**
-     * Shows the game board.
+     * Shows the game board by removing the loader and displaying the game element.
      */
     public show() : void
     {
@@ -87,6 +88,7 @@ export class Display
 
     /**
      * Creates the board element in HTML based on the given board object.
+     * Adds droppable functionality to each board tile.
      * @param board - The board object that contains information about the board's dimensions and tiles.
      */
     private createBoard(board: Board) : void
@@ -112,20 +114,21 @@ export class Display
 
     
     /**
-     * Configures the end turn button.
+     * Configures the end turn button by setting its text and click event.
      */
     private configureButtonEndTurn() : void
     {
         const that = this;
         const endTurnButton = document.getElementById("end_turn_button")!;
         endTurnButton.innerText = getStr(Strings.EndTurn);
-        endTurnButton.addEventListener('click', function(e){
-            that.endTurn(false);
+        endTurnButton.addEventListener('click', function(e)
+        {
+            that.endTurn();
         });
     }
 
     /**
-     * Configures the swap tiles button and its associated modal.
+     * Configures the swap tiles button and its associated modal, including event listeners for swapping tiles.
      */
     private configureButtonSwapTiles() : void
     {
@@ -192,7 +195,8 @@ export class Display
             const checkedCheckboxes = swapTilesForm.querySelectorAll<HTMLInputElement>('input[name="swapTile"]:checked');
             const tilesToSwap : Tile[] = [];
 
-            for (let i = 0; i < checkedCheckboxes.length; i++) {
+            for (let i = 0; i < checkedCheckboxes.length; i++) 
+            {
                 tilesToSwap.push(that.activeTiles.get(parseInt(checkedCheckboxes[i].value))!);
             }
 
@@ -210,7 +214,7 @@ export class Display
     }
 
     /**
-     * Configure the new game button.
+     * Configure the new game button to start a new game when clicked.
      */
     private configureButtonNewGame() : void
     {
@@ -219,7 +223,7 @@ export class Display
     }
 
     /**
-     * Configures the search button and its associated modal.
+     * Configures the search button and its associated modal for word lookup.
      */
     private configureButtonSearch() : void
     {
@@ -279,11 +283,7 @@ export class Display
     }
 
     /**
-     * Configures the buttons for the game.
-     * 
-     * This function sets up the event listeners for the buttons in the game, such as the "End Turn" button and the "Swap Tiles" button.
-     * It also handles displaying the configuration menu and swapping tiles.
-     * 
+     * Configures all game control buttons by calling their respective configuration functions.
      */
     private configureButtons() : void
     {
@@ -307,7 +307,8 @@ export class Display
     }
 
     /**
-     * End the current turn, identity the current placement and check if it's legal.
+     * End the current turn, identify the current placement and check if it's legal.
+     * Collects all active tiles placed on the board and passes them to the game logic.
      */
     private endTurn() : void
     {
@@ -334,7 +335,7 @@ export class Display
     }
 
     /**
-     * Move active tiles back to rack.
+     * Move all active tiles back to the player's rack.
      */
     private moveActiveTilesBackToRack() 
     {
@@ -414,7 +415,7 @@ export class Display
     }
 
     /**
-     * Make the board a valid droppable area.
+     * Make the board a valid droppable area by enabling drag-and-drop for each tile.
      */
     private makeBoardDroppable() : void
     {
@@ -424,6 +425,10 @@ export class Display
         });
     }
 
+    /**
+     * Enable or disable the board tiles as droppable areas.
+     * @param disable - If true, disables droppable; otherwise, enables it.
+     */
     private disableEnableBoardDroppable(disable: boolean) : void
     {
         const tiles = document.querySelectorAll('.board_tile');
@@ -440,8 +445,7 @@ export class Display
     }
 
     /**
-     * Create a tile with the given attributes.
-     * 
+     * Create a tile HTML element with the given attributes.
      * @param tile The tile to create
      * @param is_draggable Whether this tile should be draggable.
      * @param is_active Whether this tile is active, i.e. part of the current turn
@@ -508,7 +512,6 @@ export class Display
 
     /**
      * Set the player names on the board.
-     * 
      * @param players The players.
      */
     public setPlayerNames(players: Player[])
@@ -535,6 +538,10 @@ export class Display
     }
 
 
+    /**
+     * Initialize the display for the given player, updating turn and points indicators.
+     * @param player The player to initialize.
+     */
     public initPlayer(player: Player) : void
     {
         document.querySelectorAll('.player_turn').forEach(element => {
@@ -556,6 +563,8 @@ export class Display
      * Sets the active player and updates the display accordingly.
      * This includes moving the tiles from their rack to the active rack.
      * @param player - The player to set as active.
+     * @param activePlayerIndex - The index of the active player.
+     * @param points - Map of player indices to their points.
      */
     public updatePlayerState(player: Player, activePlayerIndex : number, points: Map<number, number>) : void
     {
@@ -611,7 +620,7 @@ export class Display
 
     /**
      * Log the move details (display a Toast with the details).
-     * @param player The player that performed the move
+     * @param playerIndex The player that performed the move
      * @param points The amount of points (excluding Bonus points) that the user got for this move
      * @param placedWords The words that the user placed as part of this move, together with their points
      * @param bonusPoints The amount of bonus points received during this turn
@@ -658,7 +667,7 @@ export class Display
 
     /**
      * Log the details of a letter swap.
-     * @param player The player that swapped their letters.
+     * @param playerIndex The player that swapped their letters.
      * @param oldTiles The old tiles that were swapped.
      */
     public logSwap(playerIndex: number, oldTiles: Tile[]) : void
@@ -679,6 +688,10 @@ export class Display
         toast.show();
     }
 
+    /**
+     * Log a notification message to the user as a Toast.
+     * @param notification The notification message.
+     */
     public logNotification(notification: string) : void
     {
         const header = "הודעה";
@@ -728,7 +741,7 @@ export class Display
     }
 
     /**
-     * Set a tile on the board.
+     * Set a tile on the board at the specified row and column.
      * @param row The row to set the tile on.
      * @param col The column to set the tile on.
      * @param tile The tile to set.
@@ -744,6 +757,12 @@ export class Display
         }, 4000);
     }
 
+    /**
+     * Check if a tile exists at the specified board location.
+     * @param row The row to check.
+     * @param col The column to check.
+     * @returns True if a tile exists, false otherwise.
+     */
     public hasTile(row: number, col: number) : boolean
     {
         const boardTile = document.querySelector(`div.board_tile[data-r="${row}"][data-c="${col}"]`);
@@ -751,8 +770,8 @@ export class Display
     }
 
     /**
-     * Handle the end of the game.
-     * @param winner The winner, or null if there's a tie.
+     * Handle the end of the game, showing the winner or tie message.
+     * @param winnerIndex The winner's index, or null if there's a tie.
      */
     public gameOver(winnerIndex: number | null) : void
     {
@@ -778,6 +797,10 @@ export class Display
         document.getElementById(`active_player_rack`)!.innerHTML = "";
     }
 
+    /**
+     * Show the waiting screen modal with the game ID.
+     * @param gameId The game ID to display.
+     */
     public showWaitScreen(gameId: string) 
     {
         const waitPlayersModal = new bootstrap.Modal('#waitPlayersModal', {backdrop: 'static', keyboard: false});
@@ -787,13 +810,21 @@ export class Display
         this.waitPlayersModal = waitPlayersModal;
     }
 
+    /**
+     * Hide the waiting screen modal.
+     */
     public hideWaitScreen() 
     {
         this.waitPlayersModal?.hide();
     }
 
-    public static async newGame() {
-        try {
+    /**
+     * Start a new game by making a request to the server and redirecting to the new game page.
+     */
+    public static async newGame() 
+    {
+        try 
+        {
             const response = await fetch('/createGame', {
                 method: 'POST',
                 headers: {
@@ -802,20 +833,26 @@ export class Display
                 // body: JSON.stringify({ config: yourGameConfig })
             });
     
-            if (!response.ok) {
+            if (!response.ok) 
+            {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
     
             const data = await response.json();
             const gameId = data.gameId;
     
-            if (gameId) {
+            if (gameId) 
+            {
                 // Redirect to the game URL
                 window.location.href = `/game/${gameId}`;
-            } else {
+            } 
+            else 
+            {
                 console.error("Server did not return a game ID");
             }
-        } catch (error) {
+        } 
+        catch (error) 
+        {
             console.error("Error creating game:", error);
         }
     }
@@ -823,6 +860,7 @@ export class Display
 
 /**
  * Represents a Bootstrap Toast.
+ * Used to display notifications to the user.
  */
 class BootstrapToast 
 {
@@ -842,6 +880,9 @@ class BootstrapToast
         this.autohide = autohide;
     }
     
+    /**
+     * Show the toast notification.
+     */
     public show(): void 
     {
         const toast = document.createElement('div');
@@ -888,6 +929,10 @@ class BootstrapToast
         });
     }
 
+    /**
+     * Get or create the toast wrapper element.
+     * @returns The toast wrapper HTMLElement.
+     */
     private getOrCreateToastWrapper() 
     {
         var toastWrapper = document.querySelector<HTMLElement>('body > [data-toast-wrapper]');
@@ -910,6 +955,7 @@ class BootstrapToast
 
 /**
  * Represents a Bootstrap Modal.
+ * Used to display modal dialogs to the user.
  */
 class BootstrapModal 
 {
@@ -926,6 +972,9 @@ class BootstrapModal
         this.type = type;
     }
     
+    /**
+     * Open the modal dialog.
+     */
     public openModal(): void 
     {
         const modal = document.createElement('div');
@@ -1004,25 +1053,33 @@ namespace BootstrapModal
     }
 }
 
-export function initHomePage() {
+/**
+ * Initialize the home page, setting up event listeners for creating and joining games.
+ */
+export function initHomePage() 
+{
     const createGameButton = document.getElementById("create-game-button");
     const joinGameButton = document.getElementById("join-game-button");
     const gameIdInput = document.getElementById("game-id-input") as HTMLInputElement;
     
     document.getElementById("loader")?.remove();
 
-    if (createGameButton) {
+    if (createGameButton) 
+    {
         createGameButton.addEventListener("click", Display.newGame);
     }
 
-    if (joinGameButton && gameIdInput) {
+    if (joinGameButton && gameIdInput) 
+    {
         joinGameButton.addEventListener("click", async (event) => {
             const gameId = gameIdInput.value;
-            if (gameId) {
+            if (gameId) 
+            {
                 // Navigate to the game URL with the entered ID
                 event.preventDefault();
                 document.getElementById("joinError")!.innerText = "";
-                try {
+                try 
+                {
                     const response = await fetch('/gameExists', {
                         method: 'POST',
                         headers: {
@@ -1041,11 +1098,15 @@ export function initHomePage() {
                         let errorText = "שגיאה: לא מצאנו משחק עם מזהה כזה";
                         document.getElementById("joinError")!.innerText = errorText;
                     }
-                } catch (error) {
+                } 
+                catch (error) 
+                {
                     console.error('Error:', error);
                     return false;
                 }
-            } else {
+            } 
+            else 
+            {
                 console.log("Please enter a game ID");
             }
         });

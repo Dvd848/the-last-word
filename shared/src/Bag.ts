@@ -12,8 +12,9 @@ export class Bag
     private tilesById: Map<number, Tile> = new Map<number, Tile>();
   
     /**
-     * Creates an instance of Bag and shuffles it
-     * @param tileCounts - An array describing the different tiles, their count and points
+     * Creates an instance of Bag and shuffles it.
+     * Initializes the tiles and tilesById map.
+     * @param tileCounts - An array describing the different tiles, their count and points.
      */
     constructor(tileCounts: TileAttributes) 
     {  
@@ -32,6 +33,7 @@ export class Bag
 
     /**
      * Draws a tile from the bag.
+     * Removes and returns the last tile in the bag, or null if empty.
      * @returns The drawn tile or null if the bag is empty.
      */
     public draw() : Tile | null
@@ -70,6 +72,11 @@ export class Bag
         return this.tiles.length;
     }
 
+    /**
+     * Gets a tile by its unique ID.
+     * @param id The tile ID.
+     * @returns The Tile object if found, otherwise null.
+     */
     public getTileById(id: number) : Tile | null
     {
         const tile = this.tilesById.get(id);

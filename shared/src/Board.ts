@@ -14,7 +14,9 @@ export class Board
   
     /**
      * Constructs a new Board object with the specified size, and initializes the special tiles on the board.
+     * Sets up the board tiles and applies multipliers.
      * @param size - The size of the board.
+     * @param multipliers - The tile multipliers configuration.
      */
     constructor(size: number, multipliers: Constants.TileMultipliers) 
     {
@@ -103,6 +105,11 @@ export class Board
         return this._size;
     }
 
+    /**
+     * Creates a Board instance from a JSON object.
+     * @param data The JSON data representing the board.
+     * @returns A Board instance.
+     */
     static fromJson(data: any): Board {
         const board = new Board(data._size, {} as Constants.TileMultipliers);
         for (let row = 0; row < data.tiles.length; row++) {
@@ -121,6 +128,11 @@ export class Board
  */
 export class ModifiableBoard extends Board
 {
+    /**
+     * Constructs a new ModifiableBoard object.
+     * @param size - The size of the board.
+     * @param multipliers - The tile multipliers configuration.
+     */
     constructor(size: number, multipliers: Constants.TileMultipliers) 
     {
         super(size, multipliers);

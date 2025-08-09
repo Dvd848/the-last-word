@@ -1,5 +1,3 @@
-
-
 import { CompletionDAWG } from "./dawg/dawgs.js";
 import { promises as fs } from 'fs';
 import * as path from 'path';
@@ -17,6 +15,7 @@ export default class Dictionary
 
     /**
      * Constructor for Dictionary class.
+     * Initializes internal mappings and alphabet set.
      */
     constructor()
     {
@@ -27,7 +26,9 @@ export default class Dictionary
     }
 
     /**
-     * Initializes the dictionary by loading the word list.
+     * Initializes the dictionary by loading the word list and DAWG database.
+     * Loads translation mappings and builds the alphabet set.
+     * @param basePath The base path to the wordlists directory.
      */
     async init(basePath: string): Promise<void> {
         const configPath = path.join(basePath, 'wordlists', 'config.json');
@@ -51,11 +52,15 @@ export default class Dictionary
         const dictPath = path.join(basePath, 'wordlists', dirName, wordlistConfig["filename"]);
 
         let rawDictionary: ArrayBuffer;
-        try {
+        try 
+        {
             const buffer = await fs.readFile(dictPath);
             rawDictionary = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
-        } catch (err: any) {
-            if (err.code === 'ENOENT') {
+        } 
+        catch (err: any) 
+        {
+            if (err.code === 'ENOENT') 
+            {
                 console.log("Can't find database");
             }
             throw new Error(`An error has occurred while loading the dictionary: ${err.message}`);
@@ -75,6 +80,8 @@ export default class Dictionary
      * For example, the Hebrew dictionary is encoded with English characters.
      * This function translates the word in from its original encoding (e.g Hebrew)
      * to the encoding used in the raw dictionary representation (e.g. English characters).
+     * @param word The word to translate.
+     * @returns The translated word.
      */
     private directTranslation(word: string) : string
     {        
@@ -82,8 +89,11 @@ export default class Dictionary
         return word.replace(/(\?|[\u0590-\u05fe])/g, m => this.translateMapping[m]);
     }
 
-    /*
+    /**
      * Performs the reverse translation for directTranslation().
+     * Converts encoded dictionary words back to their original encoding.
+     * @param word The word to reverse translate.
+     * @returns The reverse translated word.
      */
     private reverseTranslation(word: string) : string
     {
@@ -92,6 +102,7 @@ export default class Dictionary
 
     /**
      * Checks if a word is in the dictionary.
+     * Throws if the dictionary is not loaded.
      * @param word - The word to check.
      * @returns True if the word is in the dictionary, false otherwise.
      */
@@ -106,7 +117,8 @@ export default class Dictionary
     }
 
     /**
-     * Returns all words in the dictionary that start with a given prefix.
+     * Returns all possible next letters for words in the dictionary that start with a given prefix.
+     * Throws if the dictionary is not loaded.
      * @param prefix - The prefix to search for.
      * @returns A set of the next letter for all words in the dictionary that start with the given prefix.
      */

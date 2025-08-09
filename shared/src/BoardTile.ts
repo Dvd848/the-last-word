@@ -23,7 +23,8 @@ export default class BoardTile
     private          _letterMul : number;
   
     /**
-     * Constructor for BoardTile class
+     * Constructor for BoardTile class.
+     * Initializes the tile with default multipliers and type.
      * @param row - row number of the tile
      * @param col - column number of the tile
      */
@@ -38,8 +39,8 @@ export default class BoardTile
     }
   
     /**
-     * Getter for row property
-     * @returns row number of the tile
+     * Getter for row property.
+     * @returns Row number of the tile.
      */
     get row(): number 
     {
@@ -47,8 +48,8 @@ export default class BoardTile
     }
   
     /**
-     * Getter for col property
-     * @returns column number of the tile
+     * Getter for col property.
+     * @returns Column number of the tile.
      */
     get col(): number 
     {
@@ -56,8 +57,8 @@ export default class BoardTile
     }
 
     /**
-     * Getter for tile property
-     * @returns Tile object or null if there is no tile on this board tile
+     * Getter for tile property.
+     * @returns Tile object or null if there is no tile on this board tile.
      */
     get tile(): Tile | null
     {
@@ -65,8 +66,8 @@ export default class BoardTile
     }
 
     /**
-     * Setter for tile property
-     * @param tile - Tile object to be set on this board tile
+     * Setter for tile property.
+     * @param tile - Tile object to be set on this board tile.
      */
     set tile(tile: Tile | null) 
     {
@@ -74,8 +75,8 @@ export default class BoardTile
     }
 
     /**
-     * Getter for type property
-     * @returns type of this board tile (Regular, DoubleLetter, TripleLetter, DoubleWord, TripleWord)
+     * Getter for type property.
+     * @returns Type of this board tile (Regular, DoubleLetter, TripleLetter, DoubleWord, TripleWord, CenterTile).
      */
     get type(): TileTypes
     {
@@ -83,8 +84,8 @@ export default class BoardTile
     }
 
     /**
-     * Setter for type property
-     * @param type - type of this board tile (Regular, DoubleLetter, TripleLetter, DoubleWord, TripleWord)
+     * Setter for type property.
+     * @param type - Type of this board tile.
      */
     set type(type: TileTypes) 
     {
@@ -92,8 +93,8 @@ export default class BoardTile
     }
 
     /**
-     * Getter for wordMultiplier property - the score for a word placed on this tile is multiplied by this factor
-     * @returns word multiplier value of this board tile
+     * Getter for wordMultiplier property - the score for a word placed on this tile is multiplied by this factor.
+     * @returns Word multiplier value of this board tile.
      */
     get wordMultiplier(): number
     {
@@ -101,8 +102,8 @@ export default class BoardTile
     }
 
     /**
-     * Setter for wordMultiplier property - the score for a word placed on this tile is multiplied by this factor
-     * @param value - word multiplier value to be set on this board tile
+     * Setter for wordMultiplier property - the score for a word placed on this tile is multiplied by this factor.
+     * @param value - Word multiplier value to be set on this board tile.
      */
     set wordMultiplier(value: number)
     {
@@ -110,8 +111,8 @@ export default class BoardTile
     }
 
     /**
-     * Getter for letterMultiplier property - the score for a letter placed on this tile is multiplied by this factor
-     * @returns letter multiplier value of this board tile (1 or 2 or 3)
+     * Getter for letterMultiplier property - the score for a letter placed on this tile is multiplied by this factor.
+     * @returns Letter multiplier value of this board tile (1 or 2 or 3).
      */
     get letterMultiplier(): number
     {
@@ -119,8 +120,8 @@ export default class BoardTile
     }
 
     /**
-     * Setter for letterMultiplier property -  - the score for a letter placed on this tile is multiplied by this factor
-     * @param value - letter multiplier value to be set on this board tile (1 or 2 or 3)
+     * Setter for letterMultiplier property - the score for a letter placed on this tile is multiplied by this factor.
+     * @param value - Letter multiplier value to be set on this board tile (1 or 2 or 3).
      */
     set letterMultiplier(value: number)
     {
@@ -136,15 +137,24 @@ export default class BoardTile
         this._letterMul = 1;
     }
 
-    static fromJson(data: any): BoardTile {
+    /**
+     * Creates a BoardTile instance from a JSON object.
+     * @param data The JSON data representing the board tile.
+     * @returns A BoardTile instance.
+     */
+    static fromJson(data: any): BoardTile 
+    {
         const tile = new BoardTile(data._row, data._col);
         tile.type = data._type;
         tile.wordMultiplier = data._wordMul;
         tile.letterMultiplier = data._letterMul;
 
-        if (data._tile !== null) {
+        if (data._tile !== null) 
+        {
             tile.tile = Tile.fromJson(data._tile);
-        } else {
+        } 
+        else 
+        {
             tile.tile = null;
         }
 

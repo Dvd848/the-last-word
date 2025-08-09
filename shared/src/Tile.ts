@@ -1,4 +1,3 @@
-
 let counter = 0;
 
 export type TilePlacement =
@@ -25,7 +24,8 @@ export class Tile
     }
   
     /**
-     * Returns the letter for this tile
+     * Returns the letter for this tile.
+     * @returns The letter on the tile.
      */
     get letter(): string 
     {
@@ -33,7 +33,8 @@ export class Tile
     }
   
     /**
-     * Returns the points for this tile
+     * Returns the points for this tile.
+     * @returns The points value of the tile.
      */
     get points(): number 
     {
@@ -41,7 +42,8 @@ export class Tile
     }
 
     /**
-     * Returns the tile ID
+     * Returns the tile ID.
+     * @returns The unique ID of the tile.
      */
     get id(): number 
     {
@@ -49,11 +51,13 @@ export class Tile
     }
 
     /**
-     * Is this tile equal to another tile?
-     * @param other Other tile
-     * @returns True if the tiles are equal, false otherwise
+     * Checks if this tile is equal to another tile.
+     * Equality is based on letter, points, and id.
+     * @param other Other tile to compare.
+     * @returns True if the tiles are equal, false otherwise.
      */
-    public equals(other: Tile) : boolean { 
+    public equals(other: Tile) : boolean 
+    { 
         return (
             (this.letter == other.letter)
             && (this.points == other.points)
@@ -61,7 +65,13 @@ export class Tile
         );
     }
 
-    static fromJson(data: any): Tile {
+    /**
+     * Creates a Tile instance from a JSON object.
+     * @param data The JSON data representing the tile.
+     * @returns A Tile instance.
+     */
+    static fromJson(data: any): Tile 
+    {
         const tile = new Tile(data._letter, data._points);
         (tile as any)._id = data._id;
         //counter = Math.max(counter, data._id + 1); // Ensure no duplicate IDs
