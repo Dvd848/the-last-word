@@ -1,5 +1,5 @@
-import * as Utils from '../../shared/src/Utils'
-import { Languages, DefaultLanguage } from '../../shared/src/Constants';
+import * as Utils from './Utils'
+import { Languages, DefaultLanguage } from './Constants';
 
 
 export const lastLetterTranslations : Record<Languages, Record<string, string>> = {
@@ -57,7 +57,7 @@ export enum Strings {
     ErrorIllegalWord,
     ErrorFirstWordMin,
     ErrorFirstWordLocation,
-    ErrorUserDoesntHaveTile,
+    ErrorUserDoesNotHaveTile,
     Close,
     Error,
     Bonus,
@@ -69,7 +69,20 @@ export enum Strings {
     Included,
     NotIncluded,
     IsWordInDict,
-    Objection
+    Objection,
+    TooManyRequests,
+    FailedToCreateGame,
+    FailedToCheckGameId,
+    FailedToCheckWord,
+    MaxSupportedGames,
+    PlayerJoined,
+    NotYourTurn,
+    PlayerDisconnected,
+    YourTurn,
+    OpponentTurn,
+    AppTitle,
+    Message,
+    NoSuchGameId
 }
 
 export const Translations : Record<Languages, Record<Strings, string>> = {
@@ -83,7 +96,7 @@ export const Translations : Record<Languages, Record<Strings, string>> = {
         [Strings.ErrorIllegalWord]: "The following words are not included in our dictionary:",
         [Strings.ErrorFirstWordMin]: "The first word must be at least 2 letters long!",
         [Strings.ErrorFirstWordLocation]: "The first word must be placed on the center tile!",
-        [Strings.ErrorUserDoesntHaveTile]: "User doesn't have tile!",
+        [Strings.ErrorUserDoesNotHaveTile]: "User doesn't have tile!",
         [Strings.Close]: "Close",
         [Strings.Error]: "Error",
         [Strings.Bonus]: "Bonus for using all letters",
@@ -95,7 +108,20 @@ export const Translations : Record<Languages, Record<Strings, string>> = {
         [Strings.Included]: "is included",
         [Strings.NotIncluded]: "is not included",
         [Strings.IsWordInDict]: "The word \"${word}\" ${included} in the dictionary",
-        [Strings.Objection]: "Objection"
+        [Strings.Objection]: "Objection",
+        [Strings.TooManyRequests]: "Too many requests, please try again later",
+        [Strings.FailedToCreateGame]: "Failed to create game",
+        [Strings.FailedToCheckGameId]: "Failed to check game ID",
+        [Strings.FailedToCheckWord]: "Failed to check word",
+        [Strings.MaxSupportedGames]: "The server has reached the maximum number of supported games",
+        [Strings.PlayerJoined]: "Player ${playerNum} joined the game",
+        [Strings.NotYourTurn]: "It's not your turn",
+        [Strings.PlayerDisconnected]: "Player ${playerNum} disconnected",
+        [Strings.YourTurn]: "Your turn",
+        [Strings.OpponentTurn]: "Opponent's turn",
+        [Strings.AppTitle]: "The Last Word",
+        [Strings.Message]: "Message",
+        [Strings.NoSuchGameId]: "No such game ID"
     },
 
     [Languages.Hebrew]: {
@@ -108,7 +134,7 @@ export const Translations : Record<Languages, Record<Strings, string>> = {
         [Strings.ErrorIllegalWord]: "המילים הבאות לא נכללות במילון שלנו:",
         [Strings.ErrorFirstWordMin]: "על המילה הראשונה לכלול לפחות שתי אותיות!",
         [Strings.ErrorFirstWordLocation]: "על המילה הראשונה להיות מונחת במשבצת המרכזית!",
-        [Strings.ErrorUserDoesntHaveTile]: "אין לשחקן את האות הזו!",
+        [Strings.ErrorUserDoesNotHaveTile]: "אין לשחקן את האות הזו!",
         [Strings.Close]: "סגירה",
         [Strings.Error]: "שגיאה",
         [Strings.Bonus]: "בונוס על שימוש בכל האותיות",
@@ -120,7 +146,20 @@ export const Translations : Record<Languages, Record<Strings, string>> = {
         [Strings.Included]: "נכללת",
         [Strings.NotIncluded]: "לא נכללת",
         [Strings.IsWordInDict]: "המילה \"${word}\" ${included} במילון",
-        [Strings.Objection]: "ערעור"
+        [Strings.Objection]: "ערעור",
+        [Strings.TooManyRequests]: "יותר מדי בקשות, אנא נסו שוב בעוד דקה",
+        [Strings.FailedToCreateGame]: "שגיאה ביצירת המשחק",
+        [Strings.FailedToCheckGameId]: "שגיאה בבדיקת מזהה המשחק",
+        [Strings.FailedToCheckWord]: "שגיאה בבדיקת המילה",
+        [Strings.MaxSupportedGames]: "השרת הגיע למספר המקסימלי של משחקים",
+        [Strings.PlayerJoined]: "שחקן/ית ${playerNum} התחבר/ה",
+        [Strings.NotYourTurn]: "זה לא התור שלך",
+        [Strings.PlayerDisconnected]: "שחקן/ית ${playerNum} התנתק/ה",
+        [Strings.YourTurn]: "התור שלך",
+        [Strings.OpponentTurn]: "התור של היריב/ה",
+        [Strings.AppTitle]: "המילה האחרונה",
+        [Strings.Message]: "הודעה",
+        [Strings.NoSuchGameId]: "לא מצאנו משחק עם מזהה כזה"
     },
 }
 

@@ -72,9 +72,12 @@ export class Tile
      */
     static fromJson(data: any): Tile 
     {
+        if (typeof data._letter !== "string" || typeof data._points !== "number" 
+            || typeof data._id !== "number" || data._letter.length !== 1) {
+            throw new Error("Invalid tile data");
+        }
         const tile = new Tile(data._letter, data._points);
         (tile as any)._id = data._id;
-        //counter = Math.max(counter, data._id + 1); // Ensure no duplicate IDs
         return tile;
     }
 }

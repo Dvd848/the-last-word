@@ -8,12 +8,6 @@ export type PlayerDetails =
     playerType  : PlayerType
 }
 
-export type GameConfiguration = 
-{
-    playerDetails: PlayerDetails[];
-    checkDict: boolean;
-}
-
 export enum GameErrorTypes {
     PlacementConsecutive,
     PlacementConnected,
@@ -21,7 +15,7 @@ export enum GameErrorTypes {
     PlacementIllegalWord,
     PlacementFirstWordMin,
     PlacementFirstWordLocation,
-    UserDoesntHaveTile
+    UserDoesNotHaveTile
 }
 
 /**

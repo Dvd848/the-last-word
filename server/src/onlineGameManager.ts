@@ -1,16 +1,25 @@
 import { Server, Socket } from 'socket.io';
+import { randomBytes } from "crypto";
 import ServerGame from './gameLogic.js';
 import Dictionary from './Dictionary.js';
 import {Player, PlayerType} from '@shared/Player.js';
 import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 import { UserError } from "@shared/SharedGame.js";
 import {TilePlacement, Tile} from "@shared/Tile.js";
+import { getStr, Strings } from '@shared/Strings.js';
 
-const CLEANUP_DELAY = 5 * 60 * 1000; // 5 minutes in milliseconds
+const MAX_SUPPORTED_GAMES = 100;
+const NUM_PLAYERS = 2;
+const GAME_ID_LENGTH = 6;
+const GAME_ID_CHARS = "abcdefghijkmnpqrstuvwxyz23456789"; // Skipping a few characters to avoid confusion
+const GAME_ID_REGEX = new RegExp(`^[${GAME_ID_CHARS}]+$`);
+
+const CLEANUP_DELAY = 10 * 60 * 1000; // 10 minutes in milliseconds
 const CLEANUP_INTERVAL = 30 * 60 * 1000; // Check for inactivity every x minutes
 const INACTIVITY_THRESHOLD = 60 * 60 * 1000; // Remove games inactive for x minutes
 
-type GameData = {
+type GameData = 
+{
     serverGame        : ServerGame
     isMarkedForDelete : boolean
     lastActivity      : number
@@ -18,31 +27,48 @@ type GameData = {
 
 const games: { [key: string]: GameData } = {};
 
-interface GameSocket extends Socket {
+interface GameSocket extends Socket 
+{
     gameId?: string
     player?: Player
 }
 
 /**
- * Checks if the given game ID is valid (alphanumeric, underscore, dash, up to 32 chars).
+ * Checks if the given game ID is valid.
  * @param gameId The game ID to validate.
  * @returns True if valid, false otherwise.
  */
-function isValidGameID(gameId: string) {
-    return /^[A-Za-z0-9_-]{1,32}$/.test(gameId);
+function isValidGameId(gameId: string, length: number): boolean 
+{
+    if (gameId.length !== length) 
+    {
+        return false;
+    }
+
+    return GAME_ID_REGEX.test(gameId);
 }
 
 /**
  * Removes games that have been inactive for longer than INACTIVITY_THRESHOLD.
  */
-function cleanupInactiveGames() {
-    const now = Date.now();
-    for (const gameId in games) {
-        const game = games[gameId];
-        if (now - game.lastActivity > INACTIVITY_THRESHOLD) {
-            console.log(`Removing inactive game ${gameId}`);
-            delete games[gameId];
+function cleanupInactiveGames() 
+{
+    try 
+    {
+        const now = Date.now();
+        for (const gameId in games) 
+        {
+            const game = games[gameId];
+            if (now - game.lastActivity > INACTIVITY_THRESHOLD) 
+            {
+                console.log(`Removing inactive game ${gameId}`);
+                delete games[gameId];
+            }
         }
+    } 
+    catch (error) 
+    {
+        console.error("Error cleaning up inactive games:", error);
     }
 }
 
@@ -50,8 +76,32 @@ function cleanupInactiveGames() {
  * Generates a random game ID.
  * @returns A new game ID string.
  */
-function generateGameId(): string {
-    return Math.random().toString(36).substring(2, 8);
+function generateGameId(length: number): string 
+{
+    const charLen = GAME_ID_CHARS.length;
+
+    const bytes = randomBytes(length);
+    let result = "";
+    for (let i = 0; i < length; i++) 
+    {
+        result += GAME_ID_CHARS[bytes[i] % charLen];
+    }
+    return result;
+}
+
+/**
+ * Generates a unique random game ID, which doesn't already exist in the DB.
+ * @returns A new game ID string.
+ */
+function generateUniqueGameId(): string 
+{
+    let gameId: string;
+    do 
+    {
+        gameId = generateGameId(GAME_ID_LENGTH);
+    } while (gameId in games);
+
+    return gameId;
 }
 
 /**
@@ -60,22 +110,24 @@ function generateGameId(): string {
  * @param gameId Optional game ID to use; if null, generates a new one.
  * @returns The created game ID.
  */
-export function createNewGame(dictionary: Dictionary, gameId: string | null) : string {
-    if (Object.keys(games).length > 100)
+export function createNewGame(dictionary: Dictionary, gameId: string | null) : string 
+{
+    if (Object.keys(games).length > MAX_SUPPORTED_GAMES)
     {
-        throw new Error(`Max number of supported games reached!`);
+        throw new Error(getStr(Strings.MaxSupportedGames));
     }
 
     if (gameId == null)
     {
-        gameId = generateGameId();
+        gameId = generateUniqueGameId();
     }
 
     const game = {
-        serverGame : new ServerGame(dictionary, 2),
+        serverGame : new ServerGame(dictionary, NUM_PLAYERS),
         isMarkedForDelete : false,
         lastActivity      : Date.now()
     }
+
     game.serverGame.newGame();
     games[gameId] = game;
 
@@ -89,8 +141,9 @@ export function createNewGame(dictionary: Dictionary, gameId: string | null) : s
  * @param gameId The game ID to check.
  * @returns True if the game exists, false otherwise.
  */
-export function checkGameId(gameId: string) : boolean {
-    return gameId in games;
+export function checkGameId(gameId: string) : boolean 
+{
+    return gameId.toLowerCase() in games;
 }
 
 
@@ -99,7 +152,8 @@ export function checkGameId(gameId: string) : boolean {
  * @param io The Socket.IO server instance.
  * @param dictionary The dictionary instance to use for games.
  */
-export function onlineGameManager(io: Server, dictionary: Dictionary) {
+export function onlineGameManager(io: Server, dictionary: Dictionary) 
+{
     console.log('onlineGameManager initialized');
 
     setInterval(cleanupInactiveGames, CLEANUP_INTERVAL);
@@ -114,7 +168,9 @@ export function onlineGameManager(io: Server, dictionary: Dictionary) {
         socket.on('joinGame', (gameId: string, playerId: string) => {
             try 
             {
-                if (!isValidGameID(gameId))
+                gameId = gameId.toLowerCase();
+
+                if (!isValidGameId(gameId, GAME_ID_LENGTH))
                 {
                     throw new Error(`Invalid Game ID: ${gameId}`);
                 }
@@ -137,10 +193,6 @@ export function onlineGameManager(io: Server, dictionary: Dictionary) {
                     console.log(`Game existed: ${gameId}`);
                 }
 
-                socket.gameId = gameId;
-
-                game.lastActivity = Date.now();
-
                 socket.join(gameId);
                 const player = game.serverGame.addPlayer({ 
                     id: playerId, 
@@ -148,10 +200,12 @@ export function onlineGameManager(io: Server, dictionary: Dictionary) {
                     playerType: PlayerType.Human
                 });
 
+                game.lastActivity = Date.now();
+                socket.gameId = gameId;
                 socket.player = player;
 
                 io.to(gameId).emit("showNotification", {
-                    message: `שחקן/ית ${player.index + 1} התחבר/ה`
+                    message: getStr(Strings.PlayerJoined).replace("${playerNum}", (player.index + 1).toString())
                 });
 
                 socket.emit('initBoard', {
@@ -212,14 +266,17 @@ export function onlineGameManager(io: Server, dictionary: Dictionary) {
                                 
                 if (socket.player !== game.serverGame.currentPlayer) 
                 {
-                    throw new Error("Not your turn");
+                    throw new Error(getStr(Strings.NotYourTurn));
                 }
 
                 game.lastActivity = Date.now();
 
                 let tilePlacements: TilePlacement[] = move.map((tilePlacement: TilePlacement) => {
-                    return {tile: game.serverGame.bag.getTileById(Tile.fromJson(tilePlacement.tile).id), 
-                                                                  r: tilePlacement.r, c: tilePlacement.c}
+                    return {
+                        tile: game.serverGame.bag.getTileById(Tile.fromJson(tilePlacement.tile).id),
+                        r: tilePlacement.r,
+                        c: tilePlacement.c
+                    };
                 });
                 const moveDetails = game.serverGame.endTurnCallback(tilePlacements);
 
@@ -275,7 +332,6 @@ export function onlineGameManager(io: Server, dictionary: Dictionary) {
          * Validates turn, performs swap, and broadcasts changes.
          */
         socket.on('swapTiles', (tiles: any) => {
-            // TODO: Code duplication with MakeMove
             try 
             {
                 const gameId = socket.gameId;
@@ -293,7 +349,7 @@ export function onlineGameManager(io: Server, dictionary: Dictionary) {
                                 
                 if (socket.player !== game.serverGame.currentPlayer) 
                 {
-                    throw new Error("Not your turn");
+                    throw new Error(getStr(Strings.NotYourTurn));
                 }
 
                 game.lastActivity = Date.now();
@@ -315,8 +371,6 @@ export function onlineGameManager(io: Server, dictionary: Dictionary) {
                     points: JSON.stringify(Array.from(game.serverGame.getPoints().entries())),
                     numTilesInBag: game.serverGame.bag.length
                 });
-
-                
             }
             catch (err)
             {
@@ -342,7 +396,7 @@ export function onlineGameManager(io: Server, dictionary: Dictionary) {
                 {
                     const playerIndex = socket.player ? socket.player.index + 1 : "";
                     io.to(gameId).emit("showNotification", {
-                        message: `שחקן/ית ${playerIndex} התנתק/ה`
+                        message: getStr(Strings.PlayerDisconnected).replace("${playerNum}", playerIndex.toString())
                     });
                 }
 

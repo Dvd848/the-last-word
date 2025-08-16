@@ -144,6 +144,25 @@ export default class BoardTile
      */
     static fromJson(data: any): BoardTile 
     {
+        // Validate row and col
+        if (typeof data._row !== "number" || data._row < 0 || !Number.isInteger(data._row)) {
+            throw new Error("Invalid row value");
+        }
+        if (typeof data._col !== "number" || data._col < 0 || !Number.isInteger(data._col)) {
+            throw new Error("Invalid col value");
+        }
+        // Validate type
+        if (typeof data._type !== "string" || !(Object.values(TileTypes) as string[]).includes(data._type)) {
+            throw new Error("Invalid tile type");
+        }
+        // Validate word and letter multipliers
+        if (typeof data._wordMul !== "number" || ![1,2,3].includes(data._wordMul)) {
+            throw new Error("Invalid word multiplier");
+        }
+        if (typeof data._letterMul !== "number" || ![1,2,3].includes(data._letterMul)) {
+            throw new Error("Invalid letter multiplier");
+        }
+
         const tile = new BoardTile(data._row, data._col);
         tile.type = data._type;
         tile.wordMultiplier = data._wordMul;

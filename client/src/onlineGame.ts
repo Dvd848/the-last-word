@@ -11,7 +11,7 @@ import {TilePlacement, Tile} from '../../shared/src/Tile';
  * @param urlString The URL string to parse.
  * @returns The game ID if found, otherwise null.
  */
-function getGameId(urlString: string): string | null 
+export function getGameId(urlString: string): string | null 
 {
     const url = new URL(urlString);
     const pathSegments = url.pathname.split('/').filter(Boolean); // removes empty strings
@@ -23,7 +23,7 @@ function getGameId(urlString: string): string | null
     }
   
     return null;
-  }
+}
 
 class OnlineGame 
 {
@@ -40,6 +40,8 @@ class OnlineGame
     constructor() 
     {
         const that = this;
+
+        // Some of these callbacks are dummy callbacks needed to keep common interface
         this.game = new Game({
             endTurn: function(tilePlacements: TilePlacement[]){that.makeMove(tilePlacements);},
             swapTiles: function(tiles: Tile[]){that.swapTiles(tiles);},
@@ -166,7 +168,7 @@ class OnlineGame
     {
         if (!this.gameId) 
         {
-            console.error("no game id");
+            console.error("No game id");
             return;
         }
         console.log("makeMove", tilePlacements);
@@ -181,7 +183,7 @@ class OnlineGame
     {
         if (!this.gameId) 
         {
-            console.error("no game id");
+            console.error("No game id");
             return;
         }
         console.log("swapTiles", tiles);

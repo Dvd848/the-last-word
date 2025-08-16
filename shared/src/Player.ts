@@ -13,7 +13,7 @@ export abstract class Player
     private     _name        :   string;
     private     _id          :   string;
     private     _index       :   number;
-    private     maxTileNum   :   number;
+    private     _maxTileNum  :   number;
     private     _rack        :   Set<Tile>;
     private     _points      :   number;
     private     _playerType  :   PlayerType;
@@ -23,7 +23,7 @@ export abstract class Player
         this._name = name;
         this._id = id;
         this._index = index;
-        this.maxTileNum = maxTileNum;
+        this._maxTileNum = maxTileNum;
         this._points = 0;
         this._rack = new Set<Tile>();
         this._playerType = playerType;
@@ -36,7 +36,7 @@ export abstract class Player
      */
     public fillRack(bag: Bag) : void
     {
-        while ( (this._rack.size < this.maxTileNum) && (bag.length > 0) )
+        while ( (this._rack.size < this._maxTileNum) && (bag.length > 0) )
         {
             this._rack.add(bag.draw()!);
         }
@@ -167,6 +167,15 @@ export abstract class Player
     }
 
     /**
+     * Return the maximum number of tiles allowed in the player's rack.
+     * @returns The maximum number of tiles.
+     */
+    get maxTileNum() : number
+    {
+        return this._maxTileNum;
+    }
+
+    /**
      * Get the player's move. Relevant only if automaticMode() == True, i.e. if it's not a human player.
      * @param calculatePoints Function to calculate points for a move.
      * @returns Array of TilePlacement representing the move.
@@ -227,7 +236,7 @@ export abstract class Player
             _id: player.id,
             _index : player.index,
             _points: player.points,
-            maxTileNum: player['maxTileNum'],
+            _maxTileNum: player.maxTileNum,
             _playerType: player.playerType,
             _rack: Array.from(player._rack.values()).map(tile => ({
                 _letter: tile.letter,
@@ -275,9 +284,14 @@ export class HumanPlayer extends Player
      * @returns A HumanPlayer instance.
      */
     static fromJson(data: any): HumanPlayer {
-        const player = new HumanPlayer(data._name, data._id, data._index, data.maxTileNum);
+        // Validate required fields
+        if (typeof data._name !== "string" || typeof data._id !== "string" ||
+            typeof data._index !== "number" || typeof data._maxTileNum !== "number" ||
+            typeof data._points !== "number" || !Array.isArray(data._rack)) {
+            throw new Error("Invalid HumanPlayer data");
+        }
+        const player = new HumanPlayer(data._name, data._id, data._index, data._maxTileNum);
         player.points = data._points;
-        console.log(data._rack)
         const tiles = data._rack.map((tileJson: any) => Tile.fromJson(tileJson));
         player.setRack(tiles);
         return player;

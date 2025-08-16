@@ -1,4 +1,4 @@
-import { OnlineGame } from "./onlineGame";
+import { OnlineGame, getGameId } from "./onlineGame";
 import { initHomePage } from './Display';
 
 /**
@@ -48,21 +48,16 @@ function initGame()
 {
     document.addEventListener("DOMContentLoaded", async function() 
     {
-        console.log("DOMContentLoaded")
         onlineGame = new OnlineGame();
     });
 }
-
-// Check the URL on page load
-const urlParts = window.location.pathname.split("/");
-const gameIndex = urlParts.indexOf("game");
 
 /**
  * Determines which UI to show based on the current URL.
  * If the URL matches /game/<game-id>, shows the game UI and initializes the game.
  * Otherwise, shows the home UI.
  */
-if (gameIndex !== -1 && gameIndex === urlParts.length - 2) 
+if (getGameId(window.location.href) != null) 
 {
     // If the URL is like /game/<game-id>, show the game UI and initialize the game
     showGameUI();

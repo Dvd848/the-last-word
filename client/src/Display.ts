@@ -1,8 +1,8 @@
 import {Board} from "../../shared/src/Board";
-import {Player, PlayerType} from "../../shared/src/Player";
+import {Player} from "../../shared/src/Player";
 import {TilePlacement, Tile} from "../../shared/src/Tile";
 import { WordInfo, GameErrorTypes as GameErrorTypes } from "../../shared/src/SharedGame";
-import { Strings, getStr, translateLastLetter } from "./Strings";
+import { Strings, getStr, translateLastLetter } from "../../shared/src/Strings";
 
 import * as bootstrap from 'bootstrap';
 
@@ -56,6 +56,8 @@ export class Display
 
     private swapTilesModal   : bootstrap.Modal | null = null;
     private waitPlayersModal : bootstrap.Modal | null = null;
+
+    private notificationIndication = "(1) ";
 
 
     constructor(callbacks: DisplayCallBacks)
@@ -219,7 +221,10 @@ export class Display
     private configureButtonNewGame() : void
     {
         const newGameOkButton = document.getElementById("newGameOkButton")!;
-        newGameOkButton.addEventListener("click", Display.newGame);
+        //newGameOkButton.addEventListener("click", Display.newGame);
+        newGameOkButton.addEventListener("click", () => {
+            window.location.href = "/";
+        });
     }
 
     /**
@@ -263,7 +268,7 @@ export class Display
             const response = await that.callbacks.checkWord(value);
             if (response.error)
             {
-                searchResults.innerText = "שגיאה: " + response.error;
+                searchResults.innerText = `${getStr(Strings.Error)}: ` + response.error;
             }
             else
             {
@@ -292,10 +297,11 @@ export class Display
     private configureTitleListener() : void
     {
         // Remove "(1)" from the title when the tab becomes active again
+        const that = this;
         document.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === "visible" && document.title.startsWith("(1) ")) 
+            if (document.visibilityState === "visible" && document.title.startsWith(that.notificationIndication)) 
             {
-                document.title = document.title.slice(4);
+                document.title = document.title.slice(that.notificationIndication.length);
             }
         });
     }
@@ -565,11 +571,11 @@ export class Display
     {
         document.querySelectorAll('.player_turn').forEach(element => {
             const playerTurn = element as HTMLElement;
-            playerTurn.innerHTML = "התור של היריב/ה<br/>🠋"
+            playerTurn.innerHTML = `${getStr(Strings.OpponentTurn)}<br/>🠋`;
         });
 
         const playerTurn = document.getElementById(`player${player.index + 1}_turn`);
-        playerTurn!.innerHTML = "התור שלך<br/>🠋";
+        playerTurn!.innerHTML = `${getStr(Strings.YourTurn)}<br/>🠋`;
 
         const points = document.getElementById(`player${player.index + 1}_points`);
         if (points == null)
@@ -645,11 +651,11 @@ export class Display
         // Only notify if the tab is not active
         if (document.visibilityState !== "visible") {
             // Add "(1)" to the beginning of the title if not already present
-            if (!document.title.startsWith("(1)")) {
-                document.title = "(1) " + document.title;
+            if (!document.title.startsWith(this.notificationIndication)) {
+                document.title = this.notificationIndication + document.title;
             }
             // Show browser notification
-            const notificationTitle = "המילה האחרונה: תורך!";
+            const notificationTitle = `${getStr(Strings.AppTitle)}: ${getStr(Strings.YourTurn)}`;
             if (Notification.permission === "granted") {
                 new Notification(notificationTitle);
             } else if (Notification.permission !== "denied") {
@@ -738,7 +744,7 @@ export class Display
      */
     public logNotification(notification: string) : void
     {
-        const header = "הודעה";
+        const header = getStr(Strings.Message);
         const p = document.createElement('p');
 
         p.textContent = notification;
@@ -760,7 +766,7 @@ export class Display
             [GameErrorTypes.PlacementIllegalWord]       : Strings.ErrorIllegalWord,
             [GameErrorTypes.PlacementFirstWordMin]      : Strings.ErrorFirstWordMin,
             [GameErrorTypes.PlacementFirstWordLocation] : Strings.ErrorFirstWordLocation,
-            [GameErrorTypes.UserDoesntHaveTile]         : Strings.ErrorUserDoesntHaveTile
+            [GameErrorTypes.UserDoesNotHaveTile]         : Strings.ErrorUserDoesNotHaveTile
         };
 
         const body = document.createElement("div");
@@ -826,7 +832,6 @@ export class Display
         }
         else
         {
-            console.log(`player${winnerIndex + 1}_name`)
             let name = document.getElementById(`player${winnerIndex + 1}_name`)!.innerText;
             message = getStr(Strings.PlayerWon).replace("${player}", name);
         }
@@ -1140,7 +1145,8 @@ export function initHomePage()
                     }
                     else
                     {
-                        let errorText = "שגיאה: לא מצאנו משחק עם מזהה כזה";
+                        let errorText = (data.error) ? `${getStr(Strings.Error)}: ${data.error}` 
+                                                     : `${getStr(Strings.Error)}: ${getStr(Strings.NoSuchGameId)}`;
                         document.getElementById("joinError")!.innerText = errorText;
                     }
                 } 

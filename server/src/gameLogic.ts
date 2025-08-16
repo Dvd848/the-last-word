@@ -35,7 +35,7 @@ export default class ServerGame
     public newGame() : void
     {
         this.board = new ModifiableBoard(Constants.BOARD_DIMENSIONS, Constants.tileMultipliers);
-        this.currentPlayerIndex = 0;
+        this.currentPlayerIndex = -1;
         this.bag = new Bag(Constants.gameTiles[Constants.DefaultLanguage]);
         this.firstTurnPlayed = false;
         this.checkDict = true;
@@ -76,7 +76,7 @@ export default class ServerGame
         newPlayer.fillRack(this.bag);
         this.players.push(newPlayer);
 
-        if (this.allPlayersJoined())
+        if (this.currentPlayerIndex == -1 && this.allPlayersJoined())
         {
             this.currentPlayerIndex = this.players.length - 1;
             this.moveToNextPlayer();
@@ -114,7 +114,7 @@ export default class ServerGame
     {
         if (tiles.length > this.currentPlayer.rack.length)
         {
-            return null;
+            throw new Error("User trying to swap more tiles than currently has");
         }
 
         const numTiles = Math.min(tiles.length, this.bag.length);
@@ -123,7 +123,7 @@ export default class ServerGame
         {
             if (!this.currentPlayer.hasTile(tiles[i]))
             {
-                return null;
+                throw new Error("User trying to swap tiles not in their rack");
             }
         }
         
@@ -350,6 +350,16 @@ export default class ServerGame
 
         try
         {
+            if (this._isGameOver)
+            {
+                throw new Error("Game is already over!");
+            }
+
+            if (this.currentPlayerIndex == -1)
+            {
+                throw new Error("Game hasn't started yet!");
+            }
+
             if (!this.verifyPlacementConsecutive(tilePlacements))
             {
                 throw new UserError(GameErrorTypes.PlacementConsecutive);
@@ -367,10 +377,9 @@ export default class ServerGame
                     throw new UserError(GameErrorTypes.PlacementExisting);
                 }
 
-                console.log(tilePlacement.tile)
                 if (!this.currentPlayer.hasTile(tilePlacement.tile)) 
                 {
-                    throw new UserError(GameErrorTypes.UserDoesntHaveTile);
+                    throw new UserError(GameErrorTypes.UserDoesNotHaveTile);
                 }
 
                 // Mark the placed tile as placed

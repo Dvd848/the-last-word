@@ -110,10 +110,27 @@ export class Board
      * @param data The JSON data representing the board.
      * @returns A Board instance.
      */
-    static fromJson(data: any): Board {
-        const board = new Board(data._size, {} as Constants.TileMultipliers);
+    static fromJson(data: any): Board 
+    {
+        // Validate _size
+        if (typeof data._size !== "number" || data._size <= 0 || !Number.isInteger(data._size)) {
+            throw new Error("Invalid board size");
+        }
+        // Validate tiles array
+        if (!Array.isArray(data.tiles) || data.tiles.length !== data._size) {
+            throw new Error("Invalid tiles array");
+        }
         for (let row = 0; row < data.tiles.length; row++) {
-            for (let col = 0; col < data.tiles[row].length; col++) {
+            if (!Array.isArray(data.tiles[row]) || data.tiles[row].length !== data._size) {
+                throw new Error(`Invalid tiles row at index ${row}`);
+            }
+        }
+
+        const board = new Board(data._size, {} as Constants.TileMultipliers);
+        for (let row = 0; row < data.tiles.length; row++) 
+        {
+            for (let col = 0; col < data.tiles[row].length; col++) 
+            {
                 board.tiles[row][col] = BoardTile.fromJson(data.tiles[row][col]);
             }
         }

@@ -3,7 +3,7 @@ import {Board} from '../../shared/src/Board'
 import {Player} from '../../shared/src/Player';
 import {TilePlacement, Tile} from '../../shared/src/Tile';
 import { DisplayCallBacks, Display } from './Display';
-import {GameConfiguration, UserError, GameErrorTypes, MoveDetails} from '../../shared/src/SharedGame';
+import {UserError, GameErrorTypes, MoveDetails} from '../../shared/src/SharedGame';
 
 export default class Game 
 {
@@ -33,7 +33,6 @@ export default class Game
     /**
      * Starts a new game based on the given configuration.
      * Initializes the board, resets turn state, and prepares the display.
-     * @param gameConfiguration The game configuration for the game
      */
     public newGame() : void
     {
@@ -133,7 +132,6 @@ export default class Game
     private swapTilesCallback(tiles: Tile[]) : void
     {
         this.onlineGameCallbacks.swapTiles(tiles);
-        //this.display.logSwap(this.currentPlayer, oldTiles);
     }
 
     /**
