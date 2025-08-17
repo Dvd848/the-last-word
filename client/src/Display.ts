@@ -711,7 +711,7 @@ export class Display
             content.appendChild(document.createTextNode(getStr(Strings.PlayerSkippedMove)));
         }
 
-        const toast = new BootstrapToast(header, subheader, content, 10000, false);
+        const toast = new BootstrapToast(header, subheader, content, 10000, true);
         toast.show();
     }
 
@@ -734,7 +734,7 @@ export class Display
         const tilesSwapped = oldTiles.map((tile) => tile.letter + "'");
 
         p.textContent = getStr(Strings.TilesSwapped).replace("${tiles}", tilesSwapped.join(", "));
-        const toast = new BootstrapToast(header, "", p, 10000, false);
+        const toast = new BootstrapToast(header, "", p, 10000, true);
         toast.show();
     }
 
@@ -748,7 +748,7 @@ export class Display
         const p = document.createElement('p');
 
         p.textContent = notification;
-        const toast = new BootstrapToast(header, "", p, 10000, false);
+        const toast = new BootstrapToast(header, "", p, 10000, true);
         toast.show();
     }
 
@@ -966,7 +966,7 @@ class BootstrapToast
         body.appendChild(this.body);
         toast.appendChild(toastHeader);
         toast.appendChild(body);
-        
+
         const toastContainer = this.getOrCreateToastWrapper();
         toastContainer.appendChild(toast);
         
@@ -977,6 +977,34 @@ class BootstrapToast
         toast.addEventListener('hidden.bs.toast', () => {
             toast.remove();
         });
+
+        // --- Append to message_history ---
+        const history = document.getElementById("message_history");
+        if (history) {
+            document.getElementById("no_messages")?.remove();
+            const historyEntry = document.createElement("div");
+            historyEntry.className = "message-history-entry";
+            // Clone the header and body for history
+            const headerDiv = document.createElement("div");
+            headerDiv.className = "message-history-header";
+            headerDiv.textContent = this.header;
+            if (this.secondaryHeader)
+            {
+                const secondaryHeaderDiv = document.createElement("div");
+                secondaryHeaderDiv.className = "message-history-secondary-header";
+                secondaryHeaderDiv.textContent = this.secondaryHeader;
+                headerDiv.appendChild(secondaryHeaderDiv);
+            }
+            const bodyDiv = document.createElement("div");
+            bodyDiv.className = "message-history-body";
+            // Deep clone the body content
+            bodyDiv.appendChild(this.body.cloneNode(true));
+            historyEntry.appendChild(headerDiv);
+            historyEntry.appendChild(bodyDiv);
+            history.appendChild(historyEntry);
+            // Scroll to bottom on new message
+            history.scrollTop = history.scrollHeight;
+        }
     }
 
     /**

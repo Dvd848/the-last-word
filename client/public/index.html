@@ -68,6 +68,9 @@
                         <a class="nav-link" href="#" id="showSwapTilesMenu">החלפת אותיות</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="#"  data-bs-toggle="offcanvas" data-bs-target="#offcanvasHistory">הודעות</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="#" data-bs-target="#rulesModal" data-bs-toggle="modal">חוקים</a>
                     </li>
                     <li class="nav-item">
@@ -289,6 +292,20 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">סגירה</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="offcanvas offcanvas-start" tabindex="-1" 
+         id="offcanvasHistory" aria-labelledby="offcanvasHistoryLabel"
+         data-bs-scroll="true" data-bs-backdrop="false">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasHistoryLabel">הודעות</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div id="message_history">
+                <p id="no_messages">אין פה הודעות בינתיים...</p>
             </div>
         </div>
     </div>

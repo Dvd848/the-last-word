@@ -1,4 +1,3 @@
-
 :root {
     --tile_dimensions: 35px;
     --board_dimensions: 15;
@@ -354,4 +353,35 @@ nav.bg-dark {
     text-align: center;
     color: red;
     font-weight: bold;
+}
+
+#message_history {
+    max-height: 100%;
+    overflow-y: auto;
+    padding: 0.5em;
+}
+.message-history-entry {
+    border-bottom: 1px solid #ddd;
+    padding: 0.5em;
+    margin-bottom: 0.5em;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.message-history-secondary-header {
+    float: left;
+    font-size: 0.8em;
+}
+
+.message-history-header {
+    font-weight: bold;
+    margin-bottom: 0.25em;
+}
+.message-history-body {
+    white-space: pre-wrap;
+}
+
+.offcanvas.offcanvas-start {
+  top: calc(56px); /* navbar height */
+  height: calc(100% - (56px));
 }
