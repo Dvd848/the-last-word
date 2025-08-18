@@ -99,7 +99,13 @@ async function initializeServer() {
     });
 
     // Serve static files from the client directories
-    app.use(express.static(path.join(__dirname, '../../client/public/')));
+    app.use(express.static(path.join(__dirname, '../../client/public/'), {
+        setHeaders: (res, path) => {
+            if (path.endsWith(".js")) {
+                res.setHeader("Content-Type", "application/javascript");
+            }
+        }
+    }));
 
     // Only serve index.html for known SPA routes (e.g., '/', '/game/:id')
     app.get(['/', '/game/:id'], (req, res) => {
