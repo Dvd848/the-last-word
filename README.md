@@ -5,14 +5,14 @@
 
 <p>
 זהו משחק דמוי "שבץ נא" אונליין לשני שחקנים מרוחקים (מעל גבי האינטרנט).<br/>
-ניתן לשחק במשחק <a href="">כאן</a>.
+ניתן לשחק במשחק <a href="https://the-last-word.onrender.com">כאן</a>.
 קיימת גם גרסה נוספת של המשחק לשחק אחד (מול המחשב) או לשני שחקנים אשר חולקים מחשב מקומית, בה ניתן לשחק <a href="https://dvd848.github.io/the-last-word/">כאן</a>.
 </p>
 </div>
 
 # The Last Word (Remote)
 
-"The Last Word" is an online Scrabble™-like game in Hebrew. This version of the game supports an online match against a remote player. 
+"The Last Word" is an online Scrabble™-like game in Hebrew. This version of the game supports an online match against a remote player. It's available [here](https://the-last-word.onrender.com).
 
 In addition, a different version of the game supports playing the game individually against the computer or with a local partner in a two player mode. That version of the game is available online [here](https://dvd848.github.io/the-last-word/).
 
