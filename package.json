@@ -4,14 +4,14 @@
   "description": "A word game",
   "main": "client/public/dist/app.bundle.js",
   "scripts": {
-    "dev": "cd server && npm run dev",
+    "dev": "npm run dev --prefix server",
     "test": "jest --config client/jest.config.js",
-    "build-server": "tsc --build server",
+    "build-server": "npm run build --prefix server",
     "build-client": "npx webpack --mode production --output-path client/public/dist",
     "watch-client": "npx webpack --watch --mode development --output-path client/public/dist --stats-error-details",
     "start": "webpack serve --live-reload --mode development --open --output-path client/public/dist",
     "build": "npm run build-client && npm run build-server",
-    "clean": "tsc --build --clean && rm -rf server/dist && rm -rf client/public/dist && rm -rf dist && rm -rf server/*.mjs && rm -rf server/*.d.ts && rm -rf client/public/dist/*.js && rm -rf client/public/dist/*.js.map"
+    "clean": "tsc --build --clean && rm -rf server/dist && rm -rf client/public/dist && rm -rf dist && rm -rf server/*.mjs && rm -rf server/*.d.ts"
   },
   "author": "Dvd848",
   "license": "AGPLv3",
@@ -43,7 +43,8 @@
     "sass-loader": "^13.2.2",
     "style-loader": "^3.3.2",
     "ts-loader": "^9.4.2",
-    "tsup": "^8.4.0",
+    "tsc-alias": "^1.8.16",
+    "tsup": "^8.5.0",
     "typescript": "^5.0.4",
     "webpack": "^5.80.0",
     "webpack-cli": "^5.0.2",

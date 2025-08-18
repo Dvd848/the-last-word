@@ -1,0 +1,50 @@
+# ------------------------------
+# Stage 1: Build client + server
+# ------------------------------
+FROM node:18 AS builder
+
+WORKDIR /app
+
+# Install root deps
+COPY package*.json ./
+RUN npm install
+
+# Install server deps
+COPY server/package*.json ./server/
+RUN cd server && npm install
+
+# Copy full source
+COPY . .
+
+# Build both client and server
+RUN npm run build
+
+# ------------------------------
+# Stage 2: Runtime
+# ------------------------------
+FROM node:18
+
+WORKDIR /app
+
+# Copy root package files
+COPY package*.json ./
+RUN npm install --production
+
+# Copy server package files and install prod deps only
+COPY server/package*.json ./server/
+RUN cd server && npm install --production
+
+# Copy built artifacts
+COPY --from=builder /app/server/dist/ ./server/dist/
+COPY --from=builder /app/client/public/ ./server/dist/client/public/
+COPY --from=builder /app/server/wordlists/ ./server/dist/server/wordlists/
+
+# Expose backend port
+EXPOSE 8080
+
+# Start backend (via server/package.json)
+CMD ["npm", "start", "--prefix", "server"]
+#CMD ["bash"]
+
+# docker build -t the-last-word-prod -f Dockerfile.prod .
+# docker run -it -p 8080:8080 the-last-word-prod

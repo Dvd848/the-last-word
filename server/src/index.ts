@@ -27,7 +27,8 @@ app.use(apiLimiter)
 
 async function initializeServer() {
     const dictionary = new Dictionary();
-    await dictionary.init(path.join(__dirname, '..', '..', 'server'));
+    const dictionaryBasePath = path.join(__dirname, '..');
+    await dictionary.init(dictionaryBasePath);
 
     const server = http.createServer(app);
     const io = new Server(server);
