@@ -65,6 +65,9 @@ export class Display
 
     private watchdog         : any | null = null;
 
+    private static messageSound = new Audio("/sounds/2_low.mp3");
+    private messageSoundUnlocked : boolean = false;
+
     constructor(callbacks: DisplayCallBacks)
     {
         this.board = document.getElementById("board")!;
@@ -136,6 +139,11 @@ export class Display
                 && (Notification.permission !== "denied") ) 
             {
                 Notification.requestPermission();
+            }
+
+            if (!that.messageSoundUnlocked) {
+                Display.messageSound.play().catch(() => {});
+                that.messageSoundUnlocked = true;
             }
         });
     }
@@ -331,6 +339,7 @@ export class Display
             const currentCount = this.removeTitleNotificationCount();
             document.title = `(${currentCount + 1}) ${document.title}`;
         }
+        this.messageSound.play().catch(() => {});
     }
 
     /**
