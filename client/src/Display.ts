@@ -344,6 +344,21 @@ export class Display
     }
 
     /**
+     * Configures the copy share link button to copy the game share link to the clipboard.
+     */
+    private configureCopyShareLinkButton() : void
+    {
+        document.getElementById("copy_share_link")?.addEventListener("click", () => {
+            const copyText = document.getElementById("game_share_link") as HTMLInputElement;
+            navigator.clipboard.writeText(copyText.value).then(() => {
+                console.log("Copied to clipboard");
+            }).catch(err => {
+                console.error("Failed to copy: ", err);
+            });
+        });
+    }
+
+    /**
      * Configures all game control buttons by calling their respective configuration functions.
      */
     private configureButtons() : void
@@ -353,7 +368,8 @@ export class Display
         this.configureButtonNewGame();
         this.configureButtonSearch();
         this.configureTitleListener();
-        this.configureChatForm(); // Add chat form setup
+        this.configureChatForm();
+        this.configureCopyShareLinkButton();
     }
 
     /**
@@ -952,7 +968,8 @@ export class Display
     {
         const waitPlayersModal = new bootstrap.Modal('#waitPlayersModal', {backdrop: 'static', keyboard: false});
         document.getElementById("gameId_code")!.textContent = gameId;
-            
+        (document.getElementById("game_share_link")! as HTMLInputElement).value = `${window.location.origin}/game/${gameId}`;
+
         waitPlayersModal.show();
         this.waitPlayersModal = waitPlayersModal;
     }
