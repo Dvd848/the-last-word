@@ -8,7 +8,7 @@ function showGameUI()
 {
     const homeForm = document.getElementById("home-form");
     const gameUI = document.getElementById("game");
-    const messageMenuItem = document.getElementById("message_menu_item");
+    
 
     if (homeForm) 
     {
@@ -20,10 +20,10 @@ function showGameUI()
         gameUI.classList.remove("d-none");
     }
 
-    if (messageMenuItem) 
-    {
-        messageMenuItem.classList.remove("d-none");
-    }
+    Array.from(document.getElementsByClassName("game_only_menu_item")).forEach(item => {
+        item.classList.remove("d-none");
+    });
+
 }
 
 /**
@@ -33,7 +33,6 @@ function hideGameUI()
 {
     const homeForm = document.getElementById("home-form");
     const gameUI = document.getElementById("game");
-    const messageMenuItem = document.getElementById("message_menu_item");
 
     if (homeForm) 
     {
@@ -45,10 +44,9 @@ function hideGameUI()
         gameUI.classList.add("d-none");
     }
 
-    if (messageMenuItem) 
-    {
-        messageMenuItem.classList.add("d-none");
-    }
+    Array.from(document.getElementsByClassName("game_only_menu_item")).forEach(item => {
+        item.classList.add("d-none");
+    });
 }
 
 let onlineGame: OnlineGame | null = null;
