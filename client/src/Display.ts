@@ -1115,8 +1115,14 @@ class BootstrapToast
             const bodyClone = this.body.cloneNode(true) as HTMLElement;
             bodyClone.querySelectorAll(".chat_meta_element").forEach(el => el.remove());
             bodyDiv.appendChild(bodyClone);
+
+            const footerDiv = document.createElement("div");
+            footerDiv.className = "message-history-footer";
+            footerDiv.textContent = new Date().toLocaleTimeString();
+
             historyEntry.appendChild(headerDiv);
             historyEntry.appendChild(bodyDiv);
+            historyEntry.appendChild(footerDiv);
             history.appendChild(historyEntry);
             // Scroll to bottom on new message
             history.scrollTop = history.scrollHeight;

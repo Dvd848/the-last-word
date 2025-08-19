@@ -382,6 +382,12 @@ nav.bg-dark {
     overflow: auto;
 }
 
+.message-history-footer {
+    text-align: left;
+    direction: ltr;
+    font-size: 0.7em;
+}
+
 .offcanvas.offcanvas-start {
   top: calc(56px); /* navbar height */
   height: calc(100% - (56px));
