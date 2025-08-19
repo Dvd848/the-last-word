@@ -47,7 +47,8 @@ class OnlineGame
             swapTiles: function(tiles: Tile[]){that.swapTiles(tiles);},
             getNumTilesInBag: function(){return -1;},
             checkWord: function(word: string) {return Promise.resolve(false);},
-            isCurrentPlayersTurn: function(){return false;}
+            isCurrentPlayersTurn: function(){return false;},
+            sendChatMessage: function(message: string) {that.sendChatMessage(message);}
         });
         this.gameId = null;
         const playerId = Cookies.get("playerId");
@@ -139,6 +140,11 @@ class OnlineGame
             console.log("gameOver", gameOverDetails);
             this.game.gameOver(gameOverDetails.winnerIndex);
         });
+
+        this.socket.on('showChatMessage', (chatMessageDetails) => {
+            console.log("showChatMessage", chatMessageDetails);
+            this.game.showChatMessage(chatMessageDetails.playerIndex, chatMessageDetails.message);
+        });
     }
 
     /**
@@ -173,6 +179,21 @@ class OnlineGame
         }
         console.log("makeMove", tilePlacements);
         this.socket.emit('makeMove', tilePlacements);
+    }
+
+    /**
+     * Emits a 'sendChatMessage' event with the chat message to the server.
+     * @param message The chat message to send.
+     */
+    sendChatMessage(message: string) 
+    {
+        if (!this.gameId) 
+        {
+            console.error("No game id");
+            return;
+        }
+        console.log("sendChatMessage", message);
+        this.socket.emit('sendChatMessage', message);
     }
 
     /**

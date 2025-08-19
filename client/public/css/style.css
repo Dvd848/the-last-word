@@ -379,9 +379,28 @@ nav.bg-dark {
 }
 .message-history-body {
     white-space: pre-wrap;
+    overflow: auto;
 }
 
 .offcanvas.offcanvas-start {
   top: calc(56px); /* navbar height */
   height: calc(100% - (56px));
+}
+
+#offcanvasHistory .offcanvas-body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 0;
+}
+#offcanvasHistory #message_history {
+    flex-grow: 1;
+    overflow-y: auto;
+    min-height: 0;
+    margin-bottom: 1rem;
+}
+#offcanvasHistory #chatForm {
+    flex-shrink: 0;
+    padding: 10px;
+    margin: 10px;
 }

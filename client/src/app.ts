@@ -8,6 +8,7 @@ function showGameUI()
 {
     const homeForm = document.getElementById("home-form");
     const gameUI = document.getElementById("game");
+    const messageMenuItem = document.getElementById("message_menu_item");
 
     if (homeForm) 
     {
@@ -18,6 +19,11 @@ function showGameUI()
     {
         gameUI.classList.remove("d-none");
     }
+
+    if (messageMenuItem) 
+    {
+        messageMenuItem.classList.remove("d-none");
+    }
 }
 
 /**
@@ -27,6 +33,7 @@ function hideGameUI()
 {
     const homeForm = document.getElementById("home-form");
     const gameUI = document.getElementById("game");
+    const messageMenuItem = document.getElementById("message_menu_item");
 
     if (homeForm) 
     {
@@ -36,6 +43,11 @@ function hideGameUI()
     if (gameUI) 
     {
         gameUI.classList.add("d-none");
+    }
+
+    if (messageMenuItem) 
+    {
+        messageMenuItem.classList.add("d-none");
     }
 }
 

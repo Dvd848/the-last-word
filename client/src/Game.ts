@@ -26,7 +26,8 @@ export default class Game
             swapTiles: function(tiles: Tile[]){that.swapTilesCallback(tiles);},
             getNumTilesInBag: function(){return that.numTilesInBag;},
             checkWord: function(word: string) {return that.checkWordCallback(word);},
-            isCurrentPlayersTurn: function() {return that.currentPlayersTurn;}
+            isCurrentPlayersTurn: function() {return that.currentPlayersTurn;},
+            sendChatMessage: function(message: string) {that.sendChatMessageCallback(message);}
         });
     }
 
@@ -124,6 +125,15 @@ export default class Game
             return { error: error };
         }
     }  
+
+    /**
+     * Callback for the Display to send a chat message.
+     * @param message The chat message to send.
+     */
+    private sendChatMessageCallback(message: string) : void
+    {
+        this.onlineGameCallbacks.sendChatMessage(message);
+    }
 
     /**
      * Callback for the Display to swap tiles for the current player.
@@ -370,6 +380,16 @@ export default class Game
     public completeSwap(playerIndex: number, oldTiles: Tile[])
     {
         this.display.logSwap(playerIndex, oldTiles);
+    }
+
+    /**
+     * Shows a chat message in the display.
+     * @param playerIndex The index of the player sending the message.
+     * @param message The chat message to display.
+     */
+    public showChatMessage(playerIndex: number, message: string) : void
+    {
+        this.display.showChatMessage(playerIndex, message);
     }
 
 }

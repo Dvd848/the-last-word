@@ -70,7 +70,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#" id="showSwapTilesMenu">החלפת אותיות</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item d-none" id="message_menu_item">
                         <a class="nav-link" href="#"  data-bs-toggle="offcanvas" data-bs-target="#offcanvasHistory">הודעות</a>
                     </li>
                     <li class="nav-item">
@@ -310,6 +310,12 @@
             <div id="message_history">
                 <p id="no_messages">אין פה הודעות בינתיים...</p>
             </div>
+
+            <form id="chatForm" class="mt-3 d-flex" autocomplete="off">
+                <input type="text" id="chatInput" class="form-control me-2" placeholder="שליחת הודעה..." 
+                    maxlength="222"/>
+                <button type="submit" class="btn btn-primary">שליחה</button>
+            </form>
         </div>
     </div>
                         

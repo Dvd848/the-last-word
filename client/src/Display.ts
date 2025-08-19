@@ -41,6 +41,12 @@ export interface DisplayCallBacks
      * @returns True if it's the current player's turn, false otherwise.
      */
     isCurrentPlayersTurn:           () => boolean;
+
+    /**
+     * Sends a chat message to the other player.
+     * @param message - The message to send.
+     */
+    sendChatMessage: (message: string) => void;
 }
 
 /**
@@ -56,9 +62,6 @@ export class Display
 
     private swapTilesModal   : bootstrap.Modal | null = null;
     private waitPlayersModal : bootstrap.Modal | null = null;
-
-    private notificationIndication = "(1) ";
-
 
     constructor(callbacks: DisplayCallBacks)
     {
@@ -126,6 +129,11 @@ export class Display
         endTurnButton.addEventListener('click', function(e)
         {
             that.endTurn();
+            if ( (Notification.permission !== "granted") 
+                && (Notification.permission !== "denied") ) 
+            {
+                Notification.requestPermission();
+            }
         });
     }
 
@@ -251,7 +259,9 @@ export class Display
         });
 
         document.body.addEventListener("keydown", function(e) {
-            if (e.key == "/" || e.key == ".")
+            const active = document.activeElement;
+            if ( (e.key == "/" || e.key == ".") 
+                && !(active && active.id === "chatInput")) 
             {
                 showSearch();
                 e.preventDefault();
@@ -294,14 +304,41 @@ export class Display
 
     }
 
+    /**
+     * Removes the notification count from the document title.
+     */
+    private static removeTitleNotificationCount() : number
+    {
+        const match = document.title.match(/^\((\d+)\)/);
+        if (match) 
+        {
+            document.title = document.title.slice(match[0].length + 1);
+            return parseInt(match[1]);
+        }
+        return 0;
+    }
+
+    /**
+     * Increments the notification count in the document title.
+     */
+    public static incrementTitleNotificationCount() : void
+    {
+        if (document.visibilityState !== "visible") 
+        {
+            const currentCount = this.removeTitleNotificationCount();
+            document.title = `(${currentCount + 1}) ${document.title}`;
+        }
+    }
+
+    /**
+     * Configures the title listener to remove notification counts on window focus.
+     */
     private configureTitleListener() : void
     {
-        // Remove "(1)" from the title when the tab becomes active again
-        const that = this;
         document.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === "visible" && document.title.startsWith(that.notificationIndication)) 
+            if (document.visibilityState === "visible") 
             {
-                document.title = document.title.slice(that.notificationIndication.length);
+                Display.removeTitleNotificationCount();
             }
         });
     }
@@ -316,6 +353,26 @@ export class Display
         this.configureButtonNewGame();
         this.configureButtonSearch();
         this.configureTitleListener();
+        this.configureChatForm(); // Add chat form setup
+    }
+
+    /**
+     * Sets up the chat form to send messages.
+     */
+    private configureChatForm() : void
+    {
+        const chatForm = document.getElementById("chatForm") as HTMLFormElement | null;
+        const chatInput = document.getElementById("chatInput") as HTMLInputElement | null;
+        if (!chatForm || !chatInput) return;
+
+        chatForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const message = chatInput.value.trim();
+            if (message.length > 0) {
+                this.callbacks.sendChatMessage(message);
+                chatInput.value = "";
+            }
+        });
     }
 
     /**
@@ -650,10 +707,6 @@ export class Display
     private notifyTurnIfInactive() {
         // Only notify if the tab is not active
         if (document.visibilityState !== "visible") {
-            // Add "(1)" to the beginning of the title if not already present
-            if (!document.title.startsWith(this.notificationIndication)) {
-                document.title = this.notificationIndication + document.title;
-            }
             // Show browser notification
             const notificationTitle = `${getStr(Strings.AppTitle)}: ${getStr(Strings.YourTurn)}`;
             if (Notification.permission === "granted") {
@@ -749,6 +802,50 @@ export class Display
 
         p.textContent = notification;
         const toast = new BootstrapToast(header, "", p, 10000, true);
+        toast.show();
+    }
+
+    /**
+     * Show a chat message from a player.
+     * @param playerIndex The index of the player sending the message.
+     * @param message The chat message content.
+     */    
+    // TODO: Chat UI should be disabled unless all players joined
+    public showChatMessage(playerIndex: number, message: string) : void
+    {
+        const header = getStr(Strings.ChatMessage).replace("${player}", document.getElementById(`player${playerIndex + 1}_name`)?.innerText ?? "?");
+        const p = document.createElement('p');
+
+        p.textContent = message;
+
+        // Add a link to open the chat/offcanvas
+        const link = document.createElement('a');
+        link.href = "#";
+        link.textContent = getStr(Strings.ChatResponse);
+        link.classList.add("chat_respond_link", "chat_meta_element");
+        const offcanvas = document.getElementById("offcanvasHistory");
+        link.onclick = (e) => {
+            e.preventDefault();
+            if (offcanvas) {
+                const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(offcanvas);
+                bsOffcanvas.show();
+                const chatInput = document.getElementById("chatInput");
+                if (chatInput) {
+                    chatInput.focus();
+                }
+            }
+        };
+
+        // Container for message and link
+        const container = document.createElement('div');
+        container.appendChild(p);
+        container.appendChild(link);
+
+        // check if offcanvas is visible:
+        const is_offcanvas_visible = offcanvas?.classList.contains("show");
+        const autohide = is_offcanvas_visible || this.player?.index == playerIndex;
+
+        const toast = new BootstrapToast(header, "", container, 10000, autohide);
         toast.show();
     }
 
@@ -998,13 +1095,17 @@ class BootstrapToast
             const bodyDiv = document.createElement("div");
             bodyDiv.className = "message-history-body";
             // Deep clone the body content
-            bodyDiv.appendChild(this.body.cloneNode(true));
+            const bodyClone = this.body.cloneNode(true) as HTMLElement;
+            bodyClone.querySelectorAll(".chat_meta_element").forEach(el => el.remove());
+            bodyDiv.appendChild(bodyClone);
             historyEntry.appendChild(headerDiv);
             historyEntry.appendChild(bodyDiv);
             history.appendChild(historyEntry);
             // Scroll to bottom on new message
             history.scrollTop = history.scrollHeight;
         }
+
+        Display.incrementTitleNotificationCount();
     }
 
     /**

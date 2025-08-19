@@ -1,5 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { randomBytes } from "crypto";
+import sanitizeHtml from "sanitize-html";
 import ServerGame from './gameLogic.js';
 import Dictionary from './Dictionary.js';
 import {Player, PlayerType} from '@shared/Player.js';
@@ -13,6 +14,7 @@ const NUM_PLAYERS = 2;
 const GAME_ID_LENGTH = 6;
 const GAME_ID_CHARS = "abcdefghijkmnpqrstuvwxyz23456789"; // Skipping a few characters to avoid confusion
 const GAME_ID_REGEX = new RegExp(`^[${GAME_ID_CHARS}]+$`);
+const MAX_CHAT_MESSAGE_LENGTH = 222;
 
 const CLEANUP_DELAY = 10 * 60 * 1000; // 10 minutes in milliseconds
 const CLEANUP_INTERVAL = 30 * 60 * 1000; // Check for inactivity every x minutes
@@ -370,6 +372,67 @@ export function onlineGameManager(io: Server, dictionary: Dictionary)
                     swapDetails: swapDetails,
                     points: JSON.stringify(Array.from(game.serverGame.getPoints().entries())),
                     numTilesInBag: game.serverGame.bag.length
+                });
+            }
+            catch (err)
+            {
+                if (err instanceof UserError) 
+                {
+                    socket.emit("showError", {type: err.type, extraData: err.extraData});
+                }
+                console.log(`Error: ${err}`);
+            }
+        });
+
+        socket.on('sendChatMessage', (message: string) => {
+            try 
+            {
+                const gameId = socket.gameId;
+                if (!gameId) 
+                {
+                    throw new Error("Game ID not found");
+                }
+
+                if (message.trim() === "") 
+                {
+                    throw new Error("Empty chat message");
+                }
+
+                if (message.length > MAX_CHAT_MESSAGE_LENGTH) 
+                {
+                    throw new Error("Chat message is too long");
+                }
+
+                const clean_message: string = sanitizeHtml(message, {
+                    allowedTags: [],        // no tags allowed
+                    allowedAttributes: {},  // no attributes allowed
+                    nonTextTags: [          // remove these tags *and* their content
+                        'script',
+                        'style',
+                        'textarea',
+                        'option',
+                        'iframe',
+                        'noscript'
+                    ],
+                });
+
+                if (clean_message.trim() === "") 
+                {
+                    throw new Error("Empty chat message");
+                }
+
+                const game = games[gameId];
+                if (!game) 
+                {
+                    throw new Error(`Game ${gameId} not found`);
+                }
+
+                game.lastActivity = Date.now();
+
+                // Broadcast chat message to all players in the game
+                io.to(gameId).emit('showChatMessage', {
+                    playerIndex: socket.player!.index,
+                    message: clean_message
                 });
             }
             catch (err)
