@@ -84,7 +84,9 @@ export enum Strings {
     Message,
     NoSuchGameId,
     ChatMessage,
-    ChatResponse
+    ChatResponse,
+    Reminder,
+    TimePassed
 }
 
 export const Translations : Record<Languages, Record<Strings, string>> = {
@@ -125,7 +127,9 @@ export const Translations : Record<Languages, Record<Strings, string>> = {
         [Strings.Message]: "Message",
         [Strings.NoSuchGameId]: "No such game ID",
         [Strings.ChatMessage]: "${player} said:",
-        [Strings.ChatResponse]: "Send message"
+        [Strings.ChatResponse]: "Send message",
+        [Strings.Reminder]: "Reminder",
+        [Strings.TimePassed]: "A few minutes have passed, opponent is waiting for your move..."
     },
 
     [Languages.Hebrew]: {
@@ -165,7 +169,9 @@ export const Translations : Record<Languages, Record<Strings, string>> = {
         [Strings.Message]: "הודעה",
         [Strings.NoSuchGameId]: "לא מצאנו משחק עם מזהה כזה",
         [Strings.ChatMessage]: "${player} אמר/ה:",
-        [Strings.ChatResponse]: "שליחת הודעה"
+        [Strings.ChatResponse]: "שליחת הודעה",
+        [Strings.Reminder]: "תזכורת",
+        [Strings.TimePassed]: "עברו כבר כמה דקות, היריב/ה מחכה למהלך שלך..."
     },
 }
 

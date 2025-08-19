@@ -63,6 +63,8 @@ export class Display
     private swapTilesModal   : bootstrap.Modal | null = null;
     private waitPlayersModal : bootstrap.Modal | null = null;
 
+    private watchdog         : any | null = null;
+
     constructor(callbacks: DisplayCallBacks)
     {
         this.board = document.getElementById("board")!;
@@ -129,6 +131,7 @@ export class Display
         endTurnButton.addEventListener('click', function(e)
         {
             that.endTurn();
+            
             if ( (Notification.permission !== "granted") 
                 && (Notification.permission !== "denied") ) 
             {
@@ -698,10 +701,23 @@ export class Display
             }
         });
 
+        if (this.watchdog != null)
+        {
+            clearInterval(this.watchdog);
+        }
+
         if (activePlayerIndex === player.index)
         {
             this.toggleEndTurnButton(false);
             this.notifyTurnIfInactive();
+            const minutes = 2;
+            this.watchdog = setInterval(() => {
+                const header = getStr(Strings.Reminder);
+                const p = document.createElement('p');
+                p.textContent = getStr(Strings.TimePassed);
+                const toast = new BootstrapToast(header, "", p, 10000, true);
+                toast.show(false);
+            }, 1000 * 60 * minutes);
         }
         else
         {
@@ -1047,7 +1063,7 @@ class BootstrapToast
     /**
      * Show the toast notification.
      */
-    public show(): void 
+    public show(logToHistory: boolean = true): void 
     {
         const toast = document.createElement('div');
         toast.classList.add('toast');
@@ -1092,40 +1108,44 @@ class BootstrapToast
             toast.remove();
         });
 
-        // --- Append to message_history ---
-        const history = document.getElementById("message_history");
-        if (history) {
-            document.getElementById("no_messages")?.remove();
-            const historyEntry = document.createElement("div");
-            historyEntry.className = "message-history-entry";
-            // Clone the header and body for history
-            const headerDiv = document.createElement("div");
-            headerDiv.className = "message-history-header";
-            headerDiv.textContent = this.header;
-            if (this.secondaryHeader)
+        if (logToHistory)
+        {
+            // --- Append to message_history ---
+            const history = document.getElementById("message_history");
+            if (history) 
             {
-                const secondaryHeaderDiv = document.createElement("div");
-                secondaryHeaderDiv.className = "message-history-secondary-header";
-                secondaryHeaderDiv.textContent = this.secondaryHeader;
-                headerDiv.appendChild(secondaryHeaderDiv);
+                document.getElementById("no_messages")?.remove();
+                const historyEntry = document.createElement("div");
+                historyEntry.className = "message-history-entry";
+                // Clone the header and body for history
+                const headerDiv = document.createElement("div");
+                headerDiv.className = "message-history-header";
+                headerDiv.textContent = this.header;
+                if (this.secondaryHeader)
+                {
+                    const secondaryHeaderDiv = document.createElement("div");
+                    secondaryHeaderDiv.className = "message-history-secondary-header";
+                    secondaryHeaderDiv.textContent = this.secondaryHeader;
+                    headerDiv.appendChild(secondaryHeaderDiv);
+                }
+                const bodyDiv = document.createElement("div");
+                bodyDiv.className = "message-history-body";
+                // Deep clone the body content
+                const bodyClone = this.body.cloneNode(true) as HTMLElement;
+                bodyClone.querySelectorAll(".chat_meta_element").forEach(el => el.remove());
+                bodyDiv.appendChild(bodyClone);
+
+                const footerDiv = document.createElement("div");
+                footerDiv.className = "message-history-footer";
+                footerDiv.textContent = new Date().toLocaleTimeString();
+
+                historyEntry.appendChild(headerDiv);
+                historyEntry.appendChild(bodyDiv);
+                historyEntry.appendChild(footerDiv);
+                history.appendChild(historyEntry);
+                // Scroll to bottom on new message
+                history.scrollTop = history.scrollHeight;
             }
-            const bodyDiv = document.createElement("div");
-            bodyDiv.className = "message-history-body";
-            // Deep clone the body content
-            const bodyClone = this.body.cloneNode(true) as HTMLElement;
-            bodyClone.querySelectorAll(".chat_meta_element").forEach(el => el.remove());
-            bodyDiv.appendChild(bodyClone);
-
-            const footerDiv = document.createElement("div");
-            footerDiv.className = "message-history-footer";
-            footerDiv.textContent = new Date().toLocaleTimeString();
-
-            historyEntry.appendChild(headerDiv);
-            historyEntry.appendChild(bodyDiv);
-            historyEntry.appendChild(footerDiv);
-            history.appendChild(historyEntry);
-            // Scroll to bottom on new message
-            history.scrollTop = history.scrollHeight;
         }
 
         Display.incrementTitleNotificationCount();
