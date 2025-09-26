@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>המילה האחרונה - משחק דמוי "שבץ נא" אונליין</title>
+    <title>המילה האחרונה - משחק מילים אונליין בסגנון שבץ נא</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.rtl.min.css" 
           integrity="sha384-DOXMLfHhQkvFFp+rWTZwVlPVqdIhpDVYT9csOnHSgWQWPX0v5MCGtjCJbY6ERspU" crossorigin="anonymous">
@@ -11,8 +11,12 @@
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <link href="css/style.css" rel="stylesheet" />
     <link href="css/hebrew.css" rel="stylesheet" />
-    <meta name="description" content="משחק דמוי שבץ-נא בעברית, אונליין">
-    <meta name="keywords" content="שבץ נא, שבץ-נא,Scrabble">
+    <link rel="canonical" href="https://dvd848.github.io/the-last-word/">
+    <link rel="apple-touch-icon" href="https://dvd848.github.io/the-last-word/screenshots/apple-touch-icon.png">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="המילה האחרונה - משחק מילים מקוון בעברית, דמוי שבץ נא. שחקו אונליין מול המחשב או עם חברים, גלו מילים חדשות, ושפרו את אוצר המילים שלכם.">
+    <meta name="keywords" content="שבץ נא, שבץ-נא, Scrabble, משחק מילים, משחק אונליין, משחק דמוי שבץ נא, המילה האחרונה, משחק מילים בעברית, שבץ נא אונליין">
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-JTZ82LNDSY"></script>
@@ -23,6 +27,61 @@
 
     gtag('config', 'G-JTZ82LNDSY');
     </script>
+
+    <script type="application/ld+json">
+    {
+    "@context": "https://schema.org",
+    "@type": "Game",
+    "name": "המילה האחרונה",
+    "alternateName": "The Last Word",
+    "url": "https://dvd848.github.io/the-last-word/",
+    "description": "משחק מילים בעברית בסגנון שבץ נא אונליין.",
+    "inLanguage": "he",
+    "genre": ["Word game", "Scrabble-like"],
+    "applicationCategory": "Game",
+    "operatingSystem": "Web",
+    "keywords": "Scrabble, Hebrew, Game",
+    "author": {
+        "@type": "Person",
+        "name": "Dvd848",
+        "url": "https://github.com/Dvd848"
+    },
+    "mainEntity": {
+        "@type": "FAQPage",
+        "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "איך משחקים ב'מילה האחרונה'?",
+            "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "כל שחקן בתורו מניח מילה חדשה על הלוח באמצעות האותיות שלו. הניקוד נקבע לפי ערכי האותיות והמשבצות המיוחדות."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "איך מנצחים במשחק?",
+            "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "השחקן עם הניקוד הגבוה ביותר לאחר שכל האותיות נוצלו או נחסמו הוא המנצח."
+            }
+        }
+        ]
+    }
+    }
+    </script>
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="המילה האחרונה - משחק מילים אונליין בסגנון שבץ נא">
+    <meta property="og:description" content="המילה האחרונה - משחק מילים מקוון בעברית, דמוי שבץ נא. שחקו אונליין מול המחשב או עם חברים, גלו מילים חדשות, ושפרו את אוצר המילים שלכם.">
+    <meta property="og:url" content="https://dvd848.github.io/the-last-word/">
+    <meta property="og:image" content="https://dvd848.github.io/the-last-word/screenshots/game2.png">
+    <meta property="og:locale" content="he_IL">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="המילה האחרונה - משחק מילים אונליין בסגנון שבץ נא">
+    <meta name="twitter:description" content="המילה האחרונה - משחק מילים מקוון בעברית, דמוי שבץ נא. שחקו אונליין מול המחשב או עם חברים, גלו מילים חדשות, ושפרו את אוצר המילים שלכם.">
+    <meta name="twitter:image" content="https://dvd848.github.io/the-last-word/screenshots/game2.png">
 </head>
 
 <body>
@@ -47,8 +106,7 @@
                         <div class="game_tile">ה</div>
                     </div>
                 </div>
-                <h2 class="hide">המילה האחרונה</h2>
-                <h1>משחק דמוי "שבץ נא" אונליין</h1>
+                <h1><span class="hide">המילה האחרונה - </span>משחק מילים מקוון בעברית בסגנון שבץ נא</h1>
             </div>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
@@ -74,12 +132,80 @@
                         <a class="nav-link" href="#" data-bs-target="#rulesModal" data-bs-toggle="modal">חוקים</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-target="#faqModal" data-bs-toggle="modal">שאלות נפוצות</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="#" data-bs-target="#aboutModal" data-bs-toggle="modal">אודות</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
+
+    <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5" id="aboutModalLabel">אודות</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        "המילה האחרונה" הוא משחק מילים מקוון בעברית, בסגנון "שבץ נא". <br/>
+                        ניתן לשחק מול המחשב או מול חבר/ה על אותו מחשב, ללא צורך בהרשמה או התקנה. <br/>
+                        המשחק מתאים לכל הגילאים, מהווה דרך מהנה להעשיר את אוצר המילים, ומאפשר להתאמן על חשיבה מהירה ואסטרטגיה. 
+                    </p>
+                      <p>
+                        במהלך המשחק, כל שחקן/ית מנסה ליצור מילים חדשות על הלוח בעזרת האותיות שברשותם. הניקוד נקבע לפי ערכי האותיות והמשבצות המיוחדות, בדומה למשחק שבץ נא המסורתי. 
+                      </p>
+                    <p>
+                        קיימת גם גרסה נוספת של המשחק לשני שחקנים מרוחקים (מעל גבי רשת האינטרנט) הזמינה למשחק <a href="https://the-last-word.onrender.com/">כאן</a>.
+                    </p>
+                    <p>
+                        המשחק עושה שימוש במילון <a href="http://hspell.ivrix.org.il/">HSpell</a>
+                        המשוחרר תחת רישיון <a href="https://www.gnu.org/licenses/agpl.html">AGPLv3</a>.
+                    </p>
+                    <p>
+                        קוד המקור של המשחק זמין ב-<a href="https://github.com/Dvd848/the-last-word">GitHub</a>. 
+                        <a href="https://github.com/Dvd848/the-last-word/issues">הערות</a> ו<a href="https://github.com/Dvd848/the-last-word/pulls">תרומות קוד</a> יתקבלו בברכה.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">סגירה</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="faqModal" tabindex="-1" aria-labelledby="faqModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5" id="faqModalLabel">שאלות נפוצות</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="faq-item">
+                    <h3>איך משחקים ב'מילה האחרונה'?</h3>
+                        <p>בכל תור, השחקן/ית מניח/ה מילה חדשה על הלוח בעזרת האותיות שברשותו/ה. המילה חייבת להתחבר למילים שכבר קיימות, בדיוק כמו במשחק שבץ נא.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>איך מנצחים במשחק?</h3>
+                        <p>השחקן/ית עם הניקוד הגבוה ביותר בסיום המשחק - כאשר כל האותיות נוצלו או נחסמו - מנצח/ת.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>האם אפשר לשחק עם חברים אונליין?</h3>
+                        <p>בגרסה זו של המשחק ניתן לשחק מול יריב/ה על אותו מחשב. קיימת גם גרסה נוספת של המשחק לשני שחקנים מרוחקים (מעל גבי רשת האינטרנט) הזמינה למשחק <a href="https://the-last-word.onrender.com/">כאן</a>.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">סגירה</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="game" class="hide">
         <div id="game_top">
@@ -108,38 +234,11 @@
         </div>
     </div>
 
-    <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title fs-5" id="aboutModalLabel">אודות</h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>
-                        "המילה האחרונה" הוא משחק דמוי "שבץ נא" אונליין לשחקן יחיד (מול המחשב) או לשני שחקנים.
-                    </p>
-                    <p>
-                        המשחק עושה שימוש במילון <a href="http://hspell.ivrix.org.il/">HSpell</a>
-                         המשוחרר תחת רישיון <a href="http://www.gnu.org/licenses/agpl.html">AGPLv3</a>.
-                    </p>
-                    <p>
-                        קוד המקור של המשחק זמין ב-<a href="https://github.com/Dvd848/the-last-word">GitHub</a>. 
-                        <a href="https://github.com/Dvd848/the-last-word/issues">הערות</a> ו<a href="https://github.com/Dvd848/the-last-word/pulls">תרומות קוד</a> יתקבלו בברכה.
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">סגירה</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="modal fade" id="configModal" tabindex="-1" aria-labelledby="configModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="configModalLabel">הגדרות</h5>
+                    <h2 class="modal-title" id="configModalLabel">הגדרות</h2>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
